@@ -1,0 +1,16 @@
+<hibernate-configuration>
+    <session-factory>
+        <property name="connection.driver_class">org.postgresql.Driver</property>
+        <property name="connection.url">jdbc:postgresql://localhost:5432/AiTimetable</property>
+        <property name="connection.username">postgres</property>
+        <property name="connection.password">${DB_PASSWORD}</property>
+
+        <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
+        <property name="hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+        <mapping class="com.ocr.javafx.entity.User"/>
+        <mapping class="com.ocr.javafx.entity.LearningPlan"/>
+        <mapping class="com.ocr.javafx.entity.ScheduleSlot"/>
+    </session-factory>
+</hibernate-configuration>

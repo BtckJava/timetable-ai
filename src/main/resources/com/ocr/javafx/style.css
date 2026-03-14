@@ -1,0 +1,52 @@
+/* style.css */
+.calendar-grid {
+    -fx-background-color: white;
+}
+
+/* Cột thời gian bên trái */
+.time-cell {
+    -fx-alignment: top-left;
+    -fx-padding: 15 15 0 10;
+    -fx-text-fill: #6b7280; /* Màu xám nhạt */
+    -fx-font-size: 13px;
+    -fx-border-color: #f3f4f6;
+    -fx-border-width: 0 1 1 0; /* Chỉ có viền phải và dưới */
+}
+
+/* Tiêu đề ngày trên cùng */
+.day-header {
+    -fx-alignment: center;
+    -fx-padding: 10;
+    -fx-border-color: #f3f4f6;
+    -fx-border-width: 0 0 1 0;
+}
+.day-name { -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #111827; }
+.day-date { -fx-font-size: 12px; -fx-text-fill: #6b7280; }
+
+/* Ô trống trong lịch (có dấu -) */
+.empty-cell {
+    -fx-alignment: top-left;
+    -fx-padding: 15 0 0 15;
+    -fx-text-fill: #d1d5db;
+    -fx-border-color: #f3f4f6;
+    -fx-border-width: 0 0 1 0; /* Chỉ kẻ đường gạch ngang dưới */
+}
+
+/* Thẻ (Card) môn học */
+.event-card {
+    -fx-background-color: #e0f2fe; /* Xanh dương nhạt */
+    -fx-background-radius: 6;
+    -fx-border-color: #bae6fd;
+    -fx-border-radius: 6;
+    -fx-padding: 8;
+    -fx-cursor: hand;
+}
+.event-topic {
+    -fx-text-fill: #0369a1;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+.event-detail {
+    -fx-text-fill: #0284c7;
+    -fx-font-size: 11px;
+}
