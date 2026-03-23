@@ -12,6 +12,7 @@ module com.ocr.javafx {
     requires static lombok;
     requires com.fasterxml.jackson.databind;
     requires java.naming;
+    requires jbcrypt;
     opens com.ocr.javafx to javafx.fxml;
 
     // QUAN TRỌNG NHẤT: Cho phép Hibernate truy cập vào các Entity bằng Reflection
