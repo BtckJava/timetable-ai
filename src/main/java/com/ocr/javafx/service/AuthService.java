@@ -27,6 +27,8 @@ public class AuthService {
         user.setEmail(email);
         user.setPassword(hashed);
 
+        repository.save(user);
+
         return new AuthResponse(true, "Register successful");
     }
 
