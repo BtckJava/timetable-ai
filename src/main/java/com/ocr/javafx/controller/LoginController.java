@@ -1,5 +1,8 @@
 package com.ocr.javafx.controller;
 
+import com.ocr.javafx.dto.response.AuthResponse;
+import com.ocr.javafx.service.AuthService;
+import com.sun.net.httpserver.BasicAuthenticator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,35 +50,16 @@ public class LoginController extends BaseController {
         String password = txtPassword.getText();
 
         // Validate empty input
-        if (mail.isEmpty()) {
-            showError("Mail cannot be empty");
+        if (mail.isEmpty() || password.isEmpty()) {
+            showError("Please fill in all fields");
             return;
         }
 
-        if (password.isEmpty()) {
-            showError("Password cannot be empty");
-            return;
-        }
+        AuthService service = new AuthService();
+        AuthResponse response = service.login(mail, password);
 
-        // Validate exceed length
-        if (mail.length() > 30) {
-            showError("Email must not exceed 30 characters");
-            return;
-        }
-
-        if (password.length() > 30) {
-            showError("Password must not exceed 30 characters");
-            return;
-        }
-
-        // Wrong mail format
-        if (!mail.contains("@")) {
-            showError("Invalid email format");
-            return;
-        }
-
-        // Login logic (demo thui)
-        if (mail.equals("nhi@") && password.equals("hanh")) {
+        // Login logic
+        if (response.isSuccess()) {
             showSuccess("Login successful!");
             // chuyển sang trang chủ
             try {
@@ -88,7 +72,7 @@ public class LoginController extends BaseController {
             }
         }
         else {
-            showError("Invalid username or password");
+            showError(response.getResponse());
         }
     }
 

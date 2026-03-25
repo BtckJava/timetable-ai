@@ -10,7 +10,7 @@ public class AuthService {
 
     public AuthResponse register(String username, String email, String password){
         if(email == null || password == null || email.isEmpty() || password.isEmpty()){
-            return new AuthResponse(false, "Fields cannot be empty");
+            return new AuthResponse(false, "Please fill in all fields");
         }
 
         if(!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
@@ -28,6 +28,7 @@ public class AuthService {
         user.setPassword(hashed);
 
         repository.save(user);
+
 
         return new AuthResponse(true, "Register successful");
     }

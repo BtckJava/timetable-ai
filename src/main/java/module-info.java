@@ -13,6 +13,8 @@ module com.ocr.javafx {
     requires com.fasterxml.jackson.databind;
     requires java.naming;
     requires java.desktop;
+    requires jbcrypt;
+    requires jdk.httpserver;
     opens com.ocr.javafx to javafx.fxml;
 
     // QUAN TRỌNG NHẤT: Cho phép Hibernate truy cập vào các Entity bằng Reflection

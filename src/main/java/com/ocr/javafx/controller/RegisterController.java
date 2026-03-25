@@ -1,5 +1,7 @@
 package com.ocr.javafx.controller;
 
+import com.ocr.javafx.dto.response.AuthResponse;
+import com.ocr.javafx.service.AuthService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,28 +49,8 @@ public class RegisterController extends BaseController {
 
         clearError();
 
-        if (username.isEmpty()) {
-            showError("Username cannot be empty");
-            return;
-        }
-
-        if (email.isEmpty()) {
-            showError("Email cannot be empty");
-            return;
-        }
-
-        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            showError("Invalid email format");
-            return;
-        }
-
-        if (password.isEmpty()) {
-            showError("Password cannot be empty");
-            return;
-        }
-
-        if (confirmPassword.isEmpty()) {
-            showError("Please repeat your password");
+        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            showError("Please fill in all fields");
             return;
         }
 
@@ -77,17 +59,14 @@ public class RegisterController extends BaseController {
             return;
         }
 
-        if (email.length() > 30) {
-            showError("Email must not exceed 30 characters");
-            return;
-        }
+        AuthService service = new AuthService();
+        AuthResponse response = service.register(username, email, password);
 
-        if (password.length() > 30) {
-            showError("Password must not exceed 30 characters");
-            return;
+        if(response.isSuccess()){
+            goToLogin(null);
+        } else{
+            showError(response.getResponse());
         }
-
-        goToLogin(null);
     }
 
     @FXML
