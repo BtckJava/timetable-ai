@@ -1,4 +1,4 @@
-package com.ocr.javafx.controller;
+package com.ocr.javafx.controller.timetable;
 
 import com.ocr.javafx.entity.ScheduleSlot;
 import javafx.collections.FXCollections;

@@ -1,8 +1,8 @@
-package com.ocr.javafx.controller;
+package com.ocr.javafx.controller.login;
 
+import com.ocr.javafx.controller.base.BaseController;
 import com.ocr.javafx.dto.response.AuthResponse;
 import com.ocr.javafx.service.AuthService;
-import com.sun.net.httpserver.BasicAuthenticator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,7 +29,7 @@ public class LoginController extends BaseController {
             Stage stage = (Stage) txtEmail.getScene().getWindow();
 
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/ocr/javafx/register.fxml") // 🔥 FIX PATH
+                    getClass().getResource("/com/ocr/javafx/login/register.fxml") // 🔥 FIX PATH
             );
 
             stage.setScene(new Scene(loader.load()));

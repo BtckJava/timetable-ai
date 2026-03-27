@@ -1,5 +1,6 @@
-package com.ocr.javafx.controller;
+package com.ocr.javafx.controller.login;
 
+import com.ocr.javafx.controller.base.BaseController;
 import com.ocr.javafx.dto.response.AuthResponse;
 import com.ocr.javafx.service.AuthService;
 import javafx.event.ActionEvent;
@@ -32,7 +33,7 @@ public class RegisterController extends BaseController {
     void goToLogin(ActionEvent event) {
         try {
             Stage stage = (Stage) usernameField.getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/login.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/login/login.fxml"));
             stage.setScene(new Scene(loader.load()));
         } catch (Exception e) {
             e.printStackTrace();

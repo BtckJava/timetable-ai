@@ -1,4 +1,4 @@
-package com.ocr.javafx.controller;
+package com.ocr.javafx.controller.base;
 
 import javafx.scene.control.Label;
 

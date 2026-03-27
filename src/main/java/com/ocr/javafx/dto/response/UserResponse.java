@@ -1,4 +1,4 @@
-package com.ocr.javafx.dto;
+package com.ocr.javafx.dto.response;
 
 public class UserResponse {
 
