@@ -12,6 +12,9 @@ module com.ocr.javafx {
     requires static lombok;
     requires com.fasterxml.jackson.databind;
     requires java.naming;
+    requires java.desktop;
+    requires jbcrypt;
+    requires jdk.httpserver;
     opens com.ocr.javafx to javafx.fxml;
 
     // QUAN TRỌNG NHẤT: Cho phép Hibernate truy cập vào các Entity bằng Reflection
@@ -21,4 +24,7 @@ module com.ocr.javafx {
 
 
     exports com.ocr.javafx;
+    opens com.ocr.javafx.controller.login to javafx.fxml;
+    opens com.ocr.javafx.controller.base to javafx.fxml;
+    opens com.ocr.javafx.controller.timetable to javafx.fxml;
 }

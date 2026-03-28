@@ -14,7 +14,7 @@ public class OpenRouterAI {
 
         JSONObject bodyJson = new JSONObject();
 
-        bodyJson.put("model", "nvidia/nemotron-3-super-120b-a12b:free");
+        bodyJson.put("model", "arcee-ai/trinity-large-preview:free");
 
         JSONArray messages = new JSONArray();
 
@@ -33,7 +33,7 @@ public class OpenRouterAI {
 
         Request request = new Request.Builder()
                 .url("https://openrouter.ai/api/v1/chat/completions")
-                .addHeader("Authorization", "Bearer " + API_KEY)
+                .addHeader("Authorization", "Bearer " + "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")
                 .addHeader("Content-Type", "application/json")
                 .addHeader("HTTP-Referer", "http://localhost")
                 .addHeader("X-Title", "JavaFX AI App")

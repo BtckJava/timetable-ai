@@ -6,17 +6,17 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class UserController {
-    public void saveUser(String name) {
+    public void saveUser(String username) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Transaction tx = session.beginTransaction();
 
             User user = new User();
-            user.setName(name);
+            user.setUsername(username);
 
             session.persist(user); // Lưu vào DB
             tx.commit();
 
-            System.out.println("User saved with ID: " + user.getName());
+            System.out.println("User saved with ID: " + user.getUsername());
         }
     }
 }
