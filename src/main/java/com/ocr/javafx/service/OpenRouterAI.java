@@ -14,7 +14,7 @@ public class OpenRouterAI {
 
         JSONObject bodyJson = new JSONObject();
 
-        bodyJson.put("model", "nvidia/nemotron-3-super-120b-a12b:free");
+        bodyJson.put("model", "arcee-ai/trinity-large-preview:free");
 
         JSONArray messages = new JSONArray();
 
