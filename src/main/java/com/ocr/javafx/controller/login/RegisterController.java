@@ -1,6 +1,7 @@
 package com.ocr.javafx.controller.login;
 
 import com.ocr.javafx.controller.base.BaseController;
+import com.ocr.javafx.dto.request.RegisterRequest;
 import com.ocr.javafx.dto.response.AuthResponse;
 import com.ocr.javafx.service.AuthService;
 import javafx.event.ActionEvent;
@@ -43,25 +44,16 @@ public class RegisterController extends BaseController {
 
     @FXML
     void handleRegister(ActionEvent event) {
-        String username = usernameField.getText();
-        String email = emailField.getText();
-        String password = passwordField.getText();
-        String confirmPassword = confirmPasswordField.getText();
-
+        RegisterRequest request = new RegisterRequest(
+                usernameField.getText(),
+                emailField.getText(),
+                passwordField.getText(),
+                confirmPasswordField.getText()
+        );
         clearError();
 
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            showError("Please fill in all fields");
-            return;
-        }
-
-        if (!password.equals(confirmPassword)) {
-            showError("Passwords do not match");
-            return;
-        }
-
         AuthService service = new AuthService();
-        AuthResponse response = service.register(username, email, password);
+        AuthResponse response = service.register(request);
 
         if(response.isSuccess()){
             goToLogin(null);
