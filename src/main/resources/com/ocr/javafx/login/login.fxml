@@ -26,9 +26,9 @@
                                     </font>
                                 </Label>
                                 <Label />
-                                <TextField fx:id="txtEmail" promptText="Enter your email" />
+                                <TextField fx:id="emailField" promptText="Enter your email" />
                                 <Label />
-                                <PasswordField fx:id="txtPassword" promptText="Enter your password" />
+                                <PasswordField fx:id="passwordField" promptText="Enter your password" />
                                 <Label fx:id="errorLabel" prefHeight="29.0" wrapText="true" />
                                 <HBox alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="209.0">
                                     <children>
