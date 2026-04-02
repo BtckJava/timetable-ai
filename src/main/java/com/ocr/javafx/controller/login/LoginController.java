@@ -1,6 +1,7 @@
 package com.ocr.javafx.controller.login;
 
 import com.ocr.javafx.controller.base.BaseController;
+import com.ocr.javafx.dto.request.LoginRequest;
 import com.ocr.javafx.dto.response.AuthResponse;
 import com.ocr.javafx.service.AuthService;
 import javafx.event.ActionEvent;
@@ -46,17 +47,13 @@ public class LoginController extends BaseController {
 
     @FXML
     void handleLogin(ActionEvent event) {
-        String mail = txtEmail.getText();
-        String password = txtPassword.getText();
-
-        // Validate empty input
-        if (mail.isEmpty() || password.isEmpty()) {
-            showError("Please fill in all fields");
-            return;
-        }
+        LoginRequest request = new LoginRequest(
+            txtEmail.getText(),
+            txtPassword.getText()
+        );
 
         AuthService service = new AuthService();
-        AuthResponse response = service.login(mail, password);
+        AuthResponse response = service.login(request);
 
         // Login logic
         if (response.isSuccess()) {
