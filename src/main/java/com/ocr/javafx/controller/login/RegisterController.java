@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import lombok.Getter;
+import lombok.Setter;
 
 public class RegisterController extends BaseController {
 
@@ -30,12 +32,24 @@ public class RegisterController extends BaseController {
     @FXML
     private TextField usernameField;
 
+    @Setter
+    private AuthService authService;
+
     @FXML
-    void goToLogin(ActionEvent event) {
+    private void goToLogin(ActionEvent event) {
+        switchToLogin();
+    }
+
+    private void switchToLogin(){
         try {
             Stage stage = (Stage) usernameField.getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/login/login.fxml"));
-            stage.setScene(new Scene(loader.load()));
+            Scene scene = new Scene(loader.load());
+
+            LoginController controller = loader.getController();
+            controller.setAuthService(authService);
+
+            stage.setScene(scene);
         } catch (Exception e) {
             e.printStackTrace();
             showError("Cannot open Login screen");
@@ -44,19 +58,33 @@ public class RegisterController extends BaseController {
 
     @FXML
     void handleRegister(ActionEvent event) {
-        RegisterRequest request = new RegisterRequest(
-                usernameField.getText(),
-                emailField.getText(),
-                passwordField.getText(),
-                confirmPasswordField.getText()
-        );
         clearError();
 
-        AuthService service = new AuthService();
-        AuthResponse response = service.register(request);
+        String username = usernameField.getText();
+        String email = emailField.getText();
+        String password = passwordField.getText();
+        String confirmPassword = confirmPasswordField.getText();
+
+        if (username.isEmpty() || email.isEmpty() ||
+                password.isEmpty() || confirmPassword.isEmpty()) {
+
+            showError("Please fill in all fields");
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            showError("Passwords do not match");
+            return;
+        }
+
+        RegisterRequest request = new RegisterRequest(
+                username, email, password, confirmPassword
+        );
+
+        AuthResponse response = authService.register(request);
 
         if(response.isSuccess()){
-            goToLogin(null);
+            switchToLogin();
         } else{
             showError(response.getResponse());
         }
