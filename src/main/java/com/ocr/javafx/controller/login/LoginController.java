@@ -82,7 +82,7 @@ public class LoginController extends BaseController {
             // chuyển sang trang chủ
             try {
                 Stage stage = (Stage) emailField.getScene().getWindow();
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/home.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/main/main.fxml"));
                 stage.setScene(new Scene(loader.load()));
             } catch (Exception e) {
                 e.printStackTrace();

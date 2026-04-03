@@ -1,0 +1,40 @@
+/* sidebar background color */
+.sidebar-root{
+    -fx-background-color: #FDFD96;
+
+    /*fixed width feel*/
+    -fx-pref-width: 220;
+
+    /*subtle separation*/
+    -fx-border-color: #E5E7EB;
+    -fx-border-width: 0 1 0 0;
+
+    /*soft shadow*/
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 2, 0);
+}
+
+/*separator*/
+.separator .line{
+    -fx-border-color: #D4D4AA;
+    -fx-border-width: 0.5;
+}
+
+.button.sidebar-button{
+    -fx-background-color: transparent;
+    -fx-text-fill: #374151;
+
+    -fx-font-size: 14;
+    -fx-font-weight: 700;
+
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 10 15;
+    -fx-background-radius: 10;
+    -fx-graphic-text-gap: 12;
+
+    -fx-cursor: hand;
+}
+
+.button.sidebar-button:hover{
+    -fx-background-color: #f6f0b3;
+    -fx-translate-x: 2; /* tiny move right */
+}
