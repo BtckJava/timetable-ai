@@ -1,0 +1,6 @@
+@import url(topbar.css);
+@import url(statsRow.css);
+
+.root{
+    -fx-background-color: #F5F5F5;
+}

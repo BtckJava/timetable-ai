@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.geometry.Rectangle2D?>
@@ -16,44 +17,89 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
-         <VBox>
-            <HBox prefHeight="54.0" prefWidth="585.0">
-               <HBox prefHeight="100.0" prefWidth="200.0">
-                  <padding>
-                     <Insets bottom="20.0" />
-                  </padding>
-               </HBox>
-               <Pane prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-               <HBox prefHeight="100.0" prefWidth="200.0" />
-            </HBox>
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </VBox.margin>
-               <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-               <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-               <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-               <HBox alignment="CENTER_LEFT" layoutX="198.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0" />
-            </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="215.0" prefWidth="585.0" spacing="20.0">
-               <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" />
-               </VBox.margin>
-               <AnchorPane prefHeight="215.0" prefWidth="334.0" HBox.hgrow="ALWAYS">
-                  <HBox.margin>
-                     <Insets right="10.0" />
-                  </HBox.margin>
-               </AnchorPane>
-               <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="215.0" prefWidth="210.0">
-                  <HBox.margin>
-                     <Insets />
-                  </HBox.margin>
-               </AnchorPane>
-            </HBox>
-            <VBox prefHeight="232.0" prefWidth="698.0" />
-         </VBox>
-      </ScrollPane>
+      <AnchorPane>
+         <children>
+            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../style/main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="root" stylesheets="@../style/main.css">
+                  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="72.0" prefWidth="718.0" styleClass="topbar" VBox.vgrow="ALWAYS">
+                     <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0">
+                        <padding>
+                           <Insets bottom="20.0" />
+                        </padding>
+                     </HBox>
+                     <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="161.0" prefWidth="318.0" HBox.hgrow="ALWAYS" />
+                     <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0">
+                        <HBox.margin>
+                           <Insets />
+                        </HBox.margin></HBox>
+                     <stylesheets>
+                        <URL value="@../style/main.css" />
+                        <URL value="@../style/main.css" />
+                     </stylesheets>
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="121.0" prefWidth="698.0" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                     <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" stylesheets="@../style/main.css" HBox.hgrow="ALWAYS">
+                        <opaqueInsets>
+                           <Insets />
+                        </opaqueInsets>
+                        <HBox.margin>
+                           <Insets left="10.0" right="10.0" />
+                        </HBox.margin>
+                        <styleClass>
+                           <String fx:value="base-stats-box" />
+                           <String fx:value="stats-box-bar-learning" />
+                        </styleClass></HBox>
+                     <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" stylesheets="@../style/main.css" HBox.hgrow="ALWAYS">
+                        <HBox.margin>
+                           <Insets left="10.0" right="10.0" />
+                        </HBox.margin>
+                        <styleClass>
+                           <String fx:value="base-stats-box" />
+                           <String fx:value="stats-box-bar-complete" />
+                        </styleClass></HBox>
+                     <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" stylesheets="@../style/main.css" HBox.hgrow="ALWAYS">
+                        <HBox.margin>
+                           <Insets left="10.0" right="10.0" />
+                        </HBox.margin>
+                        <styleClass>
+                           <String fx:value="base-stats-box" />
+                           <String fx:value="stats-box-bar-plans" />
+                        </styleClass></HBox>
+                     <HBox alignment="CENTER_LEFT" layoutX="198.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="200.0" styleClass="stats-box-bar-progress" stylesheets="@../style/main.css" HBox.hgrow="ALWAYS">
+                        <HBox.margin>
+                           <Insets left="10.0" right="10.0" />
+                        </HBox.margin></HBox>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="215.0" prefWidth="585.0" spacing="20.0" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" />
+                     </VBox.margin>
+                     <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="215.0" prefWidth="334.0" HBox.hgrow="ALWAYS">
+                        <HBox.margin>
+                           <Insets right="10.0" />
+                        </HBox.margin>
+                     </AnchorPane>
+                     <AnchorPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="215.0" prefWidth="210.0" HBox.hgrow="ALWAYS">
+                        <HBox.margin>
+                           <Insets />
+                        </HBox.margin>
+                     </AnchorPane>
+                  </HBox>
+                  <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="232.0" prefWidth="698.0" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </VBox>
+               </VBox>
+            </ScrollPane>
+         </children>
+      </AnchorPane>
    </center>
    <left>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">

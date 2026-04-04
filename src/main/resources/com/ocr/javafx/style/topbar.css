@@ -1,0 +1,6 @@
+.topbar{
+    -fx-background-color: white;
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 3, 0, 0, 1);
+}
