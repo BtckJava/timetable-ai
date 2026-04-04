@@ -1,8 +1,8 @@
 package com.ocr.javafx.dto.response;
 
 public class AuthResponse {
-    private boolean success;
-    private String response;
+    private final boolean success;
+    private final String response;
 
     public AuthResponse(boolean success, String response){
         this.success = success;

@@ -1,6 +1,7 @@
 package com.ocr.javafx.controller.login;
 
 import com.ocr.javafx.controller.base.BaseController;
+import com.ocr.javafx.dto.request.LoginRequest;
 import com.ocr.javafx.dto.response.AuthResponse;
 import com.ocr.javafx.service.AuthService;
 import javafx.event.ActionEvent;
@@ -11,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import lombok.Setter;
 
 public class LoginController extends BaseController {
 
@@ -18,21 +20,33 @@ public class LoginController extends BaseController {
     private Label errorLabel;
 
     @FXML
-    private TextField txtEmail;
+    private TextField emailField;
 
     @FXML
-    private PasswordField txtPassword;
+    private PasswordField passwordField;
+
+    @Setter
+    private AuthService authService;
 
     @FXML
-    void goToRegister(ActionEvent event) {
+    private void goToRegister(ActionEvent event) {
+        switchToRegister();
+    }
+
+    private void switchToRegister(){
         try {
-            Stage stage = (Stage) txtEmail.getScene().getWindow();
+            Stage stage = (Stage) emailField.getScene().getWindow();
 
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/ocr/javafx/login/register.fxml") // 🔥 FIX PATH
             );
 
-            stage.setScene(new Scene(loader.load()));
+            Scene scene = new Scene(loader.load());
+
+            RegisterController controller = loader.getController();
+            controller.setAuthService(authService);
+
+            stage.setScene(scene);
         } catch (Exception e) {
             e.printStackTrace();
             showError("Cannot open Register screen");
@@ -46,25 +60,29 @@ public class LoginController extends BaseController {
 
     @FXML
     void handleLogin(ActionEvent event) {
-        String mail = txtEmail.getText();
-        String password = txtPassword.getText();
+        clearError();
 
-        // Validate empty input
-        if (mail.isEmpty() || password.isEmpty()) {
+        String email = emailField.getText();
+        String password = passwordField.getText();
+
+        if (email.isEmpty() || password.isEmpty()){
             showError("Please fill in all fields");
             return;
         }
 
-        AuthService service = new AuthService();
-        AuthResponse response = service.login(mail, password);
+        LoginRequest request = new LoginRequest(
+            email, password
+        );
+
+        AuthResponse response = authService.login(request);
 
         // Login logic
         if (response.isSuccess()) {
             showSuccess("Login successful!");
             // chuyển sang trang chủ
             try {
-                Stage stage = (Stage) txtEmail.getScene().getWindow();
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/home.fxml"));
+                Stage stage = (Stage) emailField.getScene().getWindow();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/main/main.fxml"));
                 stage.setScene(new Scene(loader.load()));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -82,8 +100,8 @@ public class LoginController extends BaseController {
         super.errorLabel = this.errorLabel;
 
         // clear lỗi khi user nhập lại
-        txtEmail.textProperty().addListener((obs, oldVal, newVal) -> clearError());
-        txtPassword.textProperty().addListener((obs, oldVal, newVal) -> clearError());
+        emailField.textProperty().addListener((obs, oldVal, newVal) -> clearError());
+        passwordField.textProperty().addListener((obs, oldVal, newVal) -> clearError());
     }
 }
 
