@@ -5,6 +5,7 @@ import com.ocr.javafx.dto.request.RegisterRequest;
 import com.ocr.javafx.dto.response.AuthResponse;
 import com.ocr.javafx.entity.User;
 import com.ocr.javafx.repository.UserRepository;
+import com.ocr.javafx.util.SessionManager;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class AuthService {
@@ -51,7 +52,6 @@ public class AuthService {
 
         repository.save(user);
 
-
         return new AuthResponse(true, "Register successful");
     }
 
@@ -64,7 +64,7 @@ public class AuthService {
         if(!BCrypt.checkpw(request.getPassword(), user.getPassword())){
             return new AuthResponse(false, "Incorrect email or password");
         }
-
+        SessionManager.setCurrentUser(user);
         return new AuthResponse(true, "Login successful");
     }
 }

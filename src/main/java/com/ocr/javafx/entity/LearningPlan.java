@@ -18,11 +18,23 @@ public class LearningPlan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String title;
+
     private String domain;
 
+    @Column(columnDefinition = "TEXT")
     private String goal;
 
+    private Integer progress;
+
+    private Integer durationDays;
+
     private String intensity;
+
+    @ElementCollection
+    @CollectionTable(name = "learning_plan_skills", joinColumns = @JoinColumn(name = "plan_id"))
+    @Column(name = "skill")
+    private List<String> skills;
 
     private LocalDateTime createdAt;
 

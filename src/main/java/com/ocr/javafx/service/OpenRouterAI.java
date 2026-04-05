@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 public class OpenRouterAI {
 
-    private static final String API_KEY = "";
+    private static final String API_KEY = "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";
 
     public static String ask(String prompt) throws Exception {
 
