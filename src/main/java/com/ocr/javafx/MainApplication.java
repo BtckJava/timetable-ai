@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
@@ -29,7 +30,7 @@ public class MainApplication extends Application {
                 new Image(getClass().getResourceAsStream("\"D:\\Code\\Java\\BTCK\\image-removebg-preview.png\""))
         );
 */
-
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.setTitle("App cua Nhi hihi");
         stage.setScene(scene);
         stage.show();

@@ -86,6 +86,7 @@ public class LoginController extends BaseController {
                 stage.setScene(new Scene(loader.load()));
             } catch (Exception e) {
                 e.printStackTrace();
+                showError(e.getMessage());
                 showError("Cannot open Home screen");
             }
         }
