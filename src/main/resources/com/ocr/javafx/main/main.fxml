@@ -14,7 +14,7 @@
    <center>
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
          <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <fx:include source="../components/topbar.fxml" />
+            <fx:include fx:id="topbar" source="../components/topbar.fxml" />
             <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../style/main.css" VBox.vgrow="ALWAYS">
                <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="root" stylesheets="@../style/main.css">
                   <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" prefWidth="718.0" styleClass="topbar" VBox.vgrow="ALWAYS">
@@ -107,6 +107,6 @@
       </AnchorPane>
    </center>
    <left>
-      <fx:include source="../components/sidebar.fxml" />
+      <fx:include fx:id="sidebar" source="../components/sidebar.fxml" />
    </left>
 </BorderPane>
