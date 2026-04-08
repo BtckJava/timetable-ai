@@ -3,11 +3,16 @@
 <?import java.lang.String?>
 <?import java.net.URL?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.main.MainController">
@@ -89,11 +94,16 @@
                         <HBox.margin>
                            <Insets right="10.0" />
                         </HBox.margin>
+                        <fx:include fx:id="barchart" source="../components/barchart.fxml"/>
                      </AnchorPane>
-                     <AnchorPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="404.0" prefWidth="218.0" styleClass="base-box" HBox.hgrow="ALWAYS">
+                     <AnchorPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308"
+                                 maxWidth="1.7976931348623157E308" prefHeight="404.0" prefWidth="218.0"
+                                 styleClass="base-box" HBox.hgrow="ALWAYS">
                         <HBox.margin>
-                           <Insets />
+                           <Insets/>
                         </HBox.margin>
+<!--                        <PieChart layoutX="-177.0" layoutY="-90.0" AnchorPane.bottomAnchor="0.0"-->
+<!--                                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>-->
                      </AnchorPane>
                   </HBox>
                   <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="232.0" prefWidth="698.0" styleClass="base-box" VBox.vgrow="ALWAYS">

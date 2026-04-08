@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.ocr.javafx.controller.main.BarchartController">
+
+    <BarChart fx:id="barchart">
+        <xAxis>
+            <CategoryAxis label="Day" side="BOTTOM"/>
+        </xAxis>
+        <yAxis>
+            <NumberAxis label="Hours" side="LEFT"/>
+        </yAxis>
+    </BarChart>
+
+</StackPane>
