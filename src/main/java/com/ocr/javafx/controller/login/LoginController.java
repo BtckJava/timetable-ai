@@ -1,5 +1,6 @@
 package com.ocr.javafx.controller.login;
 
+import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.base.BaseController;
 import com.ocr.javafx.dto.request.LoginRequest;
 import com.ocr.javafx.dto.response.AuthResponse;
@@ -26,7 +27,7 @@ public class LoginController extends BaseController {
     private PasswordField passwordField;
 
     @Setter
-    private AuthService authService;
+    private ApplicationContext applicationContext;
 
     @FXML
     private void goToRegister(ActionEvent event) {
@@ -44,7 +45,7 @@ public class LoginController extends BaseController {
             Scene scene = new Scene(loader.load());
 
             RegisterController controller = loader.getController();
-            controller.setAuthService(authService);
+            controller.setApplicationContext(applicationContext);
 
             stage.setScene(scene);
         } catch (Exception e) {
@@ -74,11 +75,12 @@ public class LoginController extends BaseController {
             email, password
         );
 
-        AuthResponse response = authService.login(request);
+        AuthResponse response = applicationContext.getAuthService().login(request);
 
         // Login logic
         if (response.isSuccess()) {
             showSuccess("Login successful!");
+            applicationContext.getSessionManager().setCurrentUser(response.getUser());
             // chuyển sang trang chủ
             try {
                 Stage stage = (Stage) emailField.getScene().getWindow();
