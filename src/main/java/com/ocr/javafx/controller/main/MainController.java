@@ -1,9 +1,13 @@
 package com.ocr.javafx.controller.main;
 
+import com.ocr.javafx.ApplicationContext;
+import com.ocr.javafx.controller.components.BarchartController;
+import com.ocr.javafx.controller.components.StatsRowController;
 import com.ocr.javafx.controller.components.TopbarController;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import lombok.Setter;
 
 public class MainController {
     @FXML
@@ -19,7 +23,18 @@ public class MainController {
     private BarchartController barchartController;
 
     @FXML
-    public void initialize() {
+    private StatsRowController statsRowController;
+
+    private ApplicationContext applicationContext;
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+
+        statsRowController.setApplicationContext(applicationContext);
+    }
+
+    @FXML
+    public void init() {
         topbarController.setMainController(this);
         barchartController.setupBarchart();
     }

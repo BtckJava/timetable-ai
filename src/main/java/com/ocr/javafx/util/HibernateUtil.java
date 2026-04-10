@@ -10,17 +10,16 @@ public class HibernateUtil {
 
     private static SessionFactory buildSessionFactory() {
         try {
-            // Load .env
             Dotenv dotenv = Dotenv.configure()
-                    .directory(System.getProperty("user.dir"))
+                    .ignoreIfMissing()
                     .load();
 
-            // Debug (remove later)
             System.out.println("DB_URL = " + dotenv.get("DB_URL"));
+
+            Class.forName("org.postgresql.Driver");
 
             Configuration config = new Configuration().configure();
 
-            // Inject env variables
             config.setProperty("hibernate.connection.url", dotenv.get("DB_URL"));
             config.setProperty("hibernate.connection.username", dotenv.get("DB_USER"));
             config.setProperty("hibernate.connection.password", dotenv.get("DB_PASSWORD"));

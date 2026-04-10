@@ -10,3 +10,7 @@
 .root{
     -fx-background-color: #F5F5F5;
 }
+
+.global-font {
+    -fx-font-family: "Inter";
+}

@@ -23,3 +23,13 @@
     -fx-border-style: solid;
 }
 
+.stats-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.stats-title {
+    -fx-font-size: 14px;
+    -fx-opacity: 0.8;
+}
+

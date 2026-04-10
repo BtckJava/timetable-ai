@@ -12,5 +12,6 @@
         <mapping class="com.ocr.javafx.entity.User"/>
         <mapping class="com.ocr.javafx.entity.LearningPlan"/>
         <mapping class="com.ocr.javafx.entity.ScheduleSlot"/>
+        <mapping class="com.ocr.javafx.entity.LearningSession"/>
     </session-factory>
 </hibernate-configuration>

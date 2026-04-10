@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 
-<HBox fx:id="topbar" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="40.0" prefHeight="27.0" prefWidth="600.0" spacing="10.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.components.TopbarController">
+<HBox fx:id="topbar" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="40.0" minWidth="40.0" prefHeight="27.0" prefWidth="600.0" spacing="10.0" styleClass="global-font" stylesheets="@../style/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.components.TopbarController">
    <HBox alignment="CENTER_LEFT" prefHeight="43.0" prefWidth="107.0" spacing="10.0" HBox.hgrow="ALWAYS">
       <children>
          <Button mnemonicParsing="false" onAction="#sidebarToggle" prefHeight="25.0" prefWidth="86.0" text="Testing" />

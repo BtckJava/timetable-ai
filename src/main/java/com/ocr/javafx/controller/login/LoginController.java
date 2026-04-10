@@ -2,6 +2,7 @@ package com.ocr.javafx.controller.login;
 
 import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.base.BaseController;
+import com.ocr.javafx.controller.main.MainController;
 import com.ocr.javafx.dto.request.LoginRequest;
 import com.ocr.javafx.dto.response.AuthResponse;
 import com.ocr.javafx.service.AuthService;
@@ -86,6 +87,10 @@ public class LoginController extends BaseController {
                 Stage stage = (Stage) emailField.getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/main/main.fxml"));
                 stage.setScene(new Scene(loader.load()));
+
+                MainController controller = loader.getController();
+                controller.setApplicationContext(applicationContext);
+                controller.init();
             } catch (Exception e) {
                 e.printStackTrace();
                 showError(e.getMessage());

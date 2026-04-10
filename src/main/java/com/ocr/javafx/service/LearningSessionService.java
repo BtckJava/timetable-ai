@@ -28,8 +28,8 @@ public class LearningSessionService {
         Map<String, Double> result = new HashMap<>();
 
         for (LearningSession s : sessions) {
-            String date = s.getDate().toString();
-            double hours = s.getDuration();
+            String date = s.getSessionTime().toLocalDate().toString();
+            double hours = s.getDurationMinutes();
 
             result.put(date, result.getOrDefault(date, 0.0) + hours);
         }
