@@ -49,4 +49,9 @@ public class StatsRowController {
         inProgressLabel.setText(String.valueOf(inProgress));
         progressLabel.setText(String.format("%.0f%%", progress));
     }
+//
+//    @FXML
+//    public void initialize() {
+//        System.out.println(learningHoursLabel);
+//    }
 }

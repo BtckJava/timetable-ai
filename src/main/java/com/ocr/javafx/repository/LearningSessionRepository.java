@@ -6,33 +6,42 @@ import com.ocr.javafx.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class LearningSessionRepository {
     public List<LearningHoursResponse> getLearningHoursPerDay(Long userId) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+//        Session session = HibernateUtil.getSessionFactory().openSession();
+//
+//        String hql = """
+//        SELECT new com.ocr.javafx.dto.response.LearningHoursResponse(
+//            DATE(ls.sessionTime),
+//            SUM(ls.durationMinutes / 60.0)
+//        )
+//        FROM LearningSession ls
+//        WHERE ls.user.id = :userId
+//          AND ls.status = 'COMPLETED'
+//        GROUP BY DATE(ls.sessionTime)
+//        ORDER BY DATE(ls.sessionTime)
+//    """;
+//
+//        Query<LearningHoursResponse> query =
+//                session.createQuery(hql, LearningHoursResponse.class);
+//
+//        query.setParameter("userId", userId);
+//
+//        List<LearningHoursResponse> result = query.getResultList();
+//
+//        session.close();
+//        return result;
 
-        String hql = """
-        SELECT new com.ocr.javafx.dto.response.LearningHoursResponse(
-            DATE(ls.sessionTime),
-            SUM(ls.durationMinutes / 60.0)
-        )
-        FROM LearningSession ls
-        WHERE ls.user.id = :userId
-          AND ls.status = 'COMPLETED'
-        GROUP BY DATE(ls.sessionTime)
-        ORDER BY DATE(ls.sessionTime)
-    """;
-
-        Query<LearningHoursResponse> query =
-                session.createQuery(hql, LearningHoursResponse.class);
-
-        query.setParameter("userId", userId);
-
-        List<LearningHoursResponse> result = query.getResultList();
-
-        session.close();
-        return result;
+        // *** M.O.C.K.***
+        return List.of(
+                new LearningHoursResponse(LocalDate.now().minusDays(3), 2.5),
+                new LearningHoursResponse(LocalDate.now().minusDays(2), 3.0),
+                new LearningHoursResponse(LocalDate.now().minusDays(1), 4.0),
+                new LearningHoursResponse(LocalDate.now(), 3.0)
+        );
     }
 
     public List<LearningSession> findByUserId(Long userId) {
