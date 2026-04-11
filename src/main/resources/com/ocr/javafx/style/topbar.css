@@ -1,25 +1,63 @@
-.topbar{
+/* BASE */
+.topbar {
     -fx-background-color: white;
-    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-alignment: center-left;
+    -fx-spacing: 12;
+    -fx-border-color: transparent transparent #e5e7eb transparent;
     -fx-border-width: 0 0 1 0;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 3, 0, 0, 1);
 }
-
-.profile-popup {
-    -fx-background-color: #1e1e1e;
-    -fx-background-radius: 12;
-    -fx-padding: 12;
-    -fx-spacing: 6;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 12, 0.3, 0, 4);
-}
-
-.popup-name {
-    -fx-text-fill: white;
+/* TITLE */
+.topbar-label {
+    -fx-text-fill: #0f172a;
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 500;
+}
+
+
+/* PROFILE IMAGE */
+.profile-image {
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 4, 0.2, 0, 1);
+}
+
+/* WINDOW BUTTONS */
+.window-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #334155;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+/* HOVER EFFECTS */
+.window-btn:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+/* CLOSE BUTTON HOVER */
+.exit-btn:hover {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+}
+
+/* POPUP CARD */
+.popup-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+    -fx-spacing: 5;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0.2, 0, 3);
+}
+
+/* POPUP TEXT */
+.popup-name {
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
 }
 
 .popup-email {
-    -fx-text-fill: #aaaaaa;
+    -fx-text-fill: #64748b;
     -fx-font-size: 12px;
 }
