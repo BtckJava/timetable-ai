@@ -4,6 +4,7 @@ import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.components.BarchartController;
 import com.ocr.javafx.controller.components.StatsRowController;
 import com.ocr.javafx.controller.components.TopbarController;
+import com.ocr.javafx.entity.User;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -25,17 +26,19 @@ public class MainController {
     @FXML
     private StatsRowController statsRowController;
 
-    private ApplicationContext applicationContext;
+    public void init(ApplicationContext applicationContext) {
+        User user = applicationContext.getSessionManager().getCurrentUser();
 
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-
-        statsRowController.setApplicationContext(applicationContext);
-    }
-
-    @FXML
-    public void init() {
+        // Topbar
+        topbarController.setApplicationContext(applicationContext);
         topbarController.setMainController(this);
+        topbarController.setUser(user);
+
+        // Stats
+        statsRowController.setApplicationContext(applicationContext);
+
+        // Chart
+        barchartController.setApplicationContext(applicationContext);
         barchartController.setupBarchart();
     }
 

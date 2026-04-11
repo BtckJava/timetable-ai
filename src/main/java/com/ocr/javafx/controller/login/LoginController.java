@@ -89,8 +89,7 @@ public class LoginController extends BaseController {
                 stage.setScene(new Scene(loader.load()));
 
                 MainController controller = loader.getController();
-                controller.setApplicationContext(applicationContext);
-                controller.init();
+                controller.init(applicationContext);
             } catch (Exception e) {
                 e.printStackTrace();
                 showError(e.getMessage());
