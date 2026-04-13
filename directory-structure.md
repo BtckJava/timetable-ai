@@ -1,8 +1,8 @@
 # Project Directory Structure
 
-*Generated: 2026-03-13 10:32:20*
+*Generated: 2026-04-13 11:11:07*
 
-Summary: 40 directories, 57 files, 0 Python files
+Summary: 64 directories, 99 files, 0 Python files
 
 ```
 + **javaFX**
@@ -12,11 +12,22 @@ Summary: 40 directories, 57 files, 0 Python files
                 + **com**
                     + **ocr**
                         + **javafx**
+                            + **backend**
+                                + **controller**
+                                + **dto**
+                                    + **ai**
+                                + **entity**
+                                + **repository**
+                                + **service**
                             + **config**
                             + **controller**
+                                + **base**
+                                + **login**
+                                + **timetable**
                             + **dto**
                                 + **response**
                             + **entity**
+                            + **repository**
                             + **service**
                             + **util**
                                 + **Function**
@@ -25,6 +36,11 @@ Summary: 40 directories, 57 files, 0 Python files
                 + **com**
                     + **ocr**
                         + **javafx**
+                            + **login**
+                            + **main**
+                            + **style**
+                            + **timetable**
+                + **db**
     + **target**
         + **classes**
             + **com**
@@ -32,10 +48,18 @@ Summary: 40 directories, 57 files, 0 Python files
                     + **javafx**
                         + **config**
                         + **controller**
+                            + **base**
+                            + **login**
+                            + **timetable**
                         + **dto**
                             + **response**
                         + **entity**
+                        + **login**
+                        + **main**
+                        + **repository**
                         + **service**
+                        + **style**
+                        + **timetable**
                         + **util**
                             + **Function**
                             + **jwt**
