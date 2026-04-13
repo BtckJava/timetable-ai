@@ -4,29 +4,29 @@ import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.components.BarchartController;
 import com.ocr.javafx.controller.components.StatsRowController;
 import com.ocr.javafx.controller.components.TopbarController;
+import com.ocr.javafx.controller.views.DashboardController;
 import com.ocr.javafx.entity.User;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import lombok.Setter;
 
 public class MainController {
     @FXML
-    private AnchorPane sidebar;
+    public ScrollPane contentPane;
 
     @FXML
-    public StackPane barchart;
+    private AnchorPane sidebar;
 
     @FXML
     private TopbarController topbarController;
 
-    @FXML
-    private BarchartController barchartController;
-
-    @FXML
-    private StatsRowController statsRowController;
+    private ApplicationContext applicationContext;
 
     public void init(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
         User user = applicationContext.getSessionManager().getCurrentUser();
 
         // Topbar
@@ -34,12 +34,7 @@ public class MainController {
         topbarController.setMainController(this);
         topbarController.setUser(user);
 
-        // Stats
-        statsRowController.setApplicationContext(applicationContext);
-
-        // Chart
-        barchartController.setApplicationContext(applicationContext);
-        barchartController.setupBarchart();
+        setContent("/com/ocr/javafx/views/dashboard.fxml");
     }
 
     @FXML
@@ -48,5 +43,21 @@ public class MainController {
 
         sidebar.setVisible(!isVisible);
         sidebar.setManaged(!isVisible);
+    }
+
+    public void setContent(String path) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+            contentPane.setContent(loader.load());
+
+            Object controller = loader.getController();
+
+            if (controller instanceof DashboardController) {
+                ((DashboardController) controller).init(applicationContext);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

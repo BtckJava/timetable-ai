@@ -43,8 +43,8 @@ public class TopbarController {
 
     private final Popup popup = new Popup();
 
-    private Label name = new Label();
-    private Label email = new Label();
+    private final Label name = new Label();
+    private final Label email = new Label();
 
     public void setUser(User user) {
         name.setText(user.getUsername());

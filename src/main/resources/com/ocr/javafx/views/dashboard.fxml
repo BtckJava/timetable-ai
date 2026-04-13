@@ -1,0 +1,53 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.ocr.javafx.controller.views.DashboardController"
+      maxHeight="1.7976931348623157E308"
+      maxWidth="1.7976931348623157E308"
+      prefWidth="630.0"
+      styleClass="root"
+      stylesheets="@../style/main.css">
+
+    <!-- ===== STATS ROW ===== -->
+    <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
+        <VBox.margin>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </VBox.margin>
+
+        <AnchorPane HBox.hgrow="ALWAYS">
+            <fx:include fx:id="statsRow"
+                        source="../components/stats-row.fxml"
+                        AnchorPane.topAnchor="0.0"
+                        AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0"
+                        AnchorPane.rightAnchor="0.0"/>
+        </AnchorPane>
+    </HBox>
+
+    <!-- ===== CHART SECTION ===== -->
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+        <VBox.margin>
+            <Insets top="10" right="20" bottom="10" left="20"/>
+        </VBox.margin>
+
+        <AnchorPane styleClass="base-box" HBox.hgrow="ALWAYS">
+            <HBox.margin>
+                <Insets right="10"/>
+            </HBox.margin>
+
+            <fx:include fx:id="barchart" source="../components/barchart.fxml"/>
+        </AnchorPane>
+
+        <AnchorPane styleClass="base-box" HBox.hgrow="ALWAYS"/>
+    </HBox>
+
+    <!-- ===== EXTRA SECTION ===== -->
+    <VBox styleClass="base-box" VBox.vgrow="ALWAYS">
+        <VBox.margin>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </VBox.margin>
+    </VBox>
+
+</VBox>

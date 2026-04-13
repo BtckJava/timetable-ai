@@ -85,6 +85,13 @@ public class LoginController extends BaseController {
             // chuyển sang trang chủ
             try {
                 Stage stage = (Stage) emailField.getScene().getWindow();
+
+                stage.setMinWidth(1000);
+                stage.setMinHeight(650);
+                stage.setWidth(1200);
+                stage.setHeight(750);
+                stage.centerOnScreen();
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/main/main.fxml"));
                 stage.setScene(new Scene(loader.load()));
 
