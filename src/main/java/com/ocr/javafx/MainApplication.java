@@ -1,23 +1,40 @@
 package com.ocr.javafx;
 
+import com.ocr.javafx.controller.login.LoginController;
+import com.ocr.javafx.controller.login.RegisterController;
+import com.ocr.javafx.repository.UserRepository;
+import com.ocr.javafx.service.AuthService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
 public class MainApplication extends Application {
+
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("login/register.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 600, 400);
-        stage.setTitle("App cua Nhi hihi");
+        ApplicationContext applicationContext = new ApplicationContext();
+
+        FXMLLoader loader = new FXMLLoader(
+                MainApplication.class.getResource("login/register.fxml")
+        );
+        Scene scene = new Scene(loader.load(), 600, 400);
+
+        RegisterController controller = loader.getController();
+        controller.setApplicationContext(applicationContext);
+
 /*
         stage.getIcons().add(
                 new Image(getClass().getResourceAsStream("\"D:\\Code\\Java\\BTCK\\image-removebg-preview.png\""))
         );
 */
+
+        stage.initStyle(StageStyle.UNDECORATED);
+        stage.setTitle("App cua Nhi hihi");
         stage.setScene(scene);
         stage.show();
     }

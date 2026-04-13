@@ -1,0 +1,16 @@
+.base-box{
+    -fx-background-color: white;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 3, 0, 0, 1);
+}
+
+.root{
+    -fx-background-color: #F5F5F5;
+}
+
+.global-font {
+    -fx-font-family: "Inter";
+}
