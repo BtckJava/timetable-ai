@@ -87,8 +87,8 @@ public class LoginController extends BaseController {
                 Stage stage = (Stage) emailField.getScene().getWindow();
 
                 stage.setMinWidth(1000);
-                stage.setMinHeight(650);
-                stage.setWidth(1200);
+                stage.setMinHeight(750);
+                stage.setWidth(1000);
                 stage.setHeight(750);
                 stage.centerOnScreen();
 

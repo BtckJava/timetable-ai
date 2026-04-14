@@ -1,52 +1,47 @@
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.AnchorPane?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.ocr.javafx.controller.views.DashboardController"
-      maxHeight="1.7976931348623157E308"
-      maxWidth="1.7976931348623157E308"
-      prefWidth="630.0"
-      styleClass="root"
-      stylesheets="@../style/main.css">
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="630.0" styleClass="root" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.views.DashboardController">
 
     <!-- ===== STATS ROW ===== -->
     <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
         <VBox.margin>
-            <Insets top="10" right="10" bottom="10" left="10"/>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
         </VBox.margin>
 
         <AnchorPane HBox.hgrow="ALWAYS">
-            <fx:include fx:id="statsRow"
-                        source="../components/stats-row.fxml"
-                        AnchorPane.topAnchor="0.0"
-                        AnchorPane.bottomAnchor="0.0"
-                        AnchorPane.leftAnchor="0.0"
-                        AnchorPane.rightAnchor="0.0"/>
+            <fx:include fx:id="statsRow" source="../components/stats-row.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
         </AnchorPane>
     </HBox>
 
     <!-- ===== CHART SECTION ===== -->
     <HBox spacing="20" VBox.vgrow="ALWAYS">
         <VBox.margin>
-            <Insets top="10" right="20" bottom="10" left="20"/>
+            <Insets bottom="10" left="20" right="20" top="10" />
         </VBox.margin>
 
         <AnchorPane styleClass="base-box" HBox.hgrow="ALWAYS">
             <HBox.margin>
-                <Insets right="10"/>
+                <Insets left="10.0" right="10.0" />
             </HBox.margin>
 
-            <fx:include fx:id="barchart" source="../components/barchart.fxml"/>
+            <fx:include fx:id="barchart" source="../components/barchart.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
         </AnchorPane>
 
-        <AnchorPane styleClass="base-box" HBox.hgrow="ALWAYS"/>
+        <AnchorPane prefWidth="200.0" styleClass="base-box" HBox.hgrow="ALWAYS">
+         <HBox.margin>
+            <Insets right="10.0" />
+         </HBox.margin></AnchorPane>
     </HBox>
 
     <!-- ===== EXTRA SECTION ===== -->
     <VBox styleClass="base-box" VBox.vgrow="ALWAYS">
         <VBox.margin>
-            <Insets top="20" right="20" bottom="20" left="20"/>
+            <Insets bottom="20" left="20" right="20" top="20" />
         </VBox.margin>
     </VBox>
 

@@ -5,6 +5,7 @@ import com.ocr.javafx.controller.components.BarchartController;
 import com.ocr.javafx.controller.components.StatsRowController;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 public class DashboardController {
     @FXML
@@ -14,7 +15,7 @@ public class DashboardController {
     private StatsRowController statsRowController;
 
     @FXML
-    public StackPane barchart;
+    public VBox barchart;
 
     public void init(ApplicationContext applicationContext){
     // Stats
@@ -25,6 +26,6 @@ public class DashboardController {
         barchartController.setupBarchart();
 
 //        CHECK
-        System.out.println("Loading dashboard...");
+//        System.out.println("Loading dashboard...");
     }
 }
