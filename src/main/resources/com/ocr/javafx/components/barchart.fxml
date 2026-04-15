@@ -7,7 +7,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxWidth="1.7976931348623157E308" spacing="10" stylesheets="@../style/barchart.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.components.BarchartController">
+<VBox maxWidth="1.7976931348623157E308"
+      spacing="10"
+      stylesheets="@../style/barchart.css"
+      xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ocr.javafx.controller.components.BarchartController">
 
     <!-- Title -->
     <Label styleClass="chart-title" text="Weekly Learning Hours">

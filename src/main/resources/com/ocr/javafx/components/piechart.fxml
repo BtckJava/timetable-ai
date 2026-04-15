@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" stylesheets="@../style/piechart.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.components.PiechartController">
+
+    <!-- Title -->
+    <Label styleClass="chart-title" text="Learning Distribution">
+      <VBox.margin>
+         <Insets left="10.0" top="10.0" />
+      </VBox.margin></Label>
+
+    <!-- Chart -->
+    <AnchorPane VBox.vgrow="ALWAYS">
+        <StackPane AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+            <PieChart fx:id="piechart" StackPane.alignment="CENTER" />
+        </StackPane>
+    </AnchorPane>
+</VBox>
