@@ -24,9 +24,7 @@
         <!-- LOGO -->
         <AnchorPane prefHeight="120.0">
             <ImageView fitHeight="120.0" fitWidth="240.0" preserveRatio="true">
-                <image>
-                    <Image url="@../image/sidebarLogo.png" />
-                </image>
+                <Image url="@../image/sidebarLogo.png"/>
             </ImageView>
         </AnchorPane>
 
@@ -36,9 +34,7 @@
         <Button maxWidth="1.7976931348623157E308" styleClass="sidebar-button" text="Dashboard">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
-                    <image>
-                        <Image url="@../image/dashboardIcon.png" />
-                    </image>
+                    <Image url="@../image/dashboardIcon.png"/>
                 </ImageView>
             </graphic>
             <VBox.margin>
@@ -49,9 +45,7 @@
         <Button maxWidth="1.7976931348623157E308" styleClass="sidebar-button" text="Timetable">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
-                    <image>
-                        <Image url="@../image/timetableIcon.png" />
-                    </image>
+                    <Image url="@../image/timetableIcon.png"/>
                 </ImageView>
             </graphic>
             <VBox.margin>
@@ -62,9 +56,7 @@
         <Button maxWidth="1.7976931348623157E308" styleClass="sidebar-button" text="Learning Plans">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
-                    <image>
-                        <Image url="@../image/planIcon.png" />
-                    </image>
+                    <Image url="@../image/planIcon.png"/>
                 </ImageView>
             </graphic>
             <VBox.margin>
@@ -75,9 +67,7 @@
         <Button maxWidth="1.7976931348623157E308" styleClass="sidebar-button" text="Profile">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
-                    <image>
-                        <Image url="@../image/profileIcon.png" />
-                    </image>
+                    <Image url="@../image/profileIcon.png"/>
                 </ImageView>
             </graphic>
             <VBox.margin>

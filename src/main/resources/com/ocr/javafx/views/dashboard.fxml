@@ -3,7 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="630.0" styleClass="root" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.views.DashboardController">
+<VBox styleClass="root" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.views.DashboardController">
 
     <!-- ===== STATS ROW ===== -->
     <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
@@ -17,7 +17,7 @@
     </HBox>
 
     <!-- ===== CHART SECTION ===== -->
-    <HBox fx:id="rootHBox" spacing="20" VBox.vgrow="ALWAYS">
+    <HBox fx:id="rootHBox" prefWidth="630.0" spacing="20" VBox.vgrow="ALWAYS">
         <VBox.margin>
             <Insets bottom="10" left="20" right="20" top="10" />
         </VBox.margin>
@@ -39,11 +39,12 @@
         </AnchorPane>
     </HBox>
 
-    <!-- ===== EXTRA SECTION ===== -->
-    <VBox styleClass="base-box" VBox.vgrow="ALWAYS">
+    <AnchorPane VBox.vgrow="ALWAYS">
         <VBox.margin>
-            <Insets bottom="20" left="20" right="20" top="20" />
+            <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
         </VBox.margin>
-    </VBox>
+
+        <fx:include source="../components/active-plans.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    </AnchorPane>
 
 </VBox>

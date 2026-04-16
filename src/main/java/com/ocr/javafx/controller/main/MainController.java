@@ -8,6 +8,7 @@ import com.ocr.javafx.controller.views.DashboardController;
 import com.ocr.javafx.entity.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -35,6 +36,9 @@ public class MainController {
         topbarController.setUser(user);
 
         setContent("/com/ocr/javafx/views/dashboard.fxml");
+
+        System.out.println("CONTENT NODE: " + contentPane.getContent());
+        System.out.println("CHILD COUNT: " + ((Parent)contentPane.getContent()).getChildrenUnmodifiable().size());
     }
 
     @FXML

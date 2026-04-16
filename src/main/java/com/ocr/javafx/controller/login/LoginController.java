@@ -97,6 +97,8 @@ public class LoginController extends BaseController {
 
                 MainController controller = loader.getController();
                 controller.init(applicationContext);
+
+
             } catch (Exception e) {
                 e.printStackTrace();
                 showError(e.getMessage());
