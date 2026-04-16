@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="16" styleClass="base-box" stylesheets="@../style/activePlans.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.components.ActivePlansController">
+
+    <!-- Title -->
+    <Label styleClass="section-title" text="Active Learning Plans" />
+
+    <!-- Plans container -->
+    <VBox fx:id="plansContainer" spacing="12" />
+
+</VBox>
