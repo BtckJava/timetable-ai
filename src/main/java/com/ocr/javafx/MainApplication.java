@@ -7,31 +7,36 @@ import com.ocr.javafx.service.AuthService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
 public class MainApplication extends Application {
+
     @Override
     public void start(Stage stage) throws IOException {
+        ApplicationContext applicationContext = new ApplicationContext();
+
         FXMLLoader loader = new FXMLLoader(
                 MainApplication.class.getResource("login/register.fxml")
         );
         Scene scene = new Scene(loader.load(), 600, 400);
 
-        UserRepository repository = new UserRepository();
-        AuthService authService = new AuthService(repository);
-
         RegisterController controller = loader.getController();
-        controller.setAuthService(authService);
+        controller.setApplicationContext(applicationContext);
+
 /*
         stage.getIcons().add(
                 new Image(getClass().getResourceAsStream("\"D:\\Code\\Java\\BTCK\\image-removebg-preview.png\""))
         );
 */
 
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.setTitle("App cua Nhi hihi");
         stage.setScene(scene);
+
         stage.show();
     }
 }

@@ -6,6 +6,7 @@ import com.ocr.javafx.dto.response.LearningPlanResponse;
 import com.ocr.javafx.entity.LearningPlan;
 import com.ocr.javafx.entity.User;
 import com.ocr.javafx.repository.LearningPlanRepository;
+import com.ocr.javafx.repository.ScheduleSlotRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,8 +18,11 @@ import java.util.stream.Collectors;
 
 public class LearningPlanService {
     private final LearningPlanRepository repository;
-    public LearningPlanService(LearningPlanRepository repository) {
+    private final ScheduleSlotService slotService;
+
+    public LearningPlanService(LearningPlanRepository repository, ScheduleSlotService slotService) {
         this.repository = repository;
+        this.slotService = slotService;
     }
 
     public LearningPlanResponse createLearningPlan(User user, LearningPlanRequest request) {
@@ -86,5 +90,7 @@ public class LearningPlanService {
                 startedDate
         );
     }
+
+
 
 }

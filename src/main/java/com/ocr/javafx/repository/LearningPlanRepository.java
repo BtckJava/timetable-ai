@@ -54,4 +54,19 @@ public class LearningPlanRepository {
         }
     }
 
+    public long countByUserIdAndStatus(Long userId, String status) {
+
+        return switch (status) {
+            case "COMPLETED" -> 8;
+            case "IN_PROGRESS" -> 3;
+            default -> 0;
+        };
+    }
+
+    public long countByUserId(Long userId) {
+
+
+        return 11;
+    }
+
 }

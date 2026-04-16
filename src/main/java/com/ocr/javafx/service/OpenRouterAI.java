@@ -3,11 +3,12 @@ package com.ocr.javafx.service;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class OpenRouterAI {
 
-    private static final String API_KEY = "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";
-
+    private static final Dotenv dotenv = Dotenv.load();
+    private static final String API_KEY = dotenv.get("API_KEY");
     public static String ask(String prompt) throws Exception {
 
         OkHttpClient client = new OkHttpClient();
@@ -33,7 +34,7 @@ public class OpenRouterAI {
 
         Request request = new Request.Builder()
                 .url("https://openrouter.ai/api/v1/chat/completions")
-                .addHeader("Authorization", "Bearer " + "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")
+                .addHeader("Authorization", "Bearer " + API_KEY)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("HTTP-Referer", "http://localhost")
                 .addHeader("X-Title", "JavaFX AI App")
