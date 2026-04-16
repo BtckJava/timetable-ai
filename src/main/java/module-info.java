@@ -27,4 +27,5 @@ module com.ocr.javafx {
     opens com.ocr.javafx.controller.login to javafx.fxml;
     opens com.ocr.javafx.controller.base to javafx.fxml;
     opens com.ocr.javafx.controller.timetable to javafx.fxml;
+    opens com.ocr.javafx.controller.profile to javafx.fxml;
 }

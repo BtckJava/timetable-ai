@@ -38,7 +38,7 @@ public class LoginController extends BaseController {
             Stage stage = (Stage) emailField.getScene().getWindow();
 
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/ocr/javafx/login/register.fxml") // 🔥 FIX PATH
+                    getClass().getResource("/com/ocr/javafx/login/register.fxml")
             );
 
             Scene scene = new Scene(loader.load());
@@ -62,17 +62,15 @@ public class LoginController extends BaseController {
     void handleLogin(ActionEvent event) {
         clearError();
 
-        String email = emailField.getText();
-        String password = passwordField.getText();
+        String email = emailField.getText().trim();
+        String password = passwordField.getText().trim();
 
         if (email.isEmpty() || password.isEmpty()){
             showError("Please fill in all fields");
             return;
         }
 
-        LoginRequest request = new LoginRequest(
-            email, password
-        );
+        LoginRequest request = new LoginRequest(email, password);
 
         AuthResponse response = authService.login(request);
 
