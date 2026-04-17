@@ -3,11 +3,12 @@ package com.ocr.javafx.service;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public class OpenRouterAI {
 
-    private static final String API_KEY = "";
-
+    private static final Dotenv dotenv = Dotenv.load();
+    private static final String API_KEY = dotenv.get("API_KEY");
     public static String ask(String prompt) throws Exception {
 
         OkHttpClient client = new OkHttpClient();

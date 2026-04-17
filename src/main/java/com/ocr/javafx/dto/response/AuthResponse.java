@@ -14,4 +14,12 @@ public class AuthResponse {
         this.response = response;
         this.user = user;
     }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getResponse() {
+        return response;
+    }
 }

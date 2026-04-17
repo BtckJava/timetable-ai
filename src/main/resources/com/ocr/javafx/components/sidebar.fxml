@@ -24,7 +24,7 @@
         <Separator />
 
         <!-- BUTTONS -->
-        <Button maxWidth="1.7976931348623157E308" onAction="#onActionDashboard" styleClass="sidebar-button" text="Dashboard">
+        <Button maxWidth="1.7976931348623157E308" onAction="#handleDashboard" styleClass="sidebar-button" text="Dashboard">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
                     <Image url="@../image/dashboardIcon.png" />
@@ -35,7 +35,7 @@
             </VBox.margin>
         </Button>
 
-        <Button maxWidth="1.7976931348623157E308" onAction="#onActionTimetable" styleClass="sidebar-button" text="Timetable">
+        <Button maxWidth="1.7976931348623157E308" onAction="#handleTimetable" styleClass="sidebar-button" text="Timetable">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
                     <Image url="@../image/timetableIcon.png" />
@@ -46,7 +46,7 @@
             </VBox.margin>
         </Button>
 
-        <Button maxWidth="1.7976931348623157E308" onAction="#onActionLearningPlans" styleClass="sidebar-button" text="Learning Plans">
+        <Button maxWidth="1.7976931348623157E308" onAction="#handleLearningPlans" styleClass="sidebar-button" text="Learning Plans">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
                     <Image url="@../image/planIcon.png" />
@@ -57,7 +57,7 @@
             </VBox.margin>
         </Button>
 
-        <Button maxWidth="1.7976931348623157E308" onAction="#onActionProfile" styleClass="sidebar-button" text="Profile">
+        <Button maxWidth="1.7976931348623157E308" onAction="#handleProfile" styleClass="sidebar-button" text="Profile">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
                     <Image url="@../image/profileIcon.png" />

@@ -16,11 +16,11 @@ module com.ocr.javafx {
     requires jbcrypt;
     requires jdk.httpserver;
     requires io.github.cdimascio.dotenv.java;
+    requires org.postgresql.jdbc;
     opens com.ocr.javafx to javafx.fxml;
 
     // QUAN TRỌNG NHẤT: Cho phép Hibernate truy cập vào các Entity bằng Reflection
     opens com.ocr.javafx.entity to org.hibernate.orm.core;
-
     opens com.ocr.javafx.controller to javafx.fxml;
 
 
@@ -31,4 +31,7 @@ module com.ocr.javafx {
     opens com.ocr.javafx.controller.timetable to javafx.fxml;
     opens com.ocr.javafx.controller.main to javafx.fxml;
     opens com.ocr.javafx.controller.views to javafx.fxml;
+    opens com.ocr.javafx.controller.learningplan to javafx.fxml;
+
+    opens com.ocr.javafx.image to javafx.fxml;
 }
