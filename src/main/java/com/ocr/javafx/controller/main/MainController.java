@@ -2,6 +2,7 @@ package com.ocr.javafx.controller.main;
 
 import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.components.BarchartController;
+import com.ocr.javafx.controller.components.SidebarController;
 import com.ocr.javafx.controller.components.StatsRowController;
 import com.ocr.javafx.controller.components.TopbarController;
 import com.ocr.javafx.controller.views.DashboardController;
@@ -15,6 +16,10 @@ import javafx.scene.layout.StackPane;
 import lombok.Setter;
 
 public class MainController {
+
+    @FXML
+    private SidebarController sidebarController;
+
     @FXML
     public ScrollPane contentPane;
 
@@ -35,10 +40,10 @@ public class MainController {
         topbarController.setMainController(this);
         topbarController.setUser(user);
 
-        setContent("/com/ocr/javafx/views/dashboard.fxml");
+        // Sidebar
+        sidebarController.setMainController(this);
 
-        System.out.println("CONTENT NODE: " + contentPane.getContent());
-        System.out.println("CHILD COUNT: " + ((Parent)contentPane.getContent()).getChildrenUnmodifiable().size());
+        setContent("/com/ocr/javafx/views/dashboard.fxml");
     }
 
     @FXML
@@ -63,5 +68,13 @@ public class MainController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public SidebarController getSidebarController() {
+        return sidebarController;
+    }
+
+    public void setSidebarController(SidebarController sidebarController) {
+        this.sidebarController = sidebarController;
     }
 }

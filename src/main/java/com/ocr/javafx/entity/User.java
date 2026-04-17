@@ -26,16 +26,16 @@ public class User extends BaseEntity {
     @Column(name = "avatar_path")
     private String avatarPath;
 
-    @Column(name = "total_hours")
-    private int totalHours;
+    @Column(name = "total_hours", nullable = false)
+    private int totalHours = 0;
 
-    @Column(name = "completed_plans")
-    private int completedPlans;
+    @Column(name = "completed_plans", nullable = false)
+    private int completedPlans = 0;
 
-    @Column(name = "current_streak")
-    private int currentStreak;
+    @Column(name = "current_streak", nullable = false)
+    private int currentStreak = 0;
 
-    @Column(name = "skills_learned")
-    private int skillsLearned;
+    @Column(name = "skills_learned", nullable = false)
+    private int skillsLearned = 0;
 
 }

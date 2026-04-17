@@ -1,4 +1,4 @@
-package com.ocr.javafx.controller.profile;
+package com.ocr.javafx.controller.views;
 
 import com.ocr.javafx.dto.request.ProfileRequest;
 import com.ocr.javafx.dto.response.ProfileResponse;

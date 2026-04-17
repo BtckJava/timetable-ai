@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.net.URL?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane styleClass="global-font"
-            stylesheets="@../style/global.css"
-            xmlns="http://javafx.com/javafx/25"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.ocr.javafx.controller.components.SidebarController">
+<AnchorPane styleClass="global-font" stylesheets="@../style/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.components.SidebarController">
 
     <VBox maxWidth="240.0" minWidth="240.0" prefWidth="240.0" styleClass="sidebar-root" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
 
@@ -24,17 +17,17 @@
         <!-- LOGO -->
         <AnchorPane prefHeight="120.0">
             <ImageView fitHeight="120.0" fitWidth="240.0" preserveRatio="true">
-                <Image url="@../image/sidebarLogo.png"/>
+                <Image url="@../image/sidebarLogo.png" />
             </ImageView>
         </AnchorPane>
 
         <Separator />
 
         <!-- BUTTONS -->
-        <Button maxWidth="1.7976931348623157E308" styleClass="sidebar-button" text="Dashboard">
+        <Button maxWidth="1.7976931348623157E308" onAction="#onActionDashboard" styleClass="sidebar-button" text="Dashboard">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
-                    <Image url="@../image/dashboardIcon.png"/>
+                    <Image url="@../image/dashboardIcon.png" />
                 </ImageView>
             </graphic>
             <VBox.margin>
@@ -42,10 +35,10 @@
             </VBox.margin>
         </Button>
 
-        <Button maxWidth="1.7976931348623157E308" styleClass="sidebar-button" text="Timetable">
+        <Button maxWidth="1.7976931348623157E308" onAction="#onActionTimetable" styleClass="sidebar-button" text="Timetable">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
-                    <Image url="@../image/timetableIcon.png"/>
+                    <Image url="@../image/timetableIcon.png" />
                 </ImageView>
             </graphic>
             <VBox.margin>
@@ -53,10 +46,10 @@
             </VBox.margin>
         </Button>
 
-        <Button maxWidth="1.7976931348623157E308" styleClass="sidebar-button" text="Learning Plans">
+        <Button maxWidth="1.7976931348623157E308" onAction="#onActionLearningPlans" styleClass="sidebar-button" text="Learning Plans">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
-                    <Image url="@../image/planIcon.png"/>
+                    <Image url="@../image/planIcon.png" />
                 </ImageView>
             </graphic>
             <VBox.margin>
@@ -64,10 +57,10 @@
             </VBox.margin>
         </Button>
 
-        <Button maxWidth="1.7976931348623157E308" styleClass="sidebar-button" text="Profile">
+        <Button maxWidth="1.7976931348623157E308" onAction="#onActionProfile" styleClass="sidebar-button" text="Profile">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
-                    <Image url="@../image/profileIcon.png"/>
+                    <Image url="@../image/profileIcon.png" />
                 </ImageView>
             </graphic>
             <VBox.margin>

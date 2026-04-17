@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.profile.ProfileController">
+<AnchorPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.views.ProfileController">
     <children>
         <VBox layoutX="37.0" layoutY="20.0" spacing="20" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="37.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="20.0">
             <HBox alignment="CENTER_LEFT" spacing="20">
