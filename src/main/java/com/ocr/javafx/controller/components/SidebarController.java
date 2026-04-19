@@ -13,8 +13,10 @@ public class SidebarController {
             mainController.setContent("/com/ocr/javafx/views/dashboard.fxml");
     }
 
-    public void handleTimetable(ActionEvent actionEvent){
-//        if(mainController != null) mainController.setContent("/com/ocr/javafx/views/timetable.fxml");
+    public void handleTimetable(ActionEvent actionEvent) {
+        if (mainController != null) {
+            mainController.setContent("/com/ocr/javafx/views/timetable-view.fxml");
+        }
     }
 
     public void handleLearningPlans(ActionEvent actionEvent) {
