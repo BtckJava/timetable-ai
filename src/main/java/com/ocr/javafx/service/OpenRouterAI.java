@@ -1,14 +1,26 @@
 package com.ocr.javafx.service;
 
+import com.ocr.javafx.config.AppEnv;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class OpenRouterAI {
 
-    private static final String API_KEY = "";
+    private static String resolveApiKey() {
+        String k = AppEnv.get("OPENROUTER_API_KEY");
+        if (k == null) {
+            k = AppEnv.get("API_KEY");
+        }
+        return k;
+    }
 
     public static String ask(String prompt) throws Exception {
+        String apiKey = resolveApiKey();
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new IllegalStateException(
+                    "Thiếu OPENROUTER_API_KEY hoặc API_KEY trong .env / biến môi trường (xem .env.example).");
+        }
 
         OkHttpClient client = new OkHttpClient();
 
@@ -33,7 +45,7 @@ public class OpenRouterAI {
 
         Request request = new Request.Builder()
                 .url("https://openrouter.ai/api/v1/chat/completions")
-                .addHeader("Authorization", "Bearer " + API_KEY)
+                .addHeader("Authorization", "Bearer " + apiKey)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("HTTP-Referer", "http://localhost")
                 .addHeader("X-Title", "JavaFX AI App")

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox styleClass="root" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.views.DashboardController">
+
+    <!-- ===== STATS ROW ===== -->
+    <HBox alignment="CENTER" VBox.vgrow="ALWAYS">
+        <VBox.margin>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+        </VBox.margin>
+
+        <AnchorPane HBox.hgrow="ALWAYS">
+            <fx:include fx:id="statsRow" source="../components/stats-row.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        </AnchorPane>
+    </HBox>
+
+    <!-- ===== CHART SECTION ===== -->
+    <HBox fx:id="rootHBox" prefWidth="630.0" spacing="20" VBox.vgrow="ALWAYS">
+        <VBox.margin>
+            <Insets bottom="10" left="20" right="20" top="10" />
+        </VBox.margin>
+
+        <AnchorPane fx:id="barWrapper" styleClass="base-box" HBox.hgrow="ALWAYS">
+            <HBox.margin>
+                <Insets left="10.0" right="10.0" />
+            </HBox.margin>
+
+            <fx:include fx:id="barchart" source="../components/barchart.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        </AnchorPane>
+
+        <AnchorPane fx:id="pieWrapper" styleClass="base-box" HBox.hgrow="ALWAYS">
+            <HBox.margin>
+                <Insets right="10.0" />
+            </HBox.margin>
+
+            <fx:include fx:id="piechart" source="../components/piechart.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        </AnchorPane>
+    </HBox>
+
+    <AnchorPane VBox.vgrow="ALWAYS">
+        <VBox.margin>
+            <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+        </VBox.margin>
+
+        <fx:include source="../components/active-plans.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    </AnchorPane>
+
+</VBox>

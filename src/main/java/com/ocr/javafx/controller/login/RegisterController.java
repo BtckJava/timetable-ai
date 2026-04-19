@@ -61,10 +61,10 @@ public class RegisterController extends BaseController {
     void handleRegister(ActionEvent event) {
         clearError();
 
-        String username = usernameField.getText();
-        String email = emailField.getText();
-        String password = passwordField.getText();
-        String confirmPassword = confirmPasswordField.getText();
+        String username = usernameField.getText().trim();
+        String email = emailField.getText().trim();
+        String password = passwordField.getText().trim();
+        String confirmPassword = confirmPasswordField.getText().trim();
 
         if (username.isEmpty() || email.isEmpty() ||
                 password.isEmpty() || confirmPassword.isEmpty()) {

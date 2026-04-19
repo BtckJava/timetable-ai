@@ -23,4 +23,14 @@ public class UserRepository {
         session.getTransaction().commit();
         session.close();
     }
+
+    public void update(User user){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        session.update(user);
+
+        session.getTransaction().commit();
+        session.close();
+    }
 }

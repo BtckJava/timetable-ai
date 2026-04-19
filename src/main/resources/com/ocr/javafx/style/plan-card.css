@@ -1,0 +1,75 @@
+
+.plan-card-root {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.plan-title {
+    -fx-text-fill: #1e293b;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+}
+
+
+.btn-delete {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-padding: 8px;
+    -fx-background-radius: 20;
+}
+
+.btn-delete:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+.text-muted {
+    -fx-text-fill: #64748b;
+}
+
+.progress-percent {
+    -fx-text-fill: #2563eb;
+    -fx-font-weight: bold;
+}
+
+.plan-progress-bar {
+    -fx-accent: #2563eb;
+}
+
+.time-box {
+    -fx-background-color: #f8fafc;
+    -fx-padding: 10;
+    -fx-background-radius: 8;
+}
+
+.time-label-title {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 11px;
+}
+
+.time-label-value {
+    -fx-text-fill: #0f172a;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.intensity-label {
+    -fx-padding: 4 10;
+    -fx-background-radius: 12;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.btn-ai {
+    -fx-background-color: #10b981;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 8 12 8 12;
+}
+.btn-ai:hover {
+    -fx-background-color: #059669;
+}

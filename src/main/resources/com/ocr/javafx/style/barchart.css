@@ -1,0 +1,60 @@
+/* ===== CHART BACKGROUND ===== */
+.chart {
+    -fx-background-color: transparent;
+}
+
+/* Remove white plot background */
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+/* ===== GRID LINES ===== */
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(255, 255, 255, 0.08);
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+
+/* ===== AXIS ===== */
+.axis {
+    -fx-tick-label-fill: #9CA3AF; /* soft gray */
+    -fx-font-family: Arial;
+    -fx-tick-label-font: 14 "Segoe UI";
+}
+
+.axis-line {
+    -fx-stroke: transparent;
+}
+
+/* ===== BAR STYLE ===== */
+.chart-bar {
+    -fx-bar-fill: #4A90E2;
+    -fx-background-radius: 6;
+}
+
+/* Hover effect */
+.chart-bar:hover {
+    -fx-bar-fill: #6EA8FE;
+}
+
+/* ===== TITLE ===== */
+.chart-title {
+    -fx-text-fill: black;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}
+
+/* ===== LEGEND (hidden anyway but safe) ===== */
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+/* ===== TOOLTIP (for later) ===== */
+.chart-tooltip {
+    -fx-background-color: #1F2937;
+    -fx-text-fill: white;
+    -fx-padding: 5;
+    -fx-background-radius: 5;
+}

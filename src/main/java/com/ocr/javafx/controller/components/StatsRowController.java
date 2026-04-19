@@ -24,11 +24,7 @@ public class StatsRowController {
 
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-
-        this.statsRowService = new StatsRowService(
-                applicationContext.getLearningSessionRepository(),
-                new com.ocr.javafx.repository.LearningPlanRepository()
-        );
+        this.statsRowService = applicationContext.getStatsRowService();
 
         loadStats();
     }

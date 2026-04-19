@@ -1,8 +1,8 @@
 # Project Directory Structure
 
-*Generated: 2026-04-13 11:43:03*
+*Generated: 2026-04-19 13:39:29*
 
-Summary: 68 directories, 138 files, 0 Python files
+Summary: 74 directories, 202 files, 0 Python files
 
 ```
 + **javaFX**
@@ -19,12 +19,14 @@ Summary: 68 directories, 138 files, 0 Python files
                                 + **login**
                                 + **main**
                                 + **timetable**
+                                + **views**
                             + **dto**
                                 + **request**
                                 + **response**
                             + **entity**
                             + **repository**
                             + **service**
+                            + **test**
                             + **util**
                                 + **Function**
                                 + **jwt**
@@ -38,6 +40,7 @@ Summary: 68 directories, 138 files, 0 Python files
                             + **main**
                             + **style**
                             + **timetable**
+                            + **views**
                 + **db**
     + **target**
         + **classes**
@@ -52,6 +55,7 @@ Summary: 68 directories, 138 files, 0 Python files
                             + **login**
                             + **main**
                             + **timetable**
+                            + **views**
                         + **dto**
                             + **request**
                             + **response**
@@ -62,10 +66,12 @@ Summary: 68 directories, 138 files, 0 Python files
                         + **repository**
                         + **service**
                         + **style**
+                        + **test**
                         + **timetable**
                         + **util**
                             + **Function**
                             + **jwt**
+                        + **views**
             + **db**
         + **generated-sources**
         + **maven-archiver**

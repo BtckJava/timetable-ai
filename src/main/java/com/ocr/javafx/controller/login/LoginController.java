@@ -40,7 +40,7 @@ public class LoginController extends BaseController {
             Stage stage = (Stage) emailField.getScene().getWindow();
 
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/ocr/javafx/login/register.fxml") // 🔥 FIX PATH
+                    getClass().getResource("/com/ocr/javafx/login/register.fxml")
             );
 
             Scene scene = new Scene(loader.load());
@@ -64,17 +64,15 @@ public class LoginController extends BaseController {
     void handleLogin(ActionEvent event) {
         clearError();
 
-        String email = emailField.getText();
-        String password = passwordField.getText();
+        String email = emailField.getText().trim();
+        String password = passwordField.getText().trim();
 
         if (email.isEmpty() || password.isEmpty()){
             showError("Please fill in all fields");
             return;
         }
 
-        LoginRequest request = new LoginRequest(
-            email, password
-        );
+        LoginRequest request = new LoginRequest(email, password);
 
         AuthResponse response = applicationContext.getAuthService().login(request);
 
@@ -85,11 +83,20 @@ public class LoginController extends BaseController {
             // chuyển sang trang chủ
             try {
                 Stage stage = (Stage) emailField.getScene().getWindow();
+
+                stage.setMinWidth(1000);
+                stage.setMinHeight(750);
+                stage.setWidth(1000);
+                stage.setHeight(750);
+                stage.centerOnScreen();
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/main/main.fxml"));
                 stage.setScene(new Scene(loader.load()));
 
                 MainController controller = loader.getController();
                 controller.init(applicationContext);
+
+
             } catch (Exception e) {
                 e.printStackTrace();
                 showError(e.getMessage());

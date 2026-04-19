@@ -13,13 +13,12 @@
 
 <HBox fx:id="topbar" alignment="CENTER_LEFT" maxHeight="65.0" maxWidth="1.7976931348623157E308" minHeight="65.0" minWidth="40.0" prefHeight="65.0" prefWidth="600.0" styleClass="topbar" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.components.TopbarController">
    <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="177.0" spacing="10.0">
-      <children>
-         <Button mnemonicParsing="false" onAction="#sidebarToggle" prefHeight="30.0" prefWidth="105.0" styleClass="window-btn" text="Testing" />
-         <Label prefHeight="33.0" prefWidth="129.0" styleClass="topbar-label" text="DODO" />
-      </children>
       <padding>
-         <Insets left="10.0" />
+         <Insets left="10.0"/>
       </padding>
+      <Button mnemonicParsing="false" onAction="#sidebarToggle" prefHeight="30.0" prefWidth="105.0"
+              styleClass="window-btn" text="Testing"/>
+      <Label prefHeight="33.0" prefWidth="129.0" styleClass="topbar-label" text="DODO"/>
    </HBox>
    <Region prefHeight="8.0" prefWidth="254.0" HBox.hgrow="ALWAYS" />
    <StackPane prefHeight="40.0" prefWidth="0.0">

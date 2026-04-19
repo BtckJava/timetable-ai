@@ -5,45 +5,29 @@ import com.ocr.javafx.controller.components.BarchartController;
 import com.ocr.javafx.controller.components.SidebarController;
 import com.ocr.javafx.controller.components.StatsRowController;
 import com.ocr.javafx.controller.components.TopbarController;
-import com.ocr.javafx.controller.timetable.TimetableController;
+import com.ocr.javafx.controller.views.DashboardController;
 import com.ocr.javafx.entity.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-
-import java.io.IOException;
+import lombok.Setter;
 
 public class MainController {
-    @FXML
-    private AnchorPane sidebar;
-
-    @FXML
-    public StackPane barchart;
-
-    @FXML
-    private StackPane mainContentStack;
-
-    @FXML
-    private VBox dashboardRoot;
-
-    @FXML
-    private TopbarController topbarController;
 
     @FXML
     private SidebarController sidebarController;
 
     @FXML
-    private BarchartController barchartController;
+    public ScrollPane contentPane;
 
     @FXML
-    private StatsRowController statsRowController;
+    private AnchorPane sidebar;
 
-    private Node timetableAiRoot;
-
-    private TimetableController timetableAiController;
+    @FXML
+    private TopbarController topbarController;
 
     private ApplicationContext applicationContext;
 
@@ -56,53 +40,10 @@ public class MainController {
         topbarController.setMainController(this);
         topbarController.setUser(user);
 
+        // Sidebar
         sidebarController.setMainController(this);
 
-        // Stats
-        statsRowController.setApplicationContext(applicationContext);
-
-        // Chart
-        barchartController.setApplicationContext(applicationContext);
-        barchartController.setupBarchart();
-    }
-
-    public void showTimetableAi() {
-        try {
-            ensureTimetableAiLoaded();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-        if (timetableAiController != null) {
-            timetableAiController.refreshFromDatabase();
-        }
-        dashboardRoot.setVisible(false);
-        dashboardRoot.setManaged(false);
-        timetableAiRoot.setVisible(true);
-        timetableAiRoot.setManaged(true);
-    }
-
-    public void showDashboard() {
-        if (timetableAiRoot != null) {
-            timetableAiRoot.setVisible(false);
-            timetableAiRoot.setManaged(false);
-        }
-        dashboardRoot.setVisible(true);
-        dashboardRoot.setManaged(true);
-    }
-
-    private void ensureTimetableAiLoaded() throws IOException {
-        if (timetableAiRoot != null) {
-            return;
-        }
-        FXMLLoader loader = new FXMLLoader(
-                MainController.class.getResource("/com/ocr/javafx/timetable/TimetableAI.fxml"));
-        timetableAiRoot = loader.load();
-        timetableAiController = loader.getController();
-        timetableAiController.setApplicationContext(applicationContext);
-        timetableAiRoot.setVisible(false);
-        timetableAiRoot.setManaged(false);
-        mainContentStack.getChildren().add(timetableAiRoot);
+        setContent("/com/ocr/javafx/views/dashboard.fxml");
     }
 
     @FXML
@@ -111,5 +52,29 @@ public class MainController {
 
         sidebar.setVisible(!isVisible);
         sidebar.setManaged(!isVisible);
+    }
+
+    public void setContent(String path) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
+            contentPane.setContent(loader.load());
+
+            Object controller = loader.getController();
+
+            if (controller instanceof DashboardController) {
+                ((DashboardController) controller).init(applicationContext);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public SidebarController getSidebarController() {
+        return sidebarController;
+    }
+
+    public void setSidebarController(SidebarController sidebarController) {
+        this.sidebarController = sidebarController;
     }
 }
