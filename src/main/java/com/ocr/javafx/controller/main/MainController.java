@@ -5,6 +5,7 @@ import com.ocr.javafx.controller.components.BarchartController;
 import com.ocr.javafx.controller.components.SidebarController;
 import com.ocr.javafx.controller.components.StatsRowController;
 import com.ocr.javafx.controller.components.TopbarController;
+import com.ocr.javafx.controller.learningplan.LearningPlanController;
 import com.ocr.javafx.controller.views.DashboardController;
 import com.ocr.javafx.entity.User;
 import javafx.fxml.FXML;
@@ -63,6 +64,10 @@ public class MainController {
 
             if (controller instanceof DashboardController) {
                 ((DashboardController) controller).init(applicationContext);
+            }
+
+            if (controller instanceof LearningPlanController) {
+                ((LearningPlanController) controller).init(applicationContext);
             }
 
         } catch (Exception e) {

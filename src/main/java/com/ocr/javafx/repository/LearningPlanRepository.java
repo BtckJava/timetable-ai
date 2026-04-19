@@ -6,8 +6,6 @@ import jakarta.persistence.TypedQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 public class LearningPlanRepository {
@@ -41,15 +39,15 @@ public class LearningPlanRepository {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            LearningPlan plan = session.get(LearningPlan.class, planId);
-            if (plan != null) {
-                session.delete(plan);
-            }
+
+            int updatedEntities = session.createMutationQuery(
+                            "DELETE FROM LearningPlan lp WHERE lp.id = :id")
+                    .setParameter("id", planId)
+                    .executeUpdate();
+
             transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
         }
     }

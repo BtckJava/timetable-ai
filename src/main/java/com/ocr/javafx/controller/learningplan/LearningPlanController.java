@@ -1,11 +1,13 @@
 package com.ocr.javafx.controller.learningplan;
 
+import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.dto.LearningPlanDTO;
 import com.ocr.javafx.dto.response.LearningPlanResponse;
 import com.ocr.javafx.repository.LearningPlanRepository;
 import com.ocr.javafx.repository.ScheduleSlotRepository;
 import com.ocr.javafx.service.LearningPlanService;
 import com.ocr.javafx.service.ScheduleSlotService;
+import com.ocr.javafx.util.Function.AlertUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -26,25 +28,23 @@ public class LearningPlanController implements Initializable {
     private FlowPane flowPanePlans;
 
     private LearningPlanService planService;
+    private ApplicationContext applicationContext;
+    private Long currentUserId;
 
-    private final Long CURRENT_USER_ID = 1L; //hardcode
+    public void init(ApplicationContext context) {
+        this.applicationContext = context;
+        this.planService = context.getLearningPlanService();
+        this.currentUserId = context.getSessionManager().getCurrentUserId();
+        loadLearningPlans();
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        LearningPlanRepository planRepo = new LearningPlanRepository();
-        ScheduleSlotRepository slotRepo = new ScheduleSlotRepository();
-
-        ScheduleSlotService slotService = new ScheduleSlotService(slotRepo);
-
-        this.planService = new LearningPlanService(planRepo, slotService);
-
-        loadLearningPlans();
     }
 
     private void loadLearningPlans() {
         flowPanePlans.getChildren().clear();
-
-        LearningPlanResponse response = planService.getAllPlans(CURRENT_USER_ID);
+        LearningPlanResponse response = planService.getAllPlans(currentUserId);
 
         if (response.isSuccess() && response.getData() != null) {
             @SuppressWarnings("unchecked")
@@ -58,14 +58,17 @@ public class LearningPlanController implements Initializable {
 
                     PlanCardController cardController = loader.getController();
 
-                    cardController.setPlanData(dto, mockPlanId, () -> {
-                        System.out.println("Đang gọi AI cho plan: " + dto.getTitle());
-                    });
-
+                    cardController.setPlanData(
+                            dto,
+                            applicationContext.getLearningPlanRepository(),
+                            dto.getId(),
+                            () -> { flowPanePlans.getChildren().remove(cardNode); },
+                            () -> { AlertUtils.showSuccess("Đang gọi AI cho plan: " + dto.getTitle()); }
+                    );
                     flowPanePlans.getChildren().add(cardNode);
 
                 } catch (IOException e) {
-                    System.err.println("Lỗi khi load giao diện PlanCard.fxml: " + e.getMessage());
+                    AlertUtils.showError("Lỗi khi load giao diện PlanCard.fxml: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
