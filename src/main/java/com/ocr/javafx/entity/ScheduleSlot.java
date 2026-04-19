@@ -36,7 +36,7 @@ public class ScheduleSlot {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "plan_id")
+    @JoinColumn(name = "plan_id", nullable = true)
     private LearningPlan plan;
 
 }

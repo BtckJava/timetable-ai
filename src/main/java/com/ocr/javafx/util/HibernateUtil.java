@@ -14,15 +14,23 @@ public class HibernateUtil {
                     .ignoreIfMissing()
                     .load();
 
-            System.out.println("DB_URL = " + dotenv.get("DB_URL"));
-
             Class.forName("org.postgresql.Driver");
 
             Configuration config = new Configuration().configure();
 
-            config.setProperty("hibernate.connection.url", dotenv.get("DB_URL"));
-            config.setProperty("hibernate.connection.username", dotenv.get("DB_USER"));
-            config.setProperty("hibernate.connection.password", dotenv.get("DB_PASSWORD"));
+            // Chỉ ghi đè khi .env có giá trị — nếu không, giữ url/user/pass trong hibernate.cfg.xml
+            String dbUrl = dotenv.get("DB_URL");
+            if (dbUrl != null && !dbUrl.isBlank()) {
+                config.setProperty("hibernate.connection.url", dbUrl.trim());
+            }
+            String dbUser = dotenv.get("DB_USER");
+            if (dbUser != null && !dbUser.isBlank()) {
+                config.setProperty("hibernate.connection.username", dbUser.trim());
+            }
+            String dbPassword = dotenv.get("DB_PASSWORD");
+            if (dbPassword != null) {
+                config.setProperty("hibernate.connection.password", dbPassword);
+            }
 
             return config.buildSessionFactory();
 

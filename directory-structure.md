@@ -1,8 +1,8 @@
 # Project Directory Structure
 
-*Generated: 2026-04-13 11:11:07*
+*Generated: 2026-04-13 11:43:03*
 
-Summary: 64 directories, 99 files, 0 Python files
+Summary: 68 directories, 138 files, 0 Python files
 
 ```
 + **javaFX**
@@ -12,19 +12,15 @@ Summary: 64 directories, 99 files, 0 Python files
                 + **com**
                     + **ocr**
                         + **javafx**
-                            + **backend**
-                                + **controller**
-                                + **dto**
-                                    + **ai**
-                                + **entity**
-                                + **repository**
-                                + **service**
                             + **config**
                             + **controller**
                                 + **base**
+                                + **components**
                                 + **login**
+                                + **main**
                                 + **timetable**
                             + **dto**
+                                + **request**
                                 + **response**
                             + **entity**
                             + **repository**
@@ -36,6 +32,8 @@ Summary: 64 directories, 99 files, 0 Python files
                 + **com**
                     + **ocr**
                         + **javafx**
+                            + **components**
+                            + **image**
                             + **login**
                             + **main**
                             + **style**
@@ -46,14 +44,19 @@ Summary: 64 directories, 99 files, 0 Python files
             + **com**
                 + **ocr**
                     + **javafx**
+                        + **components**
                         + **config**
                         + **controller**
                             + **base**
+                            + **components**
                             + **login**
+                            + **main**
                             + **timetable**
                         + **dto**
+                            + **request**
                             + **response**
                         + **entity**
+                        + **image**
                         + **login**
                         + **main**
                         + **repository**
@@ -63,6 +66,7 @@ Summary: 64 directories, 99 files, 0 Python files
                         + **util**
                             + **Function**
                             + **jwt**
+            + **db**
         + **generated-sources**
         + **maven-archiver**
         + **maven-status**

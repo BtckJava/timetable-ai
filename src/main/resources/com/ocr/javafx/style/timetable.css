@@ -1,4 +1,10 @@
 /* timetable.css */
+.timetable-form-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
 .calendar-grid {
     -fx-background-color: white;
 }

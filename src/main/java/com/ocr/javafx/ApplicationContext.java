@@ -2,6 +2,7 @@ package com.ocr.javafx;
 
 import com.ocr.javafx.config.SessionManager;
 import com.ocr.javafx.repository.LearningSessionRepository;
+import com.ocr.javafx.repository.ScheduleSlotRepository;
 import com.ocr.javafx.repository.UserRepository;
 import com.ocr.javafx.service.AuthService;
 import com.ocr.javafx.service.LearningSessionService;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @Setter
 public class ApplicationContext {
     private final UserRepository userRepository = new UserRepository();
+    private final ScheduleSlotRepository scheduleSlotRepository = new ScheduleSlotRepository();
     private final LearningSessionRepository learningSessionRepository = new LearningSessionRepository();
     private final AuthService authService = new AuthService(userRepository);
     private final LearningSessionService learningSessionService = new LearningSessionService(learningSessionRepository);
