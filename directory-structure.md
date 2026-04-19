@@ -1,8 +1,8 @@
 # Project Directory Structure
 
-*Generated: 2026-04-19 14:08:10*
+*Generated: 2026-04-19 16:28:22*
 
-Summary: 74 directories, 204 files, 0 Python files
+Summary: 76 directories, 219 files, 0 Python files
 
 ```
 + **javaFX**
@@ -24,6 +24,7 @@ Summary: 74 directories, 204 files, 0 Python files
                                 + **request**
                                 + **response**
                             + **entity**
+                            + **enums**
                             + **repository**
                             + **service**
                             + **test**
@@ -60,6 +61,7 @@ Summary: 74 directories, 204 files, 0 Python files
                             + **request**
                             + **response**
                         + **entity**
+                        + **enums**
                         + **image**
                         + **login**
                         + **main**

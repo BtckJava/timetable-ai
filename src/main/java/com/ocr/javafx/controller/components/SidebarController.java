@@ -15,7 +15,7 @@ public class SidebarController {
 
     public void handleTimetable(ActionEvent actionEvent) {
         if (mainController != null) {
-            mainController.setContent("/com/ocr/javafx/views/timetable-view.fxml");
+            mainController.setContent("/com/ocr/javafx/timetable/Timetable.fxml");
         }
     }
 
