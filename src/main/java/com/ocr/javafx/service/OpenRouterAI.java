@@ -16,7 +16,7 @@ public class OpenRouterAI {
     }
 
     public static String ask(String prompt) throws Exception {
-        String apiKey = resolveApiKey();
+        String apiKey = "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";
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException(
                     "Thiếu OPENROUTER_API_KEY hoặc API_KEY trong .env / biến môi trường (xem .env.example).");

@@ -341,7 +341,7 @@ public class TimetableController {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class AiSlotJson {
+    public static class AiSlotJson {
         @JsonProperty("date")
         String date;
         @JsonProperty("startTime")
