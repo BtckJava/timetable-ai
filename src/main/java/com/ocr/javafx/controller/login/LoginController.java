@@ -1,6 +1,8 @@
 package com.ocr.javafx.controller.login;
 
+import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.base.BaseController;
+import com.ocr.javafx.controller.main.MainController;
 import com.ocr.javafx.dto.request.LoginRequest;
 import com.ocr.javafx.dto.response.AuthResponse;
 import com.ocr.javafx.service.AuthService;
@@ -26,7 +28,7 @@ public class LoginController extends BaseController {
     private PasswordField passwordField;
 
     @Setter
-    private AuthService authService;
+    private ApplicationContext applicationContext;
 
     @FXML
     private void goToRegister(ActionEvent event) {
@@ -38,13 +40,13 @@ public class LoginController extends BaseController {
             Stage stage = (Stage) emailField.getScene().getWindow();
 
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/ocr/javafx/login/register.fxml") // 🔥 FIX PATH
+                    getClass().getResource("/com/ocr/javafx/login/register.fxml")
             );
 
             Scene scene = new Scene(loader.load());
 
             RegisterController controller = loader.getController();
-            controller.setAuthService(authService);
+            controller.setApplicationContext(applicationContext);
 
             stage.setScene(scene);
         } catch (Exception e) {
@@ -62,30 +64,42 @@ public class LoginController extends BaseController {
     void handleLogin(ActionEvent event) {
         clearError();
 
-        String email = emailField.getText();
-        String password = passwordField.getText();
+        String email = emailField.getText().trim();
+        String password = passwordField.getText().trim();
 
         if (email.isEmpty() || password.isEmpty()){
             showError("Please fill in all fields");
             return;
         }
 
-        LoginRequest request = new LoginRequest(
-            email, password
-        );
+        LoginRequest request = new LoginRequest(email, password);
 
-        AuthResponse response = authService.login(request);
+        AuthResponse response = applicationContext.getAuthService().login(request);
 
         // Login logic
         if (response.isSuccess()) {
             showSuccess("Login successful!");
+            applicationContext.getSessionManager().setCurrentUser(response.getUser());
             // chuyển sang trang chủ
             try {
                 Stage stage = (Stage) emailField.getScene().getWindow();
+
+                stage.setMinWidth(1000);
+                stage.setMinHeight(750);
+                stage.setWidth(1000);
+                stage.setHeight(750);
+                stage.centerOnScreen();
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/main/main.fxml"));
                 stage.setScene(new Scene(loader.load()));
+
+                MainController controller = loader.getController();
+                controller.init(applicationContext);
+
+
             } catch (Exception e) {
                 e.printStackTrace();
+                showError(e.getMessage());
                 showError("Cannot open Home screen");
             }
         }

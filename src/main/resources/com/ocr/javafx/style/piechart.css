@@ -1,0 +1,41 @@
+/* Remove background */
+.chart {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.chart-content {
+    -fx-padding: 0;
+}
+
+/* Pie slices (clean flat colors like your image) */
+.default-color0.chart-pie { -fx-pie-color: #3B82F6; } /* blue */
+.default-color1.chart-pie { -fx-pie-color: #10B981; } /* green */
+.default-color2.chart-pie { -fx-pie-color: #F59E0B; } /* orange */
+.default-color3.chart-pie { -fx-pie-color: #8B5CF6; } /* purple */
+.default-color4.chart-pie { -fx-pie-color: #EF4444; } /* red */
+
+/* Slice borders (clean separation like image) */
+.chart-pie {
+    -fx-border-color: white;
+    -fx-border-width: 1;
+}
+
+.chart-pie-label {
+    -fx-fill: #9CA3AF;  /* soft gray */
+    -fx-font-size: 11px;
+    -fx-max-width: 50px;   /* limit width */
+    -fx-text-overrun: ellipsis; /* add ... */
+}
+
+
+/* Hide legend completely */
+.chart-legend {
+    -fx-opacity: 0;
+}
+
+.chart-title {
+    -fx-text-fill: black;
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}

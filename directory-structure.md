@@ -1,8 +1,8 @@
 # Project Directory Structure
 
-*Generated: 2026-03-13 10:32:20*
+*Generated: 2026-04-20 17:00:45*
 
-Summary: 40 directories, 57 files, 0 Python files
+Summary: 76 directories, 221 files, 0 Python files
 
 ```
 + **javaFX**
@@ -14,10 +14,20 @@ Summary: 40 directories, 57 files, 0 Python files
                         + **javafx**
                             + **config**
                             + **controller**
+                                + **base**
+                                + **components**
+                                + **login**
+                                + **main**
+                                + **timetable**
+                                + **views**
                             + **dto**
+                                + **request**
                                 + **response**
                             + **entity**
+                            + **enums**
+                            + **repository**
                             + **service**
+                            + **test**
                             + **util**
                                 + **Function**
                                 + **jwt**
@@ -25,20 +35,46 @@ Summary: 40 directories, 57 files, 0 Python files
                 + **com**
                     + **ocr**
                         + **javafx**
+                            + **components**
+                            + **image**
+                            + **login**
+                            + **main**
+                            + **style**
+                            + **timetable**
+                            + **views**
+                + **db**
     + **target**
         + **classes**
             + **com**
                 + **ocr**
                     + **javafx**
+                        + **components**
                         + **config**
                         + **controller**
+                            + **base**
+                            + **components**
+                            + **login**
+                            + **main**
+                            + **timetable**
+                            + **views**
                         + **dto**
+                            + **request**
                             + **response**
                         + **entity**
+                        + **enums**
+                        + **image**
+                        + **login**
+                        + **main**
+                        + **repository**
                         + **service**
+                        + **style**
+                        + **test**
+                        + **timetable**
                         + **util**
                             + **Function**
                             + **jwt**
+                        + **views**
+            + **db**
         + **generated-sources**
         + **maven-archiver**
         + **maven-status**

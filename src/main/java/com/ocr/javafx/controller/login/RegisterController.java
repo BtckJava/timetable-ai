@@ -1,5 +1,6 @@
 package com.ocr.javafx.controller.login;
 
+import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.base.BaseController;
 import com.ocr.javafx.dto.request.RegisterRequest;
 import com.ocr.javafx.dto.response.AuthResponse;
@@ -33,7 +34,7 @@ public class RegisterController extends BaseController {
     private TextField usernameField;
 
     @Setter
-    private AuthService authService;
+    private ApplicationContext applicationContext;
 
     @FXML
     private void goToLogin(ActionEvent event) {
@@ -47,7 +48,7 @@ public class RegisterController extends BaseController {
             Scene scene = new Scene(loader.load());
 
             LoginController controller = loader.getController();
-            controller.setAuthService(authService);
+            controller.setApplicationContext(applicationContext);
 
             stage.setScene(scene);
         } catch (Exception e) {
@@ -60,10 +61,10 @@ public class RegisterController extends BaseController {
     void handleRegister(ActionEvent event) {
         clearError();
 
-        String username = usernameField.getText();
-        String email = emailField.getText();
-        String password = passwordField.getText();
-        String confirmPassword = confirmPasswordField.getText();
+        String username = usernameField.getText().trim();
+        String email = emailField.getText().trim();
+        String password = passwordField.getText().trim();
+        String confirmPassword = confirmPasswordField.getText().trim();
 
         if (username.isEmpty() || email.isEmpty() ||
                 password.isEmpty() || confirmPassword.isEmpty()) {
@@ -81,7 +82,7 @@ public class RegisterController extends BaseController {
                 username, email, password, confirmPassword
         );
 
-        AuthResponse response = authService.register(request);
+        AuthResponse response = applicationContext.getAuthService().register(request);
 
         if(response.isSuccess()){
             switchToLogin();

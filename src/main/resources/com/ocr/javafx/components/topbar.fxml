@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+
+<HBox fx:id="topbar" alignment="CENTER_LEFT" maxHeight="65.0" maxWidth="1.7976931348623157E308" minHeight="65.0" minWidth="40.0" prefHeight="65.0" prefWidth="600.0" styleClass="topbar" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.components.TopbarController">
+   <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="177.0" spacing="10.0">
+      <padding>
+         <Insets left="10.0"/>
+      </padding>
+      <Button mnemonicParsing="false" onAction="#sidebarToggle" prefHeight="30.0" prefWidth="105.0"
+              styleClass="window-btn" text="Testing"/>
+      <Label prefHeight="33.0" prefWidth="129.0" styleClass="topbar-label" text="DODO"/>
+   </HBox>
+   <Region prefHeight="8.0" prefWidth="254.0" HBox.hgrow="ALWAYS" />
+   <StackPane prefHeight="40.0" prefWidth="0.0">
+      <HBox.margin>
+         <Insets right="5.0" />
+      </HBox.margin>
+      <ImageView fx:id="profileImage" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" styleClass="profile-image">
+         <Image url="@../image/topbarProfileIcon.png" />
+      </ImageView>
+   </StackPane>
+   <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="0.0">
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+      <Button fx:id="minBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleMinimize" styleClass="window-btn" text="—" textOverrun="CLIP" HBox.hgrow="ALWAYS">
+         <padding>
+            <Insets left="15.0" right="15.0" />
+         </padding></Button>
+      <Button fx:id="maxBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleMaximize" styleClass="window-btn" text="☐" textOverrun="CLIP" HBox.hgrow="ALWAYS">
+         <padding>
+            <Insets left="15.0" right="15.0" />
+         </padding></Button>
+      <Button fx:id="exitBtn" maxHeight="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleExit" text="✕" textOverrun="CLIP" HBox.hgrow="ALWAYS">
+         <styleClass>
+            <String fx:value="window-btn" />
+            <String fx:value="exit-btn" />
+         </styleClass>
+         <padding>
+            <Insets left="15.0" right="15.0" />
+         </padding></Button>
+   </HBox>
+</HBox>

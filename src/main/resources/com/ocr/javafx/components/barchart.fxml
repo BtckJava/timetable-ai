@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxWidth="1.7976931348623157E308"
+      spacing="10"
+      stylesheets="@../style/barchart.css"
+      xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.ocr.javafx.controller.components.BarchartController">
+
+    <!-- Title -->
+    <Label styleClass="chart-title" text="Weekly Learning Hours">
+      <VBox.margin>
+         <Insets left="10.0" top="10.0" />
+      </VBox.margin></Label>
+
+    <!-- Chart -->
+    <BarChart fx:id="barchart" VBox.vgrow="ALWAYS">
+
+        <xAxis>
+            <CategoryAxis label="Day" fx:id="xAxis" />
+        </xAxis>
+
+        <yAxis>
+            <NumberAxis fx:id="yAxis" label="Hours" />
+        </yAxis>
+
+    </BarChart>
+
+</VBox>

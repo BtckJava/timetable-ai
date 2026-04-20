@@ -1,51 +1,200 @@
-/* timetable.css */
+/* Timetable view — đồng bộ với global.css (.root, .base-box) và main/dashboard */
+
+.timetable-page {
+    -fx-background-color: #f5f5f5;
+}
+
+/* Khối form trên cùng */
+.timetable-form-section {
+    -fx-spacing: 12;
+}
+
+.timetable-form-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0f172a;
+}
+
+.timetable-form-row {
+    -fx-spacing: 10;
+    -fx-alignment: center-left;
+}
+
+.timetable-field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #475569;
+}
+
+/* Ô nhập — cùng vibe card trắng, viền nhẹ */
+.timetable-form-row .text-field {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-padding: 8 10 8 10;
+    -fx-font-size: 13px;
+    -fx-prompt-text-fill: #94a3b8;
+}
+
+.timetable-form-row .text-field:focused {
+    -fx-border-color: #4ab5e2;
+    -fx-effect: dropshadow(gaussian, rgba(74, 181, 226, 0.25), 6, 0.2, 0, 0);
+}
+
+.timetable-form-row .date-picker {
+    -fx-background-radius: 10;
+}
+
+.timetable-form-row .date-picker .text-field {
+    -fx-background-radius: 10 0 0 10;
+}
+
+/* Nút */
+.timetable-btn-primary {
+    -fx-background-color: #4ab5e2;
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-background-radius: 10;
+    -fx-padding: 8 18;
+    -fx-cursor: hand;
+}
+
+.timetable-btn-primary:hover {
+    -fx-background-color: #3aa3d1;
+}
+
+.timetable-btn-secondary {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #334155;
+    -fx-font-weight: 600;
+    -fx-font-size: 13px;
+    -fx-background-radius: 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+
+.timetable-btn-secondary:hover {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #cbd5e1;
+}
+
+/* Khối bảng */
+.timetable-table-section {
+    -fx-spacing: 0;
+}
+
+.timetable-table-section > .table-view {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.table-view.timetable-table {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-view.timetable-table .column-header-background {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view.timetable-table .column-header .label {
+    -fx-font-weight: 600;
+    -fx-font-size: 13px;
+    -fx-text-fill: #334155;
+    -fx-padding: 10 8;
+}
+
+.table-view.timetable-table .table-cell {
+    -fx-border-color: transparent #f1f5f9 #f1f5f9 transparent;
+    -fx-padding: 10 8;
+    -fx-font-size: 13px;
+    -fx-text-fill: #1e293b;
+}
+
+.table-view.timetable-table .table-row-cell {
+    -fx-background-color: #ffffff;
+}
+
+.table-view.timetable-table .table-row-cell:odd {
+    -fx-background-color: #fafbfc;
+}
+
+.table-view.timetable-table .table-row-cell:hover {
+    -fx-background-color: #f0f9ff;
+}
+
+.table-view.timetable-table .table-row-cell:selected {
+    -fx-background-color: #e0f2fe;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-view.timetable-table .table-row-cell:selected .text {
+    -fx-fill: #0c4a6e;
+}
+
+/* --- Lịch dạng grid (Timetable.fxml / Controller) — giữ nguyên --- */
 .calendar-grid {
     -fx-background-color: white;
 }
 
-/* Cột thời gian bên trái */
 .time-cell {
     -fx-alignment: top-left;
     -fx-padding: 15 15 0 10;
-    -fx-text-fill: #6b7280; /* Màu xám nhạt */
+    -fx-text-fill: #6b7280;
     -fx-font-size: 13px;
     -fx-border-color: #f3f4f6;
-    -fx-border-width: 0 1 1 0; /* Chỉ có viền phải và dưới */
+    -fx-border-width: 0 1 1 0;
 }
 
-/* Tiêu đề ngày trên cùng */
 .day-header {
     -fx-alignment: center;
     -fx-padding: 10;
     -fx-border-color: #f3f4f6;
     -fx-border-width: 0 0 1 0;
 }
-.day-name { -fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #111827; }
-.day-date { -fx-font-size: 12px; -fx-text-fill: #6b7280; }
 
-/* Ô trống trong lịch (có dấu -) */
+.day-name {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #111827;
+}
+
+.day-date {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6b7280;
+}
+
 .empty-cell {
     -fx-alignment: top-left;
     -fx-padding: 15 0 0 15;
     -fx-text-fill: #d1d5db;
     -fx-border-color: #f3f4f6;
-    -fx-border-width: 0 0 1 0; /* Chỉ kẻ đường gạch ngang dưới */
+    -fx-border-width: 0 0 1 0;
 }
 
-/* Thẻ (Card) môn học */
 .event-card {
-    -fx-background-color: #e0f2fe; /* Xanh dương nhạt */
+    -fx-background-color: #e0f2fe;
     -fx-background-radius: 6;
     -fx-border-color: #bae6fd;
     -fx-border-radius: 6;
     -fx-padding: 8;
     -fx-cursor: hand;
 }
+
 .event-topic {
     -fx-text-fill: #0369a1;
     -fx-font-weight: bold;
     -fx-font-size: 13px;
 }
+
 .event-detail {
     -fx-text-fill: #0284c7;
     -fx-font-size: 11px;

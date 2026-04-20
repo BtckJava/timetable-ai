@@ -23,4 +23,18 @@ public class User extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(name = "avatar_path")
+    private String avatarPath;
+
+    @Column(name = "total_hours", nullable = false, columnDefinition = "integer default 0")
+    private int totalHours = 0;
+
+    @Column(name = "completed_plans", nullable = false, columnDefinition = "integer default 0")
+    private int completedPlans = 0;
+
+    @Column(name = "current_streak", nullable = false, columnDefinition = "integer default 0")
+    private int currentStreak = 0;
+
+    @Column(name = "skills_learned", nullable = false, columnDefinition = "integer default 0")
+    private int skillsLearned = 0;
 }

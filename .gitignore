@@ -20,6 +20,7 @@ target/
 .settings
 .springBeans
 .sts4-cache
+.env
 
 ### NetBeans ###
 /nbproject/private/
@@ -36,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### dotenv ####
+.env

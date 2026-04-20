@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="root,timetable-page" stylesheets="@../style/main.css,@../style/timetable.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.timetable.TimetableController">
+    <top>
+        <VBox spacing="12.0">
+            <VBox.margin>
+                <Insets bottom="0.0" left="20.0" right="20.0" top="12.0" />
+            </VBox.margin>
+            <VBox spacing="12.0" styleClass="base-box,timetable-form-section">
+                <padding>
+                    <Insets bottom="16.0" left="18.0" right="18.0" top="16.0" />
+                </padding>
+                <Label styleClass="timetable-form-title" text="Thêm buổi học (ScheduleSlot)" />
+                <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="timetable-form-row">
+                    <Label styleClass="timetable-field-label" text="Ngày" />
+                    <DatePicker fx:id="slotDatePicker" prefWidth="150.0" />
+                    <Label styleClass="timetable-field-label" text="Bắt đầu" />
+                    <TextField fx:id="startTimeField" prefWidth="72.0" promptText="9:00" />
+                    <Label styleClass="timetable-field-label" text="Kết thúc" />
+                    <TextField fx:id="endTimeField" prefWidth="72.0" promptText="10:30" />
+                    <Label styleClass="timetable-field-label" text="Chủ đề" />
+                    <TextField fx:id="topicField" prefWidth="128.0" promptText="Java" />
+                    <Label styleClass="timetable-field-label" text="Nội dung" />
+                    <TextField fx:id="subTopicField" prefWidth="128.0" promptText="JPA" />
+                    <Button mnemonicParsing="false" onAction="#onAddSlot" styleClass="timetable-btn-primary" text="Thêm" />
+                    <Button mnemonicParsing="false" onAction="#onRefresh" styleClass="timetable-btn-secondary" text="Làm mới" />
+                </HBox>
+            </VBox>
+        </VBox>
+    </top>
+    <center>
+        <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="0.0" styleClass="base-box,timetable-table-section" BorderPane.alignment="CENTER" VBox.vgrow="ALWAYS">
+            <VBox.margin>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="12.0" />
+            </VBox.margin>
+            <padding>
+                <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+            </padding>
+            <TableView fx:id="table" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="timetable-table" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="dateCol" prefWidth="110.0" text="Ngày" />
+                    <TableColumn fx:id="startCol" prefWidth="90.0" text="Bắt đầu" />
+                    <TableColumn fx:id="endCol" prefWidth="90.0" text="Kết thúc" />
+                    <TableColumn fx:id="topicCol" prefWidth="160.0" text="Chủ đề" />
+                    <TableColumn fx:id="subTopicCol" prefWidth="160.0" text="Nội dung" />
+                    <TableColumn fx:id="completedCol" prefWidth="100.0" text="Hoàn thành" />
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>
