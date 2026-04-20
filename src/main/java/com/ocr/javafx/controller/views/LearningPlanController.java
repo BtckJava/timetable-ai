@@ -52,33 +52,41 @@ public class LearningPlanController implements Initializable {
     private void loadLearningPlans() {
         flowPanePlans.getChildren().clear();
 
-        // 🔥 USE MOCK DATA INSTEAD
-        List<LearningPlanDTO> dtos = mockPlans;
+        LearningPlanResponse response = planService.getAllPlans(currentUserId);
 
-        for (LearningPlanDTO dto : dtos) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/components/plan-card.fxml"));
-                VBox cardNode = loader.load();
+        if (response.isSuccess() && response.getData() != null) {
+            @SuppressWarnings("unchecked")
+            List<LearningPlanDTO> dtos = (List<LearningPlanDTO>) response.getData();
+            long mockPlanId = 1; //mock data
 
-                PlanCardController cardController = loader.getController();
+            for (LearningPlanDTO dto : dtos) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/learningplan/plan-card.fxml"));
+                    VBox cardNode = loader.load();
 
-                cardController.setPlanData(
-                        dto,
-                        applicationContext.getLearningPlanRepository(),
-                        dto.getId(),
-                        () -> {
-                            System.out.println("Deleted plan: " + dto.getTitle());
-                        },
-                        () -> {
-                            System.out.println("Đang gọi AI cho plan: " + dto.getTitle());
-                        }
-                );
+                    PlanCardController cardController = loader.getController();
 
-                flowPanePlans.getChildren().add(cardNode);
+                    cardController.setPlanData(
+                            dto,
+                            applicationContext.getLearningPlanRepository(),          // ✅ must pass repo
+                            dto.getId(),         // or mockPlanId if needed
+                            () -> {
+                                System.out.println("Deleted plan: " + dto.getTitle());
+                            },
+                            () -> {
+                                System.out.println("Đang gọi AI cho plan: " + dto.getTitle());
+                            }
+                    );
 
-            } catch (IOException e) {
-                e.printStackTrace();
+                    flowPanePlans.getChildren().add(cardNode);
+
+                } catch (IOException e) {
+                    System.err.println("Lỗi khi load giao diện PlanCard.fxml: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Lỗi Tải Dữ Liệu", "Không thể lấy danh sách kế hoạch học tập từ Database.");
         }
     }
 
