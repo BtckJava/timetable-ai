@@ -1,6 +1,5 @@
 package com.ocr.javafx.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +10,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class LearningPlanDTO {
+    private Long id;
     private String title;
     private String domain;
     private String goal;

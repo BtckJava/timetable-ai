@@ -1,15 +1,16 @@
 package com.ocr.javafx.controller.components;
 
+import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.dto.LearningPlanDTO;
+import com.ocr.javafx.repository.LearningPlanRepository;
+import com.ocr.javafx.service.LearningPlanService;
+import com.ocr.javafx.util.Function.AlertUtils;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 
+import javafx.event.ActionEvent;
 public class PlanCardController {
-
     @FXML
     private Label lblTitle;
     @FXML
@@ -35,7 +36,15 @@ public class PlanCardController {
     @FXML
     private ProgressIndicator progressLoading;
 
-    public void setPlanData(LearningPlanDTO plan, Long planId, Runnable onAiAction) {
+    private LearningPlanRepository repository;
+    private Long planId;
+    private Runnable onDeleteCallback;
+
+    public void setPlanData(LearningPlanDTO plan, LearningPlanRepository repository, Long planId, Runnable onDelete, Runnable onAiAction) {
+        this.planId = plan.getId();
+        this.repository = repository;
+        this.onDeleteCallback = onDelete;
+
         lblTitle.setText(plan.getTitle());
         lblGoal.setText(plan.getGoal() != null ? plan.getGoal() : "No description provided.");
         lblDuration.setText(plan.getDurationDays() + " days");
@@ -78,5 +87,18 @@ public class PlanCardController {
         btnAiGenerate.setDisable(isLoading);
         btnAiGenerate.setText(isLoading ? "Đang xử lý..." : "✨ Tạo lịch học bằng AI");
         progressLoading.setVisible(isLoading);
+    }
+
+    @FXML
+    private void handleDelete(ActionEvent event) {
+        try {
+            repository.deleteById(this.planId);
+
+            if (onDeleteCallback != null) {
+                onDeleteCallback.run();
+            }
+        } catch (Exception e) {
+            AlertUtils.showError(e.getMessage());
+        }
     }
 }

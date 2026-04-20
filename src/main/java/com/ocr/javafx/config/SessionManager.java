@@ -9,6 +9,11 @@ import lombok.Setter;
 public class SessionManager {
     private User currentUser;
 
+    public Long getCurrentUserId() {
+        if (currentUser == null) return null;
+        return currentUser.getId();
+    }
+
     public void clear() {
         this.currentUser = null;
     }
