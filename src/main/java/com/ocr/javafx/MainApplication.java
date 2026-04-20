@@ -29,7 +29,7 @@ public class MainApplication extends Application {
 
 /*
         stage.getIcons().add(
-                new Image(getClass().getResourceAsStream("\"D:\\Code\\Java\\BTCK\\image-removebg-preview.png\""))
+                new Image(getClass urceAsStream("\"D:\\Code\\Java\\BTCK\\image-removebg-preview.png\""))
         );
 */
 

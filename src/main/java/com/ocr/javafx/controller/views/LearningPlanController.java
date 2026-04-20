@@ -1,11 +1,11 @@
 package com.ocr.javafx.controller.views;
 
+import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.components.PlanCardController;
 import com.ocr.javafx.dto.LearningPlanDTO;
-import com.ocr.javafx.repository.LearningPlanRepository;
-import com.ocr.javafx.repository.ScheduleSlotRepository;
+import com.ocr.javafx.dto.response.LearningPlanResponse;
 import com.ocr.javafx.service.LearningPlanService;
-import com.ocr.javafx.service.ScheduleSlotService;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -20,67 +20,40 @@ import java.util.ResourceBundle;
 
 public class LearningPlanController implements Initializable {
 
-//    private final LearningPlanController learningPlanController;
     @FXML
     private FlowPane flowPanePlans;
 
     private LearningPlanService planService;
+    private ApplicationContext applicationContext;
+    private Long currentUserId;
 
-//    public LearningPlanController(LearningPlanController learningPlanController) {
-//        this.learningPlanController = learningPlanController;
-//    }
+    List<LearningPlanDTO> mockPlans = List.of(
+            new LearningPlanDTO(1L, "Java Backend", "Backend", "Build API", 40, 30, "High",
+                    List.of("Java", "Spring"), 18, "2026-04-10"),
+
+            new LearningPlanDTO(2L, "Frontend React", "Frontend", "Build UI", 70, 20, "Medium",
+                    List.of("React", "JS"), 6, "2026-04-01"),
+
+            new LearningPlanDTO(3L, "Data Structures", "CS", "Master DSA", 20, 45, "Low",
+                    List.of("Arrays", "Trees"), 35, "2026-04-05")
+    );
+
+    public void init(ApplicationContext context) {
+        this.applicationContext = context;
+        this.planService = context.getLearningPlanService();
+        this.currentUserId = context.getSessionManager().getCurrentUserId();
+        loadLearningPlans();
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        LearningPlanRepository planRepo = new LearningPlanRepository();
-        ScheduleSlotRepository slotRepo = new ScheduleSlotRepository();
-
-        ScheduleSlotService slotService = new ScheduleSlotService(slotRepo);
-
-        this.planService = new LearningPlanService(planRepo, slotService);
-
-        loadLearningPlans();
     }
 
     private void loadLearningPlans() {
         flowPanePlans.getChildren().clear();
 
-//        //hardcode
-//        Long CURRENT_USER_ID = 1L;
-//        LearningPlanResponse response = planService.getAllPlans(CURRENT_USER_ID);
-//
-//        if (response.isSuccess() && response.getData() != null) {
-//            @SuppressWarnings("unchecked")
-//            List<LearningPlanDTO> dtos = (List<LearningPlanDTO>) response.getData();
-//            long mockPlanId = 1; //mock data
-
-        long mockPlanId = 1;
-
-        List<LearningPlanDTO> dtos = List.of(
-                new LearningPlanDTO(
-                        "Java Basics",
-                        "Programming",
-                        "Learn core Java",
-                        40,
-                        30,
-                        "Medium",
-                        List.of("OOP", "Collections"),
-                        18,
-                        "2026-04-01"
-                ),
-                new LearningPlanDTO(
-                        "Data Structures",
-                        "CS",
-                        "Master DSA",
-                        20,
-                        60,
-                        "Hard",
-                        List.of("Trees", "Graphs"),
-                        50,
-                        "2026-03-20"
-                )
-        );
-
+        // 🔥 USE MOCK DATA INSTEAD
+        List<LearningPlanDTO> dtos = mockPlans;
 
         for (LearningPlanDTO dto : dtos) {
             try {
@@ -89,19 +62,73 @@ public class LearningPlanController implements Initializable {
 
                 PlanCardController cardController = loader.getController();
 
-                cardController.setPlanData(dto, mockPlanId, () -> {
-                    System.out.println("Đang gọi AI cho plan: " + dto.getTitle());
-                });
+                cardController.setPlanData(
+                        dto,
+                        applicationContext.getLearningPlanRepository(),
+                        dto.getId(),
+                        () -> {
+                            System.out.println("Deleted plan: " + dto.getTitle());
+                        },
+                        () -> {
+                            System.out.println("Đang gọi AI cho plan: " + dto.getTitle());
+                        }
+                );
 
                 flowPanePlans.getChildren().add(cardNode);
 
             } catch (IOException e) {
-                System.err.println("Lỗi khi load giao diện PlanCard.fxml: " + e.getMessage());
                 e.printStackTrace();
             }
         }
     }
-//    else{
-//        learningPlanController.showAlert(Alert.AlertType.ERROR, "Lỗi Tải Dữ Liệu", "Không thể lấy danh sách kế hoạch học tập từ Database.");
+//    private void loadLearningPlans() {
+//        flowPanePlans.getChildren().clear();
+//
+//        LearningPlanResponse response = planService.getAllPlans(currentUserId);
+//
+//        if (response.isSuccess() && response.getData() != null) {
+//            @SuppressWarnings("unchecked")
+//            List<LearningPlanDTO> dtos = (List<LearningPlanDTO>) response.getData();
+//            long mockPlanId = 1; //mock data
+//
+//            for (LearningPlanDTO dto : dtos) {
+//                try {
+//                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/learningplan/plan-card.fxml"));
+//                    VBox cardNode = loader.load();
+//
+//                    PlanCardController cardController = loader.getController();
+//
+//                    cardController.setPlanData(
+//                            dto,
+//                            applicationContext.getLearningPlanRepository(),          // ✅ must pass repo
+//                            dto.getId(),         // or mockPlanId if needed
+//                            () -> {
+//                                System.out.println("Deleted plan: " + dto.getTitle());
+//                            },
+//                            () -> {
+//                                System.out.println("Đang gọi AI cho plan: " + dto.getTitle());
+//                            }
+//                    );
+//
+//                    flowPanePlans.getChildren().add(cardNode);
+//
+//                } catch (IOException e) {
+//                    System.err.println("Lỗi khi load giao diện PlanCard.fxml: " + e.getMessage());
+//                    e.printStackTrace();
+//                }
+//            }
+//        } else {
+//            showAlert(Alert.AlertType.ERROR, "Lỗi Tải Dữ Liệu", "Không thể lấy danh sách kế hoạch học tập từ Database.");
+//        }
 //    }
+
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
+    }
 }

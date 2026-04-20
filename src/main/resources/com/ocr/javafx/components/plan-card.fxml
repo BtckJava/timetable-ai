@@ -21,14 +21,15 @@
     <HBox alignment="CENTER_LEFT">
         <Label fx:id="lblTitle" styleClass="plan-title" text="Advanced JavaScript" />
         <Region HBox.hgrow="ALWAYS" />
-        <Button fx:id="btnDelete" styleClass="btn-delete">
-            <graphic>
-                <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../image/deleteIcon.png" />
-                    </image>
-                </ImageView>
-            </graphic>
+        <Button fx:id="btnDelete"
+                styleClass="btn-delete"
+                onAction="#handleDelete"> <graphic>
+            <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../image/deleteIcon.png" />
+                </image>
+            </ImageView>
+        </graphic>
         </Button>
     </HBox>
 

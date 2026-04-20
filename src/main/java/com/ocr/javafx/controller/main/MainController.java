@@ -1,8 +1,11 @@
 package com.ocr.javafx.controller.main;
 
 import com.ocr.javafx.ApplicationContext;
+import com.ocr.javafx.controller.components.BarchartController;
 import com.ocr.javafx.controller.components.SidebarController;
+import com.ocr.javafx.controller.components.StatsRowController;
 import com.ocr.javafx.controller.components.TopbarController;
+import com.ocr.javafx.controller.views.LearningPlanController;
 import com.ocr.javafx.controller.timetable.TimetableController;
 import com.ocr.javafx.controller.views.DashboardController;
 import com.ocr.javafx.entity.User;
@@ -61,18 +64,13 @@ public class MainController {
                 ((DashboardController) controller).init(applicationContext);
             } else if (controller instanceof TimetableController) {
                 ((TimetableController) controller).setApplicationContext(applicationContext);
+            } else if (controller instanceof LearningPlanController) {
+                ((LearningPlanController) controller).init(applicationContext);
             }
 
+            System.out.println("INIT LEARNING PLAN CALLED");
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public SidebarController getSidebarController() {
-        return sidebarController;
-    }
-
-    public void setSidebarController(SidebarController sidebarController) {
-        this.sidebarController = sidebarController;
     }
 }

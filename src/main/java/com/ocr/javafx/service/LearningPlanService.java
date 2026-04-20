@@ -6,8 +6,6 @@ import com.ocr.javafx.dto.response.LearningPlanResponse;
 import com.ocr.javafx.entity.LearningPlan;
 import com.ocr.javafx.entity.User;
 import com.ocr.javafx.repository.LearningPlanRepository;
-import com.ocr.javafx.repository.ScheduleSlotRepository;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -79,6 +77,7 @@ public class LearningPlanService {
         }
 
         return new LearningPlanDTO(
+                plan.getId(),
                 plan.getTitle(),
                 plan.getDomain(),
                 plan.getGoal(),
@@ -91,6 +90,8 @@ public class LearningPlanService {
         );
     }
 
-
+    public void deletePlan(Long id) {
+        repository.deleteById(id);
+    }
 
 }
