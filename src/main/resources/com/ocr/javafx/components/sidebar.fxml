@@ -60,7 +60,7 @@
         <Button maxWidth="1.7976931348623157E308" onAction="#handleProfile" styleClass="sidebar-button" text="Profile">
             <graphic>
                 <ImageView fitHeight="29.0" fitWidth="25.0" preserveRatio="true">
-                    <Image url="@../image/profileIcon.png" />
+                    <Image url="@../image/defaultProfileIcon.png" />
                 </ImageView>
             </graphic>
             <VBox.margin>
