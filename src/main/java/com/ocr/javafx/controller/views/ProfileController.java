@@ -1,9 +1,10 @@
 package com.ocr.javafx.controller.views;
 
+import com.ocr.javafx.ApplicationContext;
+import com.ocr.javafx.config.SessionManager;
 import com.ocr.javafx.dto.request.ProfileRequest;
 import com.ocr.javafx.dto.response.ProfileResponse;
 import com.ocr.javafx.service.ProfileService;
-import com.ocr.javafx.service.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -50,22 +51,27 @@ public class ProfileController {
     @FXML
     private Label txtStreak;
 
-    private final ProfileService profileService = new ProfileService();
+    private SessionManager sessionManager;
+
+    private ProfileService profileService;
 
     private String selectedAvatarPath;
 
     @FXML
-    public void initialize() {
+    public void init(ApplicationContext applicationContext) {
+        sessionManager = applicationContext.getSessionManager();
+        profileService = applicationContext.getProfileService();
         loadProfile();
     }
 
     private void loadProfile() {
-        if (UserSession.getInstance() == null) return;
+        if (sessionManager.getCurrentUser() == null) return;
 
-        Long currentUserId = UserSession.getInstance().getId();
+        Long currentUserId = sessionManager.getCurrentUserId();
         if (currentUserId == null) return;
 
-        ProfileResponse res = profileService.getProfile(String.valueOf(currentUserId));
+        ProfileResponse res =
+                profileService.getProfile(sessionManager.getCurrentUser().getEmail());
         if (res == null) return;
 
         // info
@@ -113,7 +119,7 @@ public class ProfileController {
 
         // update profile
         ProfileRequest req = new ProfileRequest();
-        req.setEmail(UserSession.getInstance().getEmail());
+        req.setEmail(sessionManager.getCurrentUser().getEmail());
         req.setUsername(txtName.getText());
         req.setAvatarPath(selectedAvatarPath);
 

@@ -25,10 +25,10 @@ public class ProfileService {
         res.setAvatarPath(user.getAvatarPath());
 
         // stats (demo, chua update)
-        res.setTotalHours(156);
-        res.setCompletedPlans(12);
-        res.setCurrentStreak(7);
-        res.setSkillsLearned(24);
+        res.setTotalHours(user.getTotalHours());
+        res.setCompletedPlans(user.getCompletedPlans());
+        res.setCurrentStreak(user.getCurrentStreak());
+        res.setSkillsLearned(user.getSkillsLearned());
 
         // achievements
         res.setAchievements(buildAchievements());
