@@ -59,8 +59,8 @@ public class ProfileController {
 
     @FXML
     public void init(ApplicationContext applicationContext) {
-        sessionManager = applicationContext.getSessionManager();
-        profileService = applicationContext.getProfileService();
+        this.sessionManager = applicationContext.getSessionManager();
+        this.profileService = applicationContext.getProfileService();
         loadProfile();
     }
 

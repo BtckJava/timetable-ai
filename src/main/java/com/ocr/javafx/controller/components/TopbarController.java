@@ -6,6 +6,7 @@ import com.ocr.javafx.entity.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -23,6 +24,9 @@ public class TopbarController {
     @Setter
     private ApplicationContext applicationContext;
 
+    @FXML
+    private ImageView profileImage;
+
     @Setter
     private MainController mainController;
 
@@ -38,9 +42,6 @@ public class TopbarController {
     @FXML
     private HBox topbar;
 
-    @FXML
-    private ImageView profileImage;
-
     private final Popup popup = new Popup();
 
     private final Label name = new Label();
@@ -49,6 +50,28 @@ public class TopbarController {
     public void setUser(User user) {
         name.setText(user.getUsername());
         email.setText(user.getEmail());
+
+        Image image;
+
+        if (user.getAvatarPath() != null && !user.getAvatarPath().isEmpty()) {
+            image = new Image("file:" + user.getAvatarPath());
+        } else {
+            image = new Image(
+                    getClass().getResource("/com/ocr/javafx/image/defaultProfileIcon.png")
+                            .toExternalForm()
+            );
+        }
+
+        profileImage.setImage(image);
+
+        // make it look better
+        profileImage.setFitWidth(32);
+        profileImage.setFitHeight(32);
+        profileImage.setPreserveRatio(true);
+
+        // circle avatar (nice UI)
+        javafx.scene.shape.Circle clip = new javafx.scene.shape.Circle(16, 16, 16);
+        profileImage.setClip(clip);
     }
 
     private VBox createPopupContent() {

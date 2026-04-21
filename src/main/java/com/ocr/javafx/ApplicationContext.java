@@ -22,5 +22,5 @@ public class ApplicationContext {
     private final StatsRowService statsRowService = new StatsRowService(this.getLearningSessionRepository(), learningPlanRepository);
     private final ScheduleSlotService scheduleSlotService = new ScheduleSlotService(scheduleSlotRepository);
     private final LearningPlanService learningPlanService = new LearningPlanService(learningPlanRepository, scheduleSlotService);
-    private final ProfileService profileService = new ProfileService();
+    private final ProfileService profileService = new ProfileService(userRepository);
 }

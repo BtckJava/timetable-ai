@@ -1,5 +1,6 @@
 package com.ocr.javafx.service;
 
+import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.dto.request.ProfileRequest;
 import com.ocr.javafx.dto.response.AchievementResponse;
 import com.ocr.javafx.dto.response.ProfileResponse;
@@ -11,8 +12,11 @@ import java.util.List;
 
 public class ProfileService {
 
-    private final UserRepository userRepository = new UserRepository();
+    private final UserRepository userRepository;
 
+    public ProfileService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
     public ProfileResponse getProfile(String email) {
         User user = userRepository.findByEmail(email);
         if (user == null) return null;
