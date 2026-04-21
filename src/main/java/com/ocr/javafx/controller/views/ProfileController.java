@@ -2,6 +2,8 @@ package com.ocr.javafx.controller.views;
 
 import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.config.SessionManager;
+import com.ocr.javafx.controller.components.TopbarController;
+import com.ocr.javafx.controller.main.MainController;
 import com.ocr.javafx.dto.request.ProfileRequest;
 import com.ocr.javafx.dto.response.ProfileResponse;
 import com.ocr.javafx.service.ProfileService;
@@ -13,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import lombok.Setter;
 
 import java.io.File;
 
@@ -56,6 +59,9 @@ public class ProfileController {
     private ProfileService profileService;
 
     private String selectedAvatarPath;
+
+    @Setter
+    private MainController mainController;
 
     @FXML
     public void init(ApplicationContext applicationContext) {
@@ -127,6 +133,7 @@ public class ProfileController {
 
         if (success) {
             loadProfile();
+            mainController.getTopbarController().setUser(sessionManager.getCurrentUser());
             System.out.println("Update success");
         } else {
             System.out.println("Update failed");
