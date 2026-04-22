@@ -36,13 +36,13 @@ public class PlanCardController {
     @FXML
     private ProgressIndicator progressLoading;
 
-    private LearningPlanRepository repository;
+    private LearningPlanService planService;
     private Long planId;
     private Runnable onDeleteCallback;
 
-    public void setPlanData(LearningPlanDTO plan, LearningPlanRepository repository, Long planId, Runnable onDelete, Runnable onAiAction) {
+    public void setPlanData(LearningPlanDTO plan, LearningPlanService planService, Long planId, Runnable onDelete, Runnable onAiAction) {
         this.planId = plan.getId();
-        this.repository = repository;
+        this.planService = planService;
         this.onDeleteCallback = onDelete;
 
         lblTitle.setText(plan.getTitle());
@@ -68,12 +68,16 @@ public class PlanCardController {
         }
 
         flowPaneSkills.getChildren().clear();
-        if (plan.getSkills() != null) {
+        if (plan.getSkills() != null && !plan.getSkills().isEmpty()) {
             for (String skill : plan.getSkills()) {
                 Label skillLabel = new Label(skill);
                 skillLabel.setStyle("-fx-background-color: #EFF6FF; -fx-text-fill: #3B82F6; -fx-padding: 4 8; -fx-background-radius: 4; -fx-font-size: 12px;");
                 flowPaneSkills.getChildren().add(skillLabel);
             }
+        } else {
+            Label waitingLabel = new Label("Waiting for AI generation...");
+            waitingLabel.setStyle("-fx-text-fill: #9CA3AF; -fx-font-style: italic; -fx-font-size: 12px;");
+            flowPaneSkills.getChildren().add(waitingLabel);
         }
 
         btnAiGenerate.setOnAction(e -> {
@@ -92,7 +96,7 @@ public class PlanCardController {
     @FXML
     private void handleDelete(ActionEvent event) {
         try {
-            repository.deleteById(this.planId);
+            planService.deletePlanById(this.planId);
 
             if (onDeleteCallback != null) {
                 onDeleteCallback.run();

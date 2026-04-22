@@ -17,7 +17,6 @@ module com.ocr.javafx {
     requires jdk.httpserver;
     requires io.github.cdimascio.dotenv.java;
     requires org.postgresql.jdbc;
-//    requires com.ocr.javafx;
     opens com.ocr.javafx to javafx.fxml;
 
     // QUAN TRỌNG NHẤT: Cho phép Hibernate truy cập vào các Entity bằng Reflection

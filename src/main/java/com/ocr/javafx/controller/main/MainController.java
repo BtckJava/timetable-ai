@@ -8,6 +8,7 @@ import com.ocr.javafx.controller.components.TopbarController;
 import com.ocr.javafx.controller.views.LearningPlanController;
 import com.ocr.javafx.controller.timetable.TimetableController;
 import com.ocr.javafx.controller.views.DashboardController;
+import com.ocr.javafx.controller.views.NewLearningPlanController;
 import com.ocr.javafx.controller.views.ProfileController;
 import com.ocr.javafx.entity.User;
 import javafx.fxml.FXML;
@@ -66,12 +67,14 @@ public class MainController {
             } else if (controller instanceof TimetableController) {
                 ((TimetableController) controller).setApplicationContext(applicationContext);
             } else if (controller instanceof LearningPlanController) {
+                ((LearningPlanController) controller).setMainController(this);
                 ((LearningPlanController) controller).init(applicationContext);
             } else if (controller instanceof ProfileController) {
                 ((ProfileController) controller).init(applicationContext);
+            } else if (controller instanceof NewLearningPlanController) {
+                ((NewLearningPlanController) controller).setMainController(this);
+                ((NewLearningPlanController) controller).init(applicationContext);
             }
-
-//            System.out.println("INIT LEARNING PLAN CALLED");
         } catch (Exception e) {
             e.printStackTrace();
         }

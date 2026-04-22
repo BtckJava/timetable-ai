@@ -2,24 +2,23 @@ package com.ocr.javafx.controller.views;
 
 import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.components.PlanCardController;
+import com.ocr.javafx.controller.main.MainController;
 import com.ocr.javafx.dto.LearningPlanDTO;
 import com.ocr.javafx.dto.response.LearningPlanResponse;
 import com.ocr.javafx.service.LearningPlanService;
 import com.ocr.javafx.util.Function.AlertUtils;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import lombok.Setter;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -30,8 +29,8 @@ public class LearningPlanController implements Initializable {
     @FXML
     private FlowPane flowPanePlans;
 
-    @FXML
-    private Button btnNewPlan;
+    @Setter
+    private MainController mainController;
 
 
 
@@ -64,103 +63,45 @@ public class LearningPlanController implements Initializable {
     private void loadLearningPlans() {
         flowPanePlans.getChildren().clear();
 
-        // 🔥 USE MOCK DATA INSTEAD
-        List<LearningPlanDTO> dtos = mockPlans;
+        LearningPlanResponse response = planService.getAllPlans(currentUserId);
 
-        for (LearningPlanDTO dto : dtos) {
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/components/plan-card.fxml"));
-                VBox cardNode = loader.load();
+        if (response.isSuccess() && response.getData() != null) {
+            @SuppressWarnings("unchecked")
+            List<LearningPlanDTO> dtos = (List<LearningPlanDTO>) response.getData();
 
-<<<<<<< Updated upstream
-                PlanCardController cardController = loader.getController();
-=======
             for (LearningPlanDTO dto : dtos) {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/components/plan-card.fxml"));
                     VBox cardNode = loader.load();
->>>>>>> Stashed changes
 
-                cardController.setPlanData(
-                        dto,
-                        applicationContext.getLearningPlanRepository(),
-                        dto.getId(),
-                        () -> {
-                            System.out.println("Deleted plan: " + dto.getTitle());
-                        },
-                        () -> {
-                            System.out.println("Đang gọi AI cho plan: " + dto.getTitle());
-                        }
-                );
+                    PlanCardController cardController = loader.getController();
 
-                flowPanePlans.getChildren().add(cardNode);
+                    cardController.setPlanData(
+                            dto,
+                            applicationContext.getLearningPlanService(),
+                            dto.getId(),
+                            () -> { flowPanePlans.getChildren().remove(cardNode); },
+                            () -> { AlertUtils.showSuccess("Đang gọi AI cho plan: " + dto.getTitle()); }
+                    );
 
-            } catch (IOException e) {
-                e.printStackTrace();
+                    flowPanePlans.getChildren().add(cardNode);
+
+                } catch (IOException e) {
+                    System.err.println("Lỗi khi load giao diện PlanCard.fxml: " + e.getMessage());
+                    e.printStackTrace();
+                }
             }
-<<<<<<< Updated upstream
-=======
         } else {
             AlertUtils.showError("Không thể lấy danh sách kế hoạch học tập từ Database.");
->>>>>>> Stashed changes
         }
     }
-//    private void loadLearningPlans() {
-//        flowPanePlans.getChildren().clear();
-//
-//        LearningPlanResponse response = planService.getAllPlans(currentUserId);
-//
-//        if (response.isSuccess() && response.getData() != null) {
-//            @SuppressWarnings("unchecked")
-//            List<LearningPlanDTO> dtos = (List<LearningPlanDTO>) response.getData();
-//            long mockPlanId = 1; //mock data
-//
-//            for (LearningPlanDTO dto : dtos) {
-//                try {
-//                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/learningplan/plan-card.fxml"));
-//                    VBox cardNode = loader.load();
-//
-//                    PlanCardController cardController = loader.getController();
-//
-//                    cardController.setPlanData(
-//                            dto,
-//                            applicationContext.getLearningPlanRepository(),          // ✅ must pass repo
-//                            dto.getId(),         // or mockPlanId if needed
-//                            () -> {
-//                                System.out.println("Deleted plan: " + dto.getTitle());
-//                            },
-//                            () -> {
-//                                System.out.println("Đang gọi AI cho plan: " + dto.getTitle());
-//                            }
-//                    );
-//
-//                    flowPanePlans.getChildren().add(cardNode);
-//
-//                } catch (IOException e) {
-//                    System.err.println("Lỗi khi load giao diện PlanCard.fxml: " + e.getMessage());
-//                    e.printStackTrace();
-//                }
-//            }
-//        } else {
-//            showAlert(Alert.AlertType.ERROR, "Lỗi Tải Dữ Liệu", "Không thể lấy danh sách kế hoạch học tập từ Database.");
-//        }
-//    }
-
     @FXML
-    private void hanldeNewPlan() {
+    private void handleNewPlan() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/views/new-learning-plan.fxml"));
-            Parent root = loader.load();
-            Stage stage = new Stage();
-            stage.setTitle("New Learning Plan");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(new Scene(root));
-            stage.setOnHiding(event -> loadLearningPlans());
-            stage.show();
+            if(mainController != null)
+                mainController.setContent("/com/ocr/javafx/views/new-learning-plan.fxml");
         } catch (Exception e) {
             e.printStackTrace();
-            AlertUtils.showError(e.getMessage());
-        }
+            AlertUtils.showError("Không thể mở màn hình tạo kế hoạch: " + e.getMessage());        }
     }
 }
-

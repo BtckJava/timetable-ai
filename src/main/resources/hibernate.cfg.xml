@@ -1,8 +1,6 @@
 <hibernate-configuration>
     <session-factory>
         <property name="connection.driver_class">org.postgresql.Driver</property>
-        <property name="connection.url">jdbc:postgresql://localhost:5432/dodo_app</property>
-
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
 
