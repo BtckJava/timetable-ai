@@ -44,6 +44,9 @@ public class LearningPlanService {
     public LearningPlanResponse getAllPlans(Long userId) {
         List<LearningPlan> rawPlans = repository.findByUserId(userId);
 
+//        System.out.println("USER ID = " + userId);
+//        System.out.println("PLANS = " + repository.findByUserId(userId));
+
         List<LearningPlanDTO> dtos = rawPlans.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());

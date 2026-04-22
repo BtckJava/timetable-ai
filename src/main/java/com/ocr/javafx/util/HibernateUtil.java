@@ -18,6 +18,11 @@ public class HibernateUtil {
 
             Configuration config = new Configuration().configure();
 
+            // Debug (remove later)
+            System.out.println("DB_URL = " + dotenv.get("DB_URL"));
+            System.out.println("DB_USER = " + dotenv.get("DB_USER"));
+            System.out.println("DB_PASSWORD = " + dotenv.get("DB_PASSWORD"));
+
             // Chỉ ghi đè khi .env có giá trị — nếu không, giữ url/user/pass trong hibernate.cfg.xml
             String dbUrl = dotenv.get("DB_URL");
             if (dbUrl != null && !dbUrl.isBlank()) {
@@ -28,7 +33,7 @@ public class HibernateUtil {
                 config.setProperty("hibernate.connection.username", dbUser.trim());
             }
             String dbPassword = dotenv.get("DB_PASSWORD");
-            if (dbPassword != null) {
+            if (dbPassword != null && !dbPassword.isBlank()) {
                 config.setProperty("hibernate.connection.password", dbPassword);
             }
 

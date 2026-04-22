@@ -1,6 +1,7 @@
 package com.ocr.javafx.service;
 
 import com.ocr.javafx.dto.response.LearningHoursResponse;
+import com.ocr.javafx.enums.LearningPlanStatus;
 import com.ocr.javafx.repository.LearningPlanRepository;
 import com.ocr.javafx.repository.LearningSessionRepository;
 
@@ -22,11 +23,11 @@ public class StatsRowService {
     }
 
     public long getCompletedPlans(Long userId) {
-        return learningPlanRepository.countByUserIdAndStatus(userId, "COMPLETED");
+        return learningPlanRepository.countByUserIdAndStatus(userId, LearningPlanStatus.COMPLETED);
     }
 
     public long getInProgressPlans(Long userId) {
-        return learningPlanRepository.countByUserIdAndStatus(userId, "IN_PROGRESS");
+        return learningPlanRepository.countByUserIdAndStatus(userId, LearningPlanStatus.IN_PROGRESS);
     }
 
     public double getProgress(Long userId) {
