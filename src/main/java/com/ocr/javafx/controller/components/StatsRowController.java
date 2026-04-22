@@ -35,7 +35,7 @@ public class StatsRowController {
                 .getCurrentUser()
                 .getId();
 
-        double hours = statsRowService.getLearningHours(userId);
+        double hours = statsRowService.getTotalLearningHours(userId);
         long completed = statsRowService.getCompletedPlans(userId);
         long inProgress = statsRowService.getInProgressPlans(userId);
         double progress = statsRowService.getProgress(userId);
