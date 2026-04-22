@@ -1,11 +1,12 @@
 package com.ocr.javafx.service;
 
-import com.ocr.javafx.ApplicationContext;
+import com.ocr.javafx.config.SessionManager;
 import com.ocr.javafx.dto.request.ProfileRequest;
 import com.ocr.javafx.dto.response.AchievementResponse;
 import com.ocr.javafx.dto.response.ProfileResponse;
 import com.ocr.javafx.entity.User;
 import com.ocr.javafx.repository.UserRepository;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,12 @@ public class ProfileService {
 
     private final UserRepository userRepository;
 
-    public ProfileService(UserRepository userRepository){
+    private final SessionManager sessionManager;
+
+    public ProfileService(UserRepository userRepository, SessionManager sessionManager) {
         this.userRepository = userRepository;
+        this.sessionManager = sessionManager;
+
     }
     public ProfileResponse getProfile(String email) {
         User user = userRepository.findByEmail(email);
@@ -52,6 +57,7 @@ public class ProfileService {
         }
 
         userRepository.update(user);
+        sessionManager.setCurrentUser(user);
         return true;
     }
 

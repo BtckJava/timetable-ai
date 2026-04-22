@@ -17,6 +17,7 @@ module com.ocr.javafx {
     requires jdk.httpserver;
     requires io.github.cdimascio.dotenv.java;
     requires org.postgresql.jdbc;
+    requires kotlin.stdlib;
 //    requires com.ocr.javafx;
     opens com.ocr.javafx to javafx.fxml;
 

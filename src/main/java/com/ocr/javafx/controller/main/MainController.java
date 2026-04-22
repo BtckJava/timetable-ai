@@ -14,6 +14,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
+import lombok.Getter;
+import lombok.Setter;
 
 public class MainController {
 
@@ -27,6 +29,7 @@ public class MainController {
     private AnchorPane sidebar;
 
     @FXML
+    @Getter
     private TopbarController topbarController;
 
     private ApplicationContext applicationContext;
@@ -69,6 +72,7 @@ public class MainController {
                 ((LearningPlanController) controller).init(applicationContext);
             } else if (controller instanceof ProfileController) {
                 ((ProfileController) controller).init(applicationContext);
+                ((ProfileController) controller).setMainController(this);
             }
 
 //            System.out.println("INIT LEARNING PLAN CALLED");

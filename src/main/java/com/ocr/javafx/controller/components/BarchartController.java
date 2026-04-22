@@ -9,6 +9,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import lombok.Setter;
 
+import java.time.DayOfWeek;
 import java.util.Map;
 
 public class BarchartController {
@@ -31,20 +32,10 @@ public class BarchartController {
                 .getCurrentUser()
                 .getId();
 
-//        Map<String, Double> data =
-//                applicationContext
-//                        .getLearningSessionService()
-//                        .getLearningHoursByDay(userId);
-
-        Map<String, Double> data = Map.of(
-                "Mon", 2.5,
-                "Tue", 4.0,
-                "Wed", 1.5,
-                "Thu", 5.0,
-                "Fri", 3.5,
-                "Sat", 6.5,
-                "Sun", 2.0
-        );
+        Map<DayOfWeek, Double> data =
+                applicationContext
+                        .getLearningChartService()
+                        .getWeeklyLearningData(userId);
 
         yAxis.setForceZeroInRange(true);
         yAxis.setAutoRanging(false);
@@ -65,11 +56,15 @@ public class BarchartController {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Weekly Learning Hours");
 
-        String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
 
-        for (String day : days) {
+
+        for (DayOfWeek day : DayOfWeek.values()) {
+
             Double value = data.getOrDefault(day, 0.0);
-            series.getData().add(new XYChart.Data<>(day, value));
+
+            series.getData().add(
+                    new XYChart.Data<>(day.name().toUpperCase().substring(0, 3), value)
+            );
         }
 
         barchart.getData().clear();
