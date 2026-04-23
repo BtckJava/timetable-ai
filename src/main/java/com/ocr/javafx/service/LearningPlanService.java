@@ -5,7 +5,10 @@ import com.ocr.javafx.dto.request.LearningPlanRequest;
 import com.ocr.javafx.dto.response.LearningPlanResponse;
 import com.ocr.javafx.entity.LearningPlan;
 import com.ocr.javafx.entity.User;
+import com.ocr.javafx.enums.LearningPlanStatus;
 import com.ocr.javafx.repository.LearningPlanRepository;
+import org.jetbrains.annotations.NotNull;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -97,4 +100,7 @@ public class LearningPlanService {
         repository.deleteById(id);
     }
 
+    public List<LearningPlan> getActivePlans(Long userId) {
+        return repository.findByUserIdAndStatus(userId, LearningPlanStatus.IN_PROGRESS);
+    }
 }

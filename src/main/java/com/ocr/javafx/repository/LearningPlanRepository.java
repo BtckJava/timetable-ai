@@ -91,4 +91,27 @@ public class LearningPlanRepository {
 
         return result != null ? result : 0;
     }
+
+    public List<LearningPlan> findByUserIdAndStatus(Long userId, LearningPlanStatus status) {
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            String hql = """
+            SELECT DISTINCT lp
+            FROM LearningPlan lp
+            LEFT JOIN FETCH lp.skills
+            WHERE lp.user.id = :userId AND lp.status = :status
+        """;
+
+            TypedQuery<LearningPlan> query = session.createQuery(hql, LearningPlan.class);
+            query.setParameter("userId", userId);
+            query.setParameter("status", status);
+
+            return query.getResultList();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return java.util.Collections.emptyList();
+        }
+    }
 }

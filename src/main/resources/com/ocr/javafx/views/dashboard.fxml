@@ -44,7 +44,12 @@
             <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
         </VBox.margin>
 
-        <fx:include source="../components/active-plans.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <fx:include fx:id="activePlans"
+        source="../components/active-plans.fxml"
+        AnchorPane.bottomAnchor="0.0"
+        AnchorPane.leftAnchor="0.0"
+        AnchorPane.rightAnchor="0.0"
+        AnchorPane.topAnchor="0.0" />
     </AnchorPane>
 
 </VBox>

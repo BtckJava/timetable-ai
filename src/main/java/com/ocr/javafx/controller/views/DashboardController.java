@@ -1,9 +1,7 @@
 package com.ocr.javafx.controller.views;
 
 import com.ocr.javafx.ApplicationContext;
-import com.ocr.javafx.controller.components.BarchartController;
-import com.ocr.javafx.controller.components.PiechartController;
-import com.ocr.javafx.controller.components.StatsRowController;
+import com.ocr.javafx.controller.components.*;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -11,6 +9,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class DashboardController {
+    @FXML
+    private VBox activePlans;
+
     @FXML
     public AnchorPane barWrapper;
 
@@ -30,6 +31,9 @@ public class DashboardController {
     private PiechartController piechartController;
 
     @FXML
+    private ActivePlansController activePlansController;
+
+    @FXML
     public VBox barchart;
 
     public void init(ApplicationContext applicationContext){
@@ -42,6 +46,10 @@ public class DashboardController {
 
         piechartController.setApplicationContext(applicationContext);
         piechartController.setupPieChart();
+
+    // Active plans
+        activePlansController.setApplicationContext(applicationContext);
+        activePlansController.setupActivePlans();
 //        CHECK
 //        System.out.println("Loading dashboard...");
 
