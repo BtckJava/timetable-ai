@@ -98,6 +98,10 @@ public class TopbarController {
         });
 
         profileImage.setOnMouseExited(e -> popup.hide());
+
+        profileImage.setOnMousePressed(e -> {
+            mainController.setContent("/com/ocr/javafx/views/profile.fxml");
+        });
     }
 
     @FXML
