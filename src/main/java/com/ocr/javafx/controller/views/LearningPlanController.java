@@ -27,17 +27,6 @@ public class LearningPlanController implements Initializable {
     private ApplicationContext applicationContext;
     private Long currentUserId;
 
-    List<LearningPlanDTO> mockPlans = List.of(
-            new LearningPlanDTO(1L, "Java Backend", "Backend", "Build API", 40, 30, "High",
-                    List.of("Java", "Spring"), 18, "2026-04-10"),
-
-            new LearningPlanDTO(2L, "Frontend React", "Frontend", "Build UI", 70, 20, "Medium",
-                    List.of("React", "JS"), 6, "2026-04-01"),
-
-            new LearningPlanDTO(3L, "Data Structures", "CS", "Master DSA", 20, 45, "Low",
-                    List.of("Arrays", "Trees"), 35, "2026-04-05")
-    );
-
     public void init(ApplicationContext context) {
         this.applicationContext = context;
         this.planService = context.getLearningPlanService();
@@ -49,40 +38,10 @@ public class LearningPlanController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
     }
 
-//    private void loadLearningPlans() {
-//        flowPanePlans.getChildren().clear();
-//
-//        // 🔥 USE MOCK DATA INSTEAD
-//        List<LearningPlanDTO> dtos = mockPlans;
-//
-//        for (LearningPlanDTO dto : dtos) {
-//            try {
-//                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/components/plan-card.fxml"));
-//                VBox cardNode = loader.load();
-//
-//                PlanCardController cardController = loader.getController();
-//
-//                cardController.setPlanData(
-//                        dto,
-//                        applicationContext.getLearningPlanRepository(),
-//                        dto.getId(),
-//                        () -> {
-//                            System.out.println("Deleted plan: " + dto.getTitle());
-//                        },
-//                        () -> {
-//                            System.out.println("Đang gọi AI cho plan: " + dto.getTitle());
-//                        }
-//                );
-//
-//                flowPanePlans.getChildren().add(cardNode);
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
     private void loadLearningPlans() {
         flowPanePlans.getChildren().clear();
+
+//        System.out.println("Controller userId = " + currentUserId);
 
         LearningPlanResponse response = planService.getAllPlans(currentUserId);
 

@@ -85,4 +85,18 @@ public class ScheduleSlotRepository  {
             e.printStackTrace();
         }
     }
+
+        public List<ScheduleSlot> findByUserId(Long userId) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        String hql = "FROM ScheduleSlot ls WHERE ls.user.id = :userId ORDER BY (ls.endTime - ls.startTime) DESC";
+
+        Query<ScheduleSlot> query = session.createQuery(hql, ScheduleSlot.class);
+        query.setParameter("userId", userId);
+
+        List<ScheduleSlot> result = query.getResultList();
+
+        session.close();
+        return result;
+    }
 }
