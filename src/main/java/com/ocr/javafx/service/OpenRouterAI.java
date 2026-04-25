@@ -16,7 +16,7 @@ public class OpenRouterAI {
     }
 
     public static String ask(String prompt) throws Exception {
-        String apiKey = "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";
+        String apiKey = "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";
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException(
                     "Thiếu OPENROUTER_API_KEY hoặc API_KEY trong .env / biến môi trường (xem .env.example).");
@@ -26,7 +26,7 @@ public class OpenRouterAI {
 
         JSONObject bodyJson = new JSONObject();
 
-        bodyJson.put("model", "arcee-ai/trinity-large-preview:free");
+        bodyJson.put("model", "google/gemma-3n-e2b-it:free");
 
         JSONArray messages = new JSONArray();
 
