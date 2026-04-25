@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="120" prefWidth="300" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e0e0e0;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.components.ActivePlansCardController">
+
+    <VBox spacing="8" AnchorPane.bottomAnchor="10" AnchorPane.leftAnchor="12" AnchorPane.rightAnchor="12" AnchorPane.topAnchor="10">
+
+        <!-- Title -->
+        <Label fx:id="titleLabel" style="-fx-text-fill: #1a1a1a; -fx-font-size: 16; -fx-font-weight: bold;" />
+
+        <!-- Goal -->
+        <Label fx:id="goalLabel" style="-fx-text-fill: #666666; -fx-font-size: 12;" />
+      <AnchorPane>
+         <children>
+
+              <!-- Progress -->
+              <ProgressBar fx:id="progressBar" prefWidth="260" progress="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+         </children>
+      </AnchorPane>
+
+        <!-- Bottom row -->
+        <HBox spacing="10">
+            <Label fx:id="statusLabel" style="-fx-text-fill: #2196F3; -fx-font-size: 11;" />
+        </HBox>
+
+    </VBox>
+
+</AnchorPane>

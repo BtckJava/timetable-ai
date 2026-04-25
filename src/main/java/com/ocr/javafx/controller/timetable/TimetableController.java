@@ -10,6 +10,7 @@ import com.ocr.javafx.entity.LearningPlan;
 import com.ocr.javafx.entity.ScheduleSlot;
 import com.ocr.javafx.entity.User;
 import com.ocr.javafx.repository.LearningPlanRepository;
+import com.ocr.javafx.service.LearningPlanService;
 import com.ocr.javafx.service.OpenRouterAI;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -25,6 +26,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ProgressIndicator;
@@ -53,14 +55,13 @@ import java.util.List;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class TimetableController {
 
     private static final DateTimeFormatter HEADER_FMT = DateTimeFormatter.ofPattern("d/M/yyyy");
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("H:mm");
-    private static final DataFormat SLOT_INDEX_MIME = new DataFormat("application/x-schedule-slot-index");
-
     private static final int START_HOUR = 6;
     private static final int END_HOUR = 22;
 
@@ -94,15 +95,19 @@ public class TimetableController {
 
     private final ObservableList<ScheduleSlot> slots = FXCollections.observableArrayList();
     private final LearningPlanRepository planRepository = new LearningPlanRepository();
+    private final List<ScheduleSlot> deletedSlots = new ArrayList<>();
 
     private ApplicationContext applicationContext;
     private LocalDate currentWeekStart;
+    private ScheduleSlot draggingSlot;
+    private String draggingToken;
 
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         User user = applicationContext.getSessionManager().getCurrentUser();
         if (user != null && user.getId() != null) {
-            planCombo.getItems().setAll(planRepository.findByUserId(user.getId()));
+            LearningPlanService planService = applicationContext.getLearningPlanService();
+            planCombo.getItems().setAll(planService.getPlansForDropdown(user.getId()));
             slots.setAll(applicationContext.getScheduleSlotRepository()
                     .findByUserIdOrderByDateAndStart(user.getId()));
         } else {
@@ -152,7 +157,7 @@ public class TimetableController {
         }
 
         final LocalDate weekStart = currentWeekStart;
-        final LocalDate weekEnd = currentWeekStart.plusDays(6);
+        final LocalDate weekEnd = currentWeekStart.plusDays(selectedPlan.getDurationDays() - 1);
         final List<ScheduleSlot> busySnapshot = snapshotBusySlotsForWeek(weekStart, weekEnd);
         final String aiPrompt = buildAiPrompt(selectedPlan, weekStart, weekEnd, busySnapshot);
 
@@ -361,6 +366,7 @@ public class TimetableController {
         }
         try {
             applicationContext.getScheduleSlotRepository().saveAll(new ArrayList<>(slots));
+            flushDeletedSlotsToDatabase();
             alert(Alert.AlertType.INFORMATION, "Đã lưu", "Đã lưu " + slots.size() + " slot xuống database.");
         } catch (Exception e) {
             e.printStackTrace();
@@ -550,17 +556,19 @@ public class TimetableController {
                 spanHours = Math.max(1, rowCount - rowIndex + 1);
             }
 
-            int idx = slots.indexOf(slot);
-            VBox card = buildSlotCard(slot, idx);
+            VBox card = buildSlotCard(slot);
             GridPane.setMargin(card, new Insets(2, 5, 2, 5));
             timetableGrid.add(card, colIndex, rowIndex, 1, spanHours);
         }
     }
 
-    private VBox buildSlotCard(ScheduleSlot slot, int slotIndex) {
+    private VBox buildSlotCard(ScheduleSlot slot) {
         VBox card = new VBox(4);
         card.getStyleClass().add("event-card");
-        card.setUserData(slotIndex);
+        card.setUserData(slot);
+        if (slot.isCompleted()) {
+            card.setStyle("-fx-background-color: #dcfce7; -fx-border-color: #86efac; -fx-opacity: 0.95;");
+        }
 
         Label topicLabel = new Label(slot.getTopic() != null ? slot.getTopic() : "");
         topicLabel.getStyleClass().add("event-topic");
@@ -569,39 +577,73 @@ public class TimetableController {
         sub.setWrapText(true);
         Label time = new Label(slot.getStartTime() + " – " + slot.getEndTime());
         time.getStyleClass().add("event-detail");
-        card.getChildren().addAll(topicLabel, sub, time);
+
+        Button deleteBtn = new Button("X");
+        deleteBtn.setFocusTraversable(false);
+        deleteBtn.setStyle(
+                "-fx-background-color: #ef4444; -fx-text-fill: white; -fx-font-size: 10px; "
+                        + "-fx-font-weight: bold; -fx-background-radius: 12; -fx-padding: 2 6; -fx-cursor: hand;");
+        deleteBtn.setOnMouseClicked(ev -> ev.consume());
+        deleteBtn.setOnAction(ev -> {
+            ev.consume();
+            if (slot.getId() != null && !deletedSlots.contains(slot)) {
+                deletedSlots.add(slot);
+            }
+            slots.remove(slot);
+            renderTimetable();
+        });
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox topRow = new HBox(6, topicLabel, spacer, deleteBtn);
+        topRow.setAlignment(Pos.TOP_LEFT);
+        card.getChildren().addAll(topRow, sub, time);
+
+        card.setOnMouseClicked(ev -> {
+            if (ev.isStillSincePress()) {
+                openSlotDetailsDialog(slot);
+            }
+        });
 
         card.setOnDragDetected(ev -> {
             if (!ev.isPrimaryButtonDown()) {
                 return;
             }
+            draggingSlot = slot;
+            draggingToken = UUID.randomUUID().toString();
             Dragboard db = card.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent cc = new ClipboardContent();
-            cc.put(SLOT_INDEX_MIME, slotIndex);
+            cc.putString(draggingToken);
             db.setContent(cc);
             ev.consume();
         });
-        card.setOnDragDone(ev -> ev.consume());
+        card.setOnDragDone(ev -> {
+            draggingSlot = null;
+            draggingToken = null;
+            ev.consume();
+        });
         return card;
     }
 
     private void wireDropTarget(Label cell) {
         cell.setOnDragOver(ev -> {
-            if (!ev.getDragboard().hasContent(SLOT_INDEX_MIME)) {
+            if (draggingSlot == null || draggingToken == null || !ev.getDragboard().hasString()) {
+                return;
+            }
+            String token = ev.getDragboard().getString();
+            if (!Objects.equals(token, draggingToken)) {
                 return;
             }
             ev.acceptTransferModes(TransferMode.MOVE);
-            Integer idxObj = (Integer) ev.getDragboard().getContent(SLOT_INDEX_MIME);
-            int idx = idxObj != null ? idxObj : -1;
             DropCell dc = (DropCell) cell.getUserData();
-            if (idx < 0 || idx >= slots.size() || dc == null) {
+            if (dc == null) {
                 return;
             }
-            ScheduleSlot moving = slots.get(idx);
+            ScheduleSlot moving = draggingSlot;
             LocalDate newDate = currentWeekStart.plusDays(dc.col() - 1L);
             LocalTime newStart = LocalTime.of(dc.hour(), moving.getStartTime().getMinute());
             LocalTime newEnd = newStart.plus(Duration.between(moving.getStartTime(), moving.getEndTime()));
-            boolean conflict = conflictsWithOthers(moving, idx, newDate, newStart, newEnd);
+            boolean conflict = conflictsWithOthers(moving, newDate, newStart, newEnd);
             if (conflict) {
                 cell.setStyle("-fx-border-color: #ef4444; -fx-border-width: 2; -fx-background-color: rgba(254,226,226,0.5);");
             } else {
@@ -612,21 +654,36 @@ public class TimetableController {
         cell.setOnDragExited(ev -> cell.setStyle(""));
         cell.setOnDragDropped(ev -> {
             Dragboard db = ev.getDragboard();
-            if (!db.hasContent(SLOT_INDEX_MIME)) {
+            if (draggingSlot == null || draggingToken == null || !db.hasString()) {
+                ev.setDropCompleted(false);
+                ev.consume();
                 return;
             }
-            Integer idxObj = (Integer) db.getContent(SLOT_INDEX_MIME);
-            int idx = idxObj != null ? idxObj : -1;
+            if (!Objects.equals(db.getString(), draggingToken)) {
+                ev.setDropCompleted(false);
+                return;
+            }
             DropCell dc = (DropCell) cell.getUserData();
-            if (idx < 0 || idx >= slots.size() || dc == null) {
+            if (dc == null) {
+                ev.setDropCompleted(false);
+                ev.consume();
                 return;
             }
-            ScheduleSlot moving = slots.get(idx);
+            ScheduleSlot moving = draggingSlot;
             LocalDate newDate = currentWeekStart.plusDays(dc.col() - 1L);
             LocalTime newStart = LocalTime.of(dc.hour(), moving.getStartTime().getMinute());
             LocalTime newEnd = newStart.plus(Duration.between(moving.getStartTime(), moving.getEndTime()));
 
-            if (conflictsWithOthers(moving, idx, newDate, newStart, newEnd)) {
+            // Thả vào đúng vị trí cũ => không làm gì
+            if (Objects.equals(moving.getDate(), newDate)
+                    && Objects.equals(moving.getStartTime(), newStart)
+                    && Objects.equals(moving.getEndTime(), newEnd)) {
+                ev.setDropCompleted(true);
+                ev.consume();
+                return;
+            }
+
+            if (conflictsWithOthers(moving, newDate, newStart, newEnd)) {
                 alert(Alert.AlertType.WARNING, "Trùng lịch", "Không thể thả vào ô này vì trùng thời gian với slot khác.");
                 ev.setDropCompleted(false);
                 ev.consume();
@@ -637,16 +694,17 @@ public class TimetableController {
             moving.setEndTime(newEnd);
             ev.setDropCompleted(true);
             ev.consume();
+            draggingSlot = null;
+            draggingToken = null;
             renderTimetable();
         });
     }
 
-    private boolean conflictsWithOthers(ScheduleSlot self, int selfIndex, LocalDate date, LocalTime start, LocalTime end) {
-        for (int i = 0; i < slots.size(); i++) {
-            if (i == selfIndex) {
+    private boolean conflictsWithOthers(ScheduleSlot self, LocalDate date, LocalTime start, LocalTime end) {
+        for (ScheduleSlot o : slots) {
+            if (o == self) {
                 continue;
             }
-            ScheduleSlot o = slots.get(i);
             if (o.getDate() == null || o.getStartTime() == null || o.getEndTime() == null) {
                 continue;
             }
@@ -658,6 +716,49 @@ public class TimetableController {
             }
         }
         return false;
+    }
+
+    private void openSlotDetailsDialog(ScheduleSlot slot) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Chi tiết ScheduleSlot");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        String planName = "(Không có)";
+        if (slot.getPlan() != null) {
+            planName = planDisplayName(slot.getPlan());
+        }
+
+        CheckBox completedCheck = new CheckBox("Đã hoàn thành");
+        completedCheck.setSelected(slot.isCompleted());
+
+        VBox content = new VBox(
+                8,
+                new Label("Date: " + (slot.getDate() != null ? slot.getDate() : "")),
+                new Label("Start Time: " + (slot.getStartTime() != null ? slot.getStartTime() : "")),
+                new Label("End Time: " + (slot.getEndTime() != null ? slot.getEndTime() : "")),
+                new Label("Topic: " + (slot.getTopic() != null ? slot.getTopic() : "")),
+                new Label("SubTopic: " + (slot.getSubTopic() != null ? slot.getSubTopic() : "")),
+                new Label("LearningPlan: " + planName),
+                completedCheck
+        );
+        content.setPadding(new Insets(12));
+        dialog.getDialogPane().setContent(content);
+
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            slot.setCompleted(completedCheck.isSelected());
+            renderTimetable();
+        }
+    }
+
+    private void flushDeletedSlotsToDatabase() throws Exception {
+        if (deletedSlots.isEmpty()) {
+            return;
+        }
+        for (ScheduleSlot slot : new ArrayList<>(deletedSlots)) {
+            applicationContext.getScheduleSlotRepository().delete(slot);
+        }
+        deletedSlots.clear();
     }
 
     /**

@@ -19,12 +19,14 @@ public class PiechartController {
 
     public void setupPieChart() {
 
-        Map<String, Double> data = Map.of(
-                "Java", 10.0,
-                "C++", 6.0,
-                "Web", 5.0,
-                "Game Dev", 3.0
-        );
+        Long userId = applicationContext
+                .getSessionManager()
+                .getCurrentUser()
+                .getId();
+
+        Map<String, Double> data = applicationContext
+                .getLearningChartService()
+                .getSkillDistribution(userId);
 
         piechart.getData().clear();
 

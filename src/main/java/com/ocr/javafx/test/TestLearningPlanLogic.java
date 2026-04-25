@@ -34,7 +34,7 @@ public class TestLearningPlanLogic {
         // 3. Test Tạo Kế hoạch mới (Create)
         System.out.println("\n--- Test Tạo Kế hoạch ---");
         LearningPlanRequest request = new LearningPlanRequest(
-                "Hoàn",
+                "Chủ nhật",
                 "Hoàn",
                 "Hoàn",
                 Arrays.asList("C++", "Dynamic Programming", "Graph Theory"),
