@@ -81,7 +81,7 @@ public class LearningPlanController implements Initializable {
                             applicationContext.getLearningPlanService(),
                             dto.getId(),
                             () -> { flowPanePlans.getChildren().remove(cardNode); },
-                            () -> { AlertUtils.showSuccess("Đang gọi AI cho plan: " + dto.getTitle()); }
+                            () -> { showPlanDetails(dto.getId()); }
                     );
 
                     flowPanePlans.getChildren().add(cardNode);
@@ -104,4 +104,20 @@ public class LearningPlanController implements Initializable {
             e.printStackTrace();
             AlertUtils.showError("Không thể mở màn hình tạo kế hoạch: " + e.getMessage());        }
     }
+
+    private void showPlanDetails(Long planId) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/ocr/javafx/views/plan-details.fxml"));
+            Parent root = loader.load();
+            PlanDetailsController detailsController = loader.getController();
+            detailsController.init(this.applicationContext, this.mainController, planId);
+            if (mainController != null) {
+                mainController.contentPane.setContent(root);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            AlertUtils.showError("Lỗi khi mở màn hình chi tiết: " + e.getMessage());
+        }
+    }
+
 }

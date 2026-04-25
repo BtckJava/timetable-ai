@@ -30,17 +30,13 @@ public class PlanCardController {
     @FXML
     private FlowPane flowPaneSkills;
     @FXML
-    private Button btnDelete;
-    @FXML
-    private Button btnAiGenerate;
-    @FXML
-    private ProgressIndicator progressLoading;
+    private Button btnViewDetails;
 
     private LearningPlanService planService;
     private Long planId;
     private Runnable onDeleteCallback;
 
-    public void setPlanData(LearningPlanDTO plan, LearningPlanService planService, Long planId, Runnable onDelete, Runnable onAiAction) {
+    public void setPlanData(LearningPlanDTO plan, LearningPlanService planService, Long planId, Runnable onDelete, Runnable onViewDetails) {
         this.planId = plan.getId();
         this.planService = planService;
         this.onDeleteCallback = onDelete;
@@ -80,17 +76,11 @@ public class PlanCardController {
             flowPaneSkills.getChildren().add(waitingLabel);
         }
 
-        btnAiGenerate.setOnAction(e -> {
-            if (onAiAction != null) {
-                onAiAction.run();
+        btnViewDetails.setOnAction(e -> {
+            if (onViewDetails != null) {
+                onViewDetails.run();
             }
         });
-    }
-
-    public void setLoadingState(boolean isLoading) {
-        btnAiGenerate.setDisable(isLoading);
-        btnAiGenerate.setText(isLoading ? "Đang xử lý..." : "✨ Tạo lịch học bằng AI");
-        progressLoading.setVisible(isLoading);
     }
 
     @FXML

@@ -154,7 +154,7 @@ public class TimetableController {
         }
 
         final LocalDate weekStart = currentWeekStart;
-        final LocalDate weekEnd = currentWeekStart.plusDays(6);
+        final LocalDate weekEnd = currentWeekStart.plusDays(selectedPlan.getDurationDays() - 1);
         final List<ScheduleSlot> busySnapshot = snapshotBusySlotsForWeek(weekStart, weekEnd);
         final String aiPrompt = buildAiPrompt(selectedPlan, weekStart, weekEnd, busySnapshot);
 

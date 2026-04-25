@@ -34,6 +34,16 @@ public class LearningPlanRepository {
         }
     }
 
+    public LearningPlan findByIdWithSlots(Session session, Long planId) {
+        session.createQuery("SELECT lp FROM LearningPlan lp LEFT JOIN FETCH lp.skills WHERE lp.id = :id", LearningPlan.class)
+                .setParameter("id", planId)
+                .uniqueResult();
+        String hql = "SELECT lp FROM LearningPlan lp LEFT JOIN FETCH lp.slots WHERE lp.id = :id";
+        return session.createQuery(hql, LearningPlan.class)
+                .setParameter("id", planId)
+                .uniqueResult();
+    }
+
     public long countByUserIdAndStatus(Long userId, String status) {
 //        Session session = HibernateUtil.getSessionFactory().openSession();
 //

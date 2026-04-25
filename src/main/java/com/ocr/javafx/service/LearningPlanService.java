@@ -122,4 +122,13 @@ public class LearningPlanService {
         }
     }
 
+    public LearningPlan getPlanDetails(Long planId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return repository.findByIdWithSlots(session, planId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }
