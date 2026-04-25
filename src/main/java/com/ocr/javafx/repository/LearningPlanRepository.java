@@ -12,15 +12,13 @@ import org.hibernate.query.Query;
 
 public class LearningPlanRepository {
 
-    public List<LearningPlan> findByUserId(Long userId) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            String hql = "SELECT DISTINCT lp FROM LearningPlan lp LEFT JOIN FETCH lp.skills WHERE lp.user.id = :userId";            TypedQuery<LearningPlan> query = session.createQuery(hql, LearningPlan.class);
-            query.setParameter("userId", userId);
-            return query.getResultList();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return java.util.Collections.emptyList();
-        }
+    public List<LearningPlan> findByUserId(Session session, Long userId) {
+        String hql = "SELECT DISTINCT lp FROM LearningPlan lp " +
+                "LEFT JOIN FETCH lp.skills " +
+                "WHERE lp.user.id = :userId";
+        return session.createQuery(hql, LearningPlan.class)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 
     public void save(LearningPlan plan) {
@@ -37,21 +35,14 @@ public class LearningPlanRepository {
         }
     }
 
-    public void deleteById(Long planId) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-
-            int updatedEntities = session.createMutationQuery(
-                            "DELETE FROM LearningPlan lp WHERE lp.id = :id")
-                    .setParameter("id", planId)
-                    .executeUpdate();
-
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            e.printStackTrace();
-        }
+    public LearningPlan findByIdWithSlots(Session session, Long planId) {
+        session.createQuery("SELECT lp FROM LearningPlan lp LEFT JOIN FETCH lp.skills WHERE lp.id = :id", LearningPlan.class)
+                .setParameter("id", planId)
+                .uniqueResult();
+        String hql = "SELECT lp FROM LearningPlan lp LEFT JOIN FETCH lp.slots WHERE lp.id = :id";
+        return session.createQuery(hql, LearningPlan.class)
+                .setParameter("id", planId)
+                .uniqueResult();
     }
 
     public long countByUserIdAndStatus(Long userId, LearningPlanStatus status) {

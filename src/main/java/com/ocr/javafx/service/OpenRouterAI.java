@@ -26,7 +26,7 @@ public class OpenRouterAI {
 
         JSONObject bodyJson = new JSONObject();
 
-        bodyJson.put("model", "arcee-ai/trinity-large-preview:free");
+        bodyJson.put("model", "google/gemma-3n-e2b-it:free");
 
         JSONArray messages = new JSONArray();
 

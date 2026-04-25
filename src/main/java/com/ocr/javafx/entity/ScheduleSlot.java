@@ -19,8 +19,10 @@ public class ScheduleSlot {
 
     private LocalDate date;
 
+    @Column(name = "start_time")
     private LocalTime startTime;
 
+    @Column(name = "end_time")
     private LocalTime endTime;
 
     private String topic;

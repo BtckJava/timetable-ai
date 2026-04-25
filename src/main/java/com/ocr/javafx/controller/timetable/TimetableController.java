@@ -10,6 +10,7 @@ import com.ocr.javafx.entity.LearningPlan;
 import com.ocr.javafx.entity.ScheduleSlot;
 import com.ocr.javafx.entity.User;
 import com.ocr.javafx.repository.LearningPlanRepository;
+import com.ocr.javafx.service.LearningPlanService;
 import com.ocr.javafx.service.OpenRouterAI;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -102,7 +103,8 @@ public class TimetableController {
         this.applicationContext = applicationContext;
         User user = applicationContext.getSessionManager().getCurrentUser();
         if (user != null && user.getId() != null) {
-            planCombo.getItems().setAll(planRepository.findByUserId(user.getId()));
+            LearningPlanService planService = applicationContext.getLearningPlanService();
+            planCombo.getItems().setAll(planService.getPlansForDropdown(user.getId()));
             slots.setAll(applicationContext.getScheduleSlotRepository()
                     .findByUserIdOrderByDateAndStart(user.getId()));
         } else {
@@ -152,7 +154,7 @@ public class TimetableController {
         }
 
         final LocalDate weekStart = currentWeekStart;
-        final LocalDate weekEnd = currentWeekStart.plusDays(6);
+        final LocalDate weekEnd = currentWeekStart.plusDays(selectedPlan.getDurationDays() - 1);
         final List<ScheduleSlot> busySnapshot = snapshotBusySlotsForWeek(weekStart, weekEnd);
         final String aiPrompt = buildAiPrompt(selectedPlan, weekStart, weekEnd, busySnapshot);
 
@@ -341,7 +343,7 @@ public class TimetableController {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class AiSlotJson {
+    public static class AiSlotJson {
         @JsonProperty("date")
         String date;
         @JsonProperty("startTime")

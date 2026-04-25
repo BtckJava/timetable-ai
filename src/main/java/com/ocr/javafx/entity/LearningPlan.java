@@ -51,6 +51,7 @@ public class LearningPlan {
     private User user;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("date ASC, startTime ASC")
     private List<ScheduleSlot> slots;
 
 }

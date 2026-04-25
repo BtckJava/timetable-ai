@@ -33,4 +33,15 @@ public class UserRepository {
         session.getTransaction().commit();
         session.close();
     }
+
+    public User findById(Long id){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        String hql = "FROM User WHERE id = :id";
+        Query<User> query = session.createQuery(hql, User.class);
+        query.setParameter("id", id);
+        User user = query.uniqueResult();
+        session.close();
+        return user;
+    }
+
 }

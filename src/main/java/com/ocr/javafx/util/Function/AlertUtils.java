@@ -15,6 +15,10 @@ public class AlertUtils {
         });
     }
 
+    public static void showAlert(Alert.AlertType type, String title, String content) {
+        showAlert(type, title, null, content);
+    }
+
     public static void showSuccess(String message) {
         showAlert(Alert.AlertType.INFORMATION, "Thành công", null, message);
     }

@@ -7,6 +7,10 @@ import com.ocr.javafx.entity.LearningPlan;
 import com.ocr.javafx.entity.User;
 import com.ocr.javafx.enums.LearningPlanStatus;
 import com.ocr.javafx.repository.LearningPlanRepository;
+import com.ocr.javafx.util.HibernateUtil;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -45,16 +49,26 @@ public class LearningPlanService {
     }
 
     public LearningPlanResponse getAllPlans(Long userId) {
-        List<LearningPlan> rawPlans = repository.findByUserId(userId);
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            List<LearningPlan> rawPlans = repository.findByUserId(session, userId);
+            List<LearningPlanDTO> dtos = rawPlans.stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
 
-//        System.out.println("USER ID = " + userId);
-//        System.out.println("PLANS = " + repository.findByUserId(userId));
+            return new LearningPlanResponse(true, "Fetched successfully", dtos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new LearningPlanResponse(false, "Lỗi khi tải danh sách: " + e.getMessage());
+        }
+    }
 
-        List<LearningPlanDTO> dtos = rawPlans.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-
-        return new LearningPlanResponse(true, "Fetched successfully", dtos);
+    public List<LearningPlan> getPlansForDropdown(Long userId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return repository.findByUserId(session, userId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return java.util.Collections.emptyList();
+        }
     }
 
     private LearningPlanDTO convertToDTO(LearningPlan plan) {
@@ -96,8 +110,28 @@ public class LearningPlanService {
         );
     }
 
-    public void deletePlan(Long id) {
-        repository.deleteById(id);
+    public void deletePlanById(Long id) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            LearningPlan plan = session.get(LearningPlan.class, id);
+            if (plan != null) {
+                session.remove(plan);
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+        }
+    }
+
+    public LearningPlan getPlanDetails(Long planId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return repository.findByIdWithSlots(session, planId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public List<LearningPlan> getActivePlans(Long userId) {

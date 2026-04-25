@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="600.0" prefWidth="800.0" spacing="20.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.views.PlanDetailsController">
+    <padding>
+        <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
+    </padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="15.0">
+        <Button onAction="#handleBack" style="-fx-background-color: transparent; -fx-cursor: hand;" text="←" textFill="#1e293b">
+            <font><Font name="System Bold" size="24.0" /></font>
+        </Button>
+        <VBox>
+            <Label fx:id="lblTitle" text="Plan Title" textFill="#0f172a">
+                <font><Font name="System Bold" size="22.0" /></font>
+            </Label>
+            <Label fx:id="lblDomain" text="Domain" textFill="#64748b" />
+        </VBox>
+    </HBox>
+
+    <Separator />
+
+    <Label text="Lịch học" textFill="#0f172a">
+        <font><Font name="System Bold" size="16.0" /></font>
+    </Label>
+
+    <TableView fx:id="tableSlots" VBox.vgrow="ALWAYS" style="-fx-border-color: #e2e8f0; -fx-border-radius: 5;">
+        <columns>
+            <TableColumn fx:id="colDate" prefWidth="120.0" text="Ngày" />
+            <TableColumn fx:id="colTime" prefWidth="150.0" text="Thời gian" />
+            <TableColumn fx:id="colTopic" prefWidth="250.0" text="Chủ đề" />
+            <TableColumn fx:id="colSubTopic" prefWidth="200.0" text="Nội dung chi tiết" />
+            <TableColumn fx:id="colStatus" prefWidth="100.0" text="Trạng thái" />
+        </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
+    </TableView>
+</VBox>
