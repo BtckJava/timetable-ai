@@ -3,7 +3,7 @@
         <property name="connection.driver_class">org.postgresql.Driver</property>
         <property name="connection.url">jdbc:postgresql://localhost:5432/AiTimetable</property>
         <property name="connection.username">postgres</property>
-        <property name="connection.password">Minh@nh195</property>
+        <property name="connection.password"></property>
 
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
