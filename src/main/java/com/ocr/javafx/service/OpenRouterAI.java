@@ -16,17 +16,17 @@ public class OpenRouterAI {
     }
 
     public static String ask(String prompt) throws Exception {
-        String apiKey = "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";
+        String apiKey = resolveApiKey();
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException(
-                    "Thiếu OPENROUTER_API_KEY hoặc API_KEY trong .env / biến môi trường (xem .env.example).");
+                    "Thiếu OPENROUTER_API_KEY hoặc API_KEY trong .env / biến môi trường (xem .env).");
         }
 
         OkHttpClient client = new OkHttpClient();
 
         JSONObject bodyJson = new JSONObject();
 
-        bodyJson.put("model", "google/gemma-3n-e2b-it:free");
+        bodyJson.put("model", "inclusionai/ling-2.6-flash:free");
 
         JSONArray messages = new JSONArray();
 
