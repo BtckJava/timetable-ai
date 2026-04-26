@@ -42,6 +42,7 @@ public class LearningPlanService {
         plan.setCreatedAt(LocalDateTime.now());
         plan.setProgress(0);
         plan.setDurationDays(request.getDurationDays());
+        plan.setStatus(LearningPlanStatus.NOT_STARTED);
         repository.save(plan);
         return new LearningPlanResponse(true, "Learning Plan created successfully");
     }
@@ -134,6 +135,32 @@ public class LearningPlanService {
 
     public List<LearningPlan> getActivePlans(Long userId) {
         return repository.findByUserIdAndStatus(userId, LearningPlanStatus.IN_PROGRESS);
+    }
+
+    public int calculateAndUpdateProgress(Long planId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            long total = repository.countTotalSlots(session, planId);
+            if (total == 0) {
+                repository.updateProgressAndStatus(planId, 0, LearningPlanStatus.NOT_STARTED);
+                return 0;
+            }
+            long completed = repository.countCompletedSlots(session, planId);
+            int progress = (int) Math.round(((double) completed / total) * 100);
+
+            LearningPlanStatus status;
+            if (progress == 0) {
+                status = LearningPlanStatus.NOT_STARTED;
+            } else if (progress < 100) {
+                status = LearningPlanStatus.IN_PROGRESS;
+            } else {
+                status = LearningPlanStatus.COMPLETED;
+            }
+            repository.updateProgressAndStatus(planId, progress, status);
+            return progress;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
 }

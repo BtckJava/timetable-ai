@@ -367,6 +367,13 @@ public class TimetableController {
         try {
             applicationContext.getScheduleSlotRepository().saveAll(new ArrayList<>(slots));
             flushDeletedSlotsToDatabase();
+            java.util.Set<Long> planIdsToUpdate = slots.stream()
+                    .map(s -> s.getPlan() != null ? s.getPlan().getId() : null)
+                    .filter(java.util.Objects::nonNull)
+                    .collect(java.util.stream.Collectors.toSet());
+            for (Long planId : planIdsToUpdate) {
+                applicationContext.getLearningPlanService().calculateAndUpdateProgress(planId);
+            }
             alert(Alert.AlertType.INFORMATION, "Đã lưu", "Đã lưu " + slots.size() + " slot xuống database.");
         } catch (Exception e) {
             e.printStackTrace();
