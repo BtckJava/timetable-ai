@@ -60,12 +60,6 @@ public class LearningPlanRepository {
 
         return result != null ? result : 0;
 
-//        // *** M.O.C.K.***
-//        return switch (status) {
-//            case "COMPLETED" -> 8;
-//            case "IN_PROGRESS" -> 3;
-//            default -> 0;
-//        };
     }
 
     public long countByUserId(Long userId) {
@@ -105,4 +99,12 @@ public class LearningPlanRepository {
             return java.util.Collections.emptyList();
         }
     }
+
+    public long countTotalSlots(Session session, Long planId) {
+        String hql = "SELECT COUNT(s) FROM ScheduleSlot s WHERE s.plan.id = :planId";
+        return session.createQuery(hql, Long.class)
+                .setParameter("planId", planId)
+                .uniqueResult();
+    }
+
 }

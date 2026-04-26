@@ -2,9 +2,9 @@ package com.ocr.javafx.controller.views;
 
 import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.config.SessionManager;
-import com.ocr.javafx.controller.components.TopbarController;
 import com.ocr.javafx.controller.main.MainController;
 import com.ocr.javafx.dto.request.ProfileRequest;
+import com.ocr.javafx.dto.response.AchievementResponse;
 import com.ocr.javafx.dto.response.ProfileResponse;
 import com.ocr.javafx.service.ProfileService;
 import javafx.event.ActionEvent;
@@ -25,6 +25,15 @@ public class ProfileController {
     private Button btnEditProfile;
 
     @FXML
+    private ImageView imgAchievementHour;
+
+    @FXML
+    private ImageView imgAchievementPlan;
+
+    @FXML
+    private ImageView imgAchievementStreak;
+
+    @FXML
     private ImageView imgAva;
 
     @FXML
@@ -32,9 +41,6 @@ public class ProfileController {
 
     @FXML
     private Label lblHours;
-
-    @FXML
-    private TextField txtName;
 
     @FXML
     private Label lblPlans;
@@ -49,15 +55,16 @@ public class ProfileController {
     private Label txtMaster;
 
     @FXML
+    private TextField txtName;
+
+    @FXML
     private Label txtQuickLearner;
 
     @FXML
     private Label txtStreak;
 
     private SessionManager sessionManager;
-
     private ProfileService profileService;
-
     private String selectedAvatarPath;
 
     @Setter
@@ -73,70 +80,63 @@ public class ProfileController {
     private void loadProfile() {
         if (sessionManager.getCurrentUser() == null) return;
 
-        Long currentUserId = sessionManager.getCurrentUserId();
-        if (currentUserId == null) return;
-
-        ProfileResponse res =
-                profileService.getProfile(sessionManager.getCurrentUser().getEmail());
+        ProfileResponse res = profileService.getProfile(sessionManager.getCurrentUser().getEmail());
         if (res == null) return;
 
-        // info
         txtName.setText(res.getUsername());
         lblEmail.setText(res.getEmail());
-
-        // stats
         lblHours.setText(String.valueOf(res.getTotalHours()));
         lblPlans.setText(String.valueOf(res.getCompletedPlans()));
         lblStreak.setText(String.valueOf(res.getCurrentStreak()));
         lblSkills.setText(String.valueOf(res.getSkillsLearned()));
 
-        // avatar
-        if (res.getAvatarPath() != null) {
-            Image image = new Image("file:" + res.getAvatarPath());
-            imgAva.setImage(image);
+        if (res.getAvatarPath() != null && !res.getAvatarPath().isEmpty()) {
+            imgAva.setImage(new Image("file:" + res.getAvatarPath()));
         }
 
-        // achievements (chưa update khi user dùng app:>)
-        if (res.getAchievements() != null && !res.getAchievements().isEmpty()) {
-            if (res.getAchievements().size() > 0)
-                txtMaster.setText(res.getAchievements().get(0).getTitle());
-
-            if (res.getAchievements().size() > 1)
-                txtQuickLearner.setText(res.getAchievements().get(1).getTitle());
-
-            if (res.getAchievements().size() > 2)
-                txtStreak.setText(res.getAchievements().get(2).getTitle());
+        if (res.getAchievements() != null && res.getAchievements().size() >= 3) {
+            renderAchievementUI(res.getAchievements().get(0), txtQuickLearner, imgAchievementPlan);
+            renderAchievementUI(res.getAchievements().get(1), txtStreak, imgAchievementStreak);
+            renderAchievementUI(res.getAchievements().get(2), txtMaster, imgAchievementHour);
         }
+    }
+
+    private void renderAchievementUI(AchievementResponse data, Label descLabel, ImageView imgView) {
+        descLabel.setText(data.getDescription());
+        String iconFileName = data.getIconType() + "_lv" + data.getLevel() + ".png";
+        String resourcePath = "/com/ocr/javafx/image/" + iconFileName;
+
+        try {
+            Image iconImage = new Image(getClass().getResourceAsStream(resourcePath));
+            imgView.setImage(iconImage);
+        } catch (Exception e) {
+            System.err.println("Error: Icon not found at " + resourcePath);
+        }
+
+        imgView.setOpacity(data.isUnlocked() ? 1.0 : 0.4);
     }
 
     @FXML
     void handleEditProfile(ActionEvent event) {
-        // chọn avatar
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose Avatar");
 
         File file = fileChooser.showOpenDialog(null);
         if (file != null) {
             selectedAvatarPath = file.getAbsolutePath();
-
-            Image image = new Image("file:" + selectedAvatarPath);
-            imgAva.setImage(image);
+            imgAva.setImage(new Image("file:" + selectedAvatarPath));
         }
 
-        // update profile
         ProfileRequest req = new ProfileRequest();
         req.setEmail(sessionManager.getCurrentUser().getEmail());
         req.setUsername(txtName.getText());
         req.setAvatarPath(selectedAvatarPath);
 
-        boolean success = profileService.updateProfile(req);
-
-        if (success) {
+        if (profileService.updateProfile(req)) {
             loadProfile();
-            mainController.getTopbarController().setUser(sessionManager.getCurrentUser());
-            System.out.println("Update success");
-        } else {
-            System.out.println("Update failed");
+            if (mainController != null && mainController.getTopbarController() != null) {
+                mainController.getTopbarController().setUser(sessionManager.getCurrentUser());
+            }
         }
     }
 }

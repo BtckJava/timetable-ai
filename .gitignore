@@ -17,7 +17,7 @@ target/
 .classpath
 .factorypath
 .project
-.settings
+.settings3
 .springBeans
 .sts4-cache
 .env
@@ -39,4 +39,14 @@ build/
 .DS_Store
 
 ### dotenv ####
+.env
+
+# Maven build
+target/
+
+# IDE - IntelliJ
+.idea/
+*.iml
+
+# Security - Quan trọng nhất!
 .env

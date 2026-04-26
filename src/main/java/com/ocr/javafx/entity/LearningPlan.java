@@ -35,6 +35,8 @@ public class LearningPlan {
     private String intensity;
 
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "status", columnDefinition = "learning_plan_status")
     private LearningPlanStatus status;
 
     @ElementCollection
@@ -49,7 +51,6 @@ public class LearningPlan {
     private User user;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @OrderBy("date ASC, startTime ASC")
     private List<ScheduleSlot> slots;
 
 }

@@ -17,11 +17,9 @@ public class ScheduleSlotRepository  {
             transaction = session.beginTransaction();
 
             for (int i = 0; i < slots.size(); i++) {
-                // ĐÃ SỬA: Dùng merge() thay vì save()
-                // - Nếu slot chưa có ID (mới tạo) -> Insert
-                // - Nếu slot đã có ID (kéo thả đổi giờ) -> Update
-                session.merge(slots.get(i));
-
+                // Lưu ý: Nếu bạn dùng Hibernate 6+ (do thấy bạn import jakarta.*),
+                // có thể bạn sẽ cần đổi session.save() thành session.persist() nếu IDE báo lỗi deprecated
+                session.save(slots.get(i));
                 if (i % 20 == 0) {
                     session.flush();
                     session.clear();
@@ -33,15 +31,17 @@ public class ScheduleSlotRepository  {
                 transaction.rollback();
             }
             e.printStackTrace();
-            throw e; // Nên throw lại để UI còn biết mà báo lỗi
         }
     }
 
     public List<ScheduleSlot> findByUserIdOrderByDateAndStart(Long userId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
             String hql = "FROM ScheduleSlot s WHERE s.user.id = :userId ORDER BY s.date ASC, s.startTime ASC";
+
             Query<ScheduleSlot> query = session.createQuery(hql, ScheduleSlot.class);
             query.setParameter("userId", userId);
+
             return query.getResultList();
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,8 +53,7 @@ public class ScheduleSlotRepository  {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            // ĐÃ SỬA: Dùng merge() thay vì save()
-            session.merge(slot);
+            session.save(slot);
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -65,18 +64,14 @@ public class ScheduleSlotRepository  {
     }
 
     public void delete(ScheduleSlot slot) {
-        if (slot == null || slot.getId() == null) {
-            return;
-        }
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            ScheduleSlot managed = session.get(ScheduleSlot.class, slot.getId());
-            if (managed != null) {
-                // Với Hibernate 6+, dùng remove() thay vì delete() nếu IDE báo deprecated,
-                // nhưng delete() vẫn chạy tốt.
-                session.remove(managed);
-            }
+
+            // Sử dụng merge để "đính" lại object vào session trước khi xóa
+            // Nếu bạn dùng Hibernate 6, có thể thay session.delete bằng session.remove
+            session.delete(session.contains(slot) ? slot : session.merge(slot));
+
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -86,7 +81,7 @@ public class ScheduleSlotRepository  {
         }
     }
 
-        public List<ScheduleSlot> findByUserId(Long userId) {
+    public List<ScheduleSlot> findByUserId(Long userId) {
         Session session = HibernateUtil.getSessionFactory().openSession();
 
         String hql = "FROM ScheduleSlot ls WHERE ls.user.id = :userId ORDER BY (ls.endTime - ls.startTime) DESC";
@@ -98,5 +93,41 @@ public class ScheduleSlotRepository  {
 
         session.close();
         return result;
+    }
+    public double sumTotalHoursByUserId(Long userId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // Lấy tất cả các slot của user thông qua LearningPlan
+            String hql = "SELECT s.startTime, s.endTime FROM ScheduleSlot s WHERE s.learningPlan.user.id = :userId";
+            List<Object[]> results = session.createQuery(hql).setParameter("userId", userId).getResultList();
+
+            double totalMinutes = 0;
+            for (Object[] row : results) {
+                java.time.LocalTime start = (java.time.LocalTime) row[0];
+                java.time.LocalTime end = (java.time.LocalTime) row[1];
+                if (start != null && end != null) {
+                    totalMinutes += java.time.Duration.between(start, end).toMinutes();
+                }
+            }
+            return totalMinutes / 60.0; // Đổi ra giờ
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
+        }
+    }
+
+    public List<java.time.LocalDate> findDistinctDatesByUserId(Long userId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // Lấy các ngày không trùng lặp, sắp xếp từ mới nhất đến cũ nhất
+            String hql = "SELECT DISTINCT s.date FROM ScheduleSlot s " +
+                    "WHERE s.learningPlan.user.id = :userId " +
+                    "ORDER BY s.date DESC";
+
+            return session.createQuery(hql, java.time.LocalDate.class)
+                    .setParameter("userId", userId)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return java.util.Collections.emptyList();
+        }
     }
 }
