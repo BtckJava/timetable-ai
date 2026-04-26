@@ -27,6 +27,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ProgressIndicator;
@@ -57,6 +58,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.awt.Desktop;
+import java.net.URI;
 
 public class TimetableController {
 
@@ -265,9 +268,10 @@ public class TimetableController {
                 + "Yêu cầu đầu ra:\n"
                 + "- Chỉ trả về MỘT mảng JSON thuần (không markdown, không giải thích, không code fence).\n"
                 + "- Mỗi phần tử là object: {\"date\":\"yyyy-MM-dd\",\"startTime\":\"HH:mm\",\"endTime\":\"HH:mm\","
-                + "\"topic\":\"Tên bài học\",\"subTopic\":\"(tuỳ chọn)\"}\n"
+                + "\"topic\":\"Tên bài học\",\"subTopic\":\"(tuỳ chọn)\",\"resourceUrl\":\"https://...\"}\n"
                 + "- Giờ trong ngày hợp lý (ví dụ 08:00–10:00), không chồng lấn trong chính mảng bạn trả về.\n"
-                + "- Chỉ dùng ngày nằm trong khoảng tuần đã nêu.\n";
+                + "- Chỉ dùng ngày nằm trong khoảng tuần đã nêu.\n"
+                + "- resourceUrl phải là nguồn học uy tín và KHÔNG được là YouTube (không youtube.com, không youtu.be).\n";
     }
 
     /**
@@ -325,12 +329,22 @@ public class TimetableController {
                 s.setEndTime(en);
                 s.setTopic(row.topic.trim());
                 s.setSubTopic(row.subTopic != null && !row.subTopic.isBlank() ? row.subTopic.trim() : "");
+                if (row.resourceUrl != null && !row.resourceUrl.isBlank() && !isYouTubeUrl(row.resourceUrl)) {
+                    s.setResourceUrl(row.resourceUrl.trim());
+                } else {
+                    s.setResourceUrl("");
+                }
                 out.add(s);
             } catch (Exception ignored) {
                 // bỏ qua dòng không parse được
             }
         }
         return out;
+    }
+
+    private static boolean isYouTubeUrl(String url) {
+        String u = url == null ? "" : url.toLowerCase();
+        return u.contains("youtube.com") || u.contains("youtu.be");
     }
 
     private static LocalTime parseTimeFlexible(String s) {
@@ -357,6 +371,8 @@ public class TimetableController {
         String topic;
         @JsonProperty("subTopic")
         String subTopic;
+        @JsonProperty("resourceUrl")
+        String resourceUrl;
     }
 
     @FXML
@@ -738,6 +754,12 @@ public class TimetableController {
         CheckBox completedCheck = new CheckBox("Đã hoàn thành");
         completedCheck.setSelected(slot.isCompleted());
 
+        String resourceUrl = slot.getResourceUrl() != null ? slot.getResourceUrl().trim() : "";
+        Hyperlink resourceLink = new Hyperlink(resourceUrl.isBlank() ? "(Chưa có)" : resourceUrl);
+        resourceLink.setDisable(resourceUrl.isBlank());
+        resourceLink.setWrapText(true);
+        resourceLink.setOnAction(ev -> openExternalUrl(resourceUrl));
+
         VBox content = new VBox(
                 8,
                 new Label("Date: " + (slot.getDate() != null ? slot.getDate() : "")),
@@ -745,6 +767,8 @@ public class TimetableController {
                 new Label("End Time: " + (slot.getEndTime() != null ? slot.getEndTime() : "")),
                 new Label("Topic: " + (slot.getTopic() != null ? slot.getTopic() : "")),
                 new Label("SubTopic: " + (slot.getSubTopic() != null ? slot.getSubTopic() : "")),
+                new Label("Resource URL:"),
+                resourceLink,
                 new Label("LearningPlan: " + planName),
                 completedCheck
         );
@@ -755,6 +779,25 @@ public class TimetableController {
         if (result.isPresent() && result.get() == ButtonType.OK) {
             slot.setCompleted(completedCheck.isSelected());
             renderTimetable();
+        }
+    }
+
+    private void openExternalUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return;
+        }
+        try {
+            if (!Desktop.isDesktopSupported()) {
+                throw new IllegalStateException("Desktop API không được hỗ trợ trên hệ thống này.");
+            }
+            Desktop desktop = Desktop.getDesktop();
+            if (!desktop.isSupported(Desktop.Action.BROWSE)) {
+                throw new IllegalStateException("Không hỗ trợ mở trình duyệt mặc định.");
+            }
+            desktop.browse(URI.create(url));
+        } catch (Exception e) {
+            alert(Alert.AlertType.ERROR, "Mở liên kết thất bại",
+                    "Không thể mở resourceUrl trên trình duyệt: " + e.getMessage());
         }
     }
 
