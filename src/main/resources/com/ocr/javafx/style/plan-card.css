@@ -1,78 +1,97 @@
-
 .plan-card-root {
     -fx-background-color: white;
     -fx-background-radius: 12;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 2);
+    -fx-border-color: #E5E7EB;
+    -fx-border-radius: 12;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.04), 15, 0, 0, 4);
 }
 
 .plan-title {
-    -fx-text-fill: #1e293b;
+    -fx-text-fill: #111827;
     -fx-font-weight: bold;
     -fx-font-size: 18px;
 }
 
-
 .btn-delete {
     -fx-background-color: transparent;
-    -fx-padding: 5;
-    -fx-background-radius: 50;
+    -fx-padding: 6;
+    -fx-background-radius: 6;
     -fx-cursor: hand;
+    -fx-transition: all 0.2s;
 }
 
 .btn-delete:hover {
-    -fx-background-color: #ffebee;
+    -fx-background-color: #FEE2E2;
 }
 
 .btn-delete:pressed {
-    -fx-scale-x: 0.9;
-    -fx-scale-y: 0.9;
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
 }
 
 .text-muted {
-    -fx-text-fill: #64748b;
+    -fx-text-fill: #6B7280;
 }
 
 .progress-percent {
-    -fx-text-fill: #2563eb;
+    -fx-text-fill: #4F46E5;
     -fx-font-weight: bold;
 }
 
 .plan-progress-bar {
-    -fx-accent: #2563eb;
+    -fx-accent: #4F46E5;
+    -fx-control-inner-background: #F3F4F6;
 }
 
-.time-box {
-    -fx-background-color: #f8fafc;
-    -fx-padding: 10;
+.plan-progress-bar .track {
+    -fx-background-color: #F3F4F6;
     -fx-background-radius: 8;
 }
 
+.plan-progress-bar .bar {
+    -fx-background-radius: 8;
+}
+
+.time-box {
+    -fx-background-color: #F9FAFB;
+    -fx-padding: 16;
+    -fx-background-radius: 8;
+    -fx-border-color: #F3F4F6;
+    -fx-border-radius: 8;
+}
+
 .time-label-title {
-    -fx-text-fill: #94a3b8;
+    -fx-text-fill: #6B7280;
     -fx-font-size: 11px;
+    -fx-font-weight: bold;
 }
 
 .time-label-value {
-    -fx-text-fill: #0f172a;
+    -fx-text-fill: #111827;
     -fx-font-weight: bold;
     -fx-font-size: 13px;
 }
 
 .intensity-label {
-    -fx-padding: 4 10;
+    -fx-padding: 4 12;
     -fx-background-radius: 12;
     -fx-font-weight: bold;
     -fx-font-size: 12px;
+    -fx-background-color: #EEF2FF;
+    -fx-text-fill: #4F46E5;
 }
 
 .btn-ai {
-    -fx-background-color: #10b981;
+    -fx-background-color: #4F46E5;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-radius: 6;
     -fx-cursor: hand;
-    -fx-padding: 8 12 8 12;
+    -fx-padding: 8 16;
 }
+
 .btn-ai:hover {
-    -fx-background-color: #059669;
+    -fx-background-color: #4338CA;
+    -fx-effect: dropshadow(three-pass-box, rgba(79, 70, 229, 0.3), 10, 0, 0, 4);
 }

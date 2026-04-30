@@ -1,16 +1,21 @@
 package com.ocr.javafx.controller.components;
 
-import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.dto.LearningPlanDTO;
-import com.ocr.javafx.repository.LearningPlanRepository;
 import com.ocr.javafx.service.LearningPlanService;
 import com.ocr.javafx.util.Function.AlertUtils;
+import javafx.animation.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 import javafx.event.ActionEvent;
 public class PlanCardController {
+    @FXML
+    private VBox rootVBox;
     @FXML
     private Label lblTitle;
     @FXML
@@ -47,9 +52,11 @@ public class PlanCardController {
         lblRemaining.setText(plan.getRemainingDays() + " days");
         lblStarted.setText(plan.getStartedDate());
 
-        int progress = plan.getProgress() != null ? plan.getProgress() : 0;
-        lblProgressPercent.setText(progress + "%");
-        progressBar.setProgress(progress / 100.0);
+        int targetPercent = plan.getProgress() != null ? plan.getProgress() : 0;
+        double targetProgress = targetPercent / 100.0;
+
+        progressBar.setProgress(0);
+        lblProgressPercent.setText("0%");
 
         lblIntensity.getStyleClass().removeAll("intensity-high", "intensity-medium", "intensity-low");
 
@@ -75,12 +82,42 @@ public class PlanCardController {
             waitingLabel.setStyle("-fx-text-fill: #9CA3AF; -fx-font-style: italic; -fx-font-size: 12px;");
             flowPaneSkills.getChildren().add(waitingLabel);
         }
-
+        playEntranceAnimation(targetProgress, targetPercent);
         btnViewDetails.setOnAction(e -> {
             if (onViewDetails != null) {
                 onViewDetails.run();
             }
         });
+    }
+
+    private void playEntranceAnimation(double targetProgress, int targetPercent) {
+        ScaleTransition scale = new ScaleTransition(Duration.millis(300), rootVBox);
+        scale.setFromX(0.8);
+        scale.setFromY(0.8);
+        scale.setToX(1.0);
+        scale.setToY(1.0);
+
+        FadeTransition fade = new FadeTransition(Duration.millis(300), rootVBox);
+        fade.setFromValue(0.0);
+        fade.setToValue(1.0);
+
+        Timeline progressTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(progressBar.progressProperty(), 0)),
+                new KeyFrame(Duration.millis(1000), new KeyValue(progressBar.progressProperty(), targetProgress, Interpolator.EASE_BOTH))
+        );
+        
+        DoubleProperty progressDouble = new SimpleDoubleProperty(0);
+        progressDouble.addListener((obs, oldVal, newVal) -> {
+            lblProgressPercent.setText(String.format("%d%%", (int) (newVal.doubleValue() * 100)));
+        });
+
+        Timeline labelTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(progressDouble, 0)),
+                new KeyFrame(Duration.millis(1000), new KeyValue(progressDouble, targetProgress, Interpolator.EASE_BOTH))
+        );
+
+        ParallelTransition parallel = new ParallelTransition(scale, fade, progressTimeline, labelTimeline);
+        parallel.play();
     }
 
     @FXML

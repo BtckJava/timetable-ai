@@ -3,31 +3,40 @@
 }
 
 .section-label {
-    -fx-text-fill: #64748B;
-    -fx-font-size: 11px;
+    -fx-text-fill: #6B7280;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
 
 .custom-input {
-    -fx-background-color: #F1F5F9;
-    -fx-background-radius: 8;
-    -fx-padding: 10;
-    -fx-text-fill: #1e293b;
-    -fx-prompt-text-fill: #94a3b8;
+    -fx-background-color: #F9FAFB;
+    -fx-border-color: #E5E7EB;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 12;
+    -fx-text-fill: #111827;
+    -fx-prompt-text-fill: #9CA3AF;
+}
+
+.custom-input:focused {
+    -fx-border-color: #4F46E5;
+    -fx-background-color: white;
 }
 
 .custom-scroll-pane {
     -fx-background-color: transparent;
     -fx-background: white;
 }
+
 .custom-scroll-pane .viewport {
     -fx-background-color: transparent;
 }
 
 .skill-tag {
-    -fx-background-color: #E0E7FF;
-    -fx-text-fill: #4338CA;
-    -fx-padding: 5 12 5 12;
-    -fx-background-radius: 15;
+    -fx-background-color: #EEF2FF;
+    -fx-text-fill: #4F46E5;
+    -fx-padding: 6 14 6 14;
+    -fx-background-radius: 16;
     -fx-font-size: 12px;
+    -fx-font-weight: bold;
 }

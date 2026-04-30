@@ -1,0 +1,58 @@
+.notion-table {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.notion-table .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.notion-table .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 40px;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #E2E8F0;
+    -fx-padding: 0;
+}
+
+.notion-table .column-header .label {
+    -fx-text-fill: #94A3B8;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+    -fx-max-width: 1.7976931348623157E308;
+}
+
+.notion-table .cell {
+    -fx-border-width: 0;
+    -fx-alignment: CENTER;
+    -fx-padding: 0 10;
+    -fx-text-fill: #1E293B;
+}
+
+.notion-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #F1F5F9;
+    -fx-cell-size: 55px;
+}
+
+.notion-table .table-row-cell:hover {
+    -fx-background-color: #F8FAFC;
+}
+
+.badge {
+    -fx-padding: 4 12;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.status-done {
+    -fx-background-color: #DCFCE7;
+    -fx-text-fill: #15803D;
+}
+
+.status-pending {
+    -fx-background-color: #F1F5F9;
+    -fx-text-fill: #475569;
+}

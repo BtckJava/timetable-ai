@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
@@ -61,6 +62,30 @@ public class PlanDetailsController {
         colStatus.setCellValueFactory(cellData -> {
             boolean isDone = Boolean.TRUE.equals(cellData.getValue().isCompleted());
             return new SimpleStringProperty(isDone ? "Đã xong" : "Chưa học");
+        });
+
+        colStatus.setCellFactory(column -> new TableCell<ScheduleSlot, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    Label badgeLabel = new Label(item);
+                    badgeLabel.getStyleClass().removeAll("badge", "status-done", "status-pending");
+                    badgeLabel.getStyleClass().add("badge");
+                    if (item.equals("Đã xong")) {
+                        badgeLabel.getStyleClass().add("status-done");
+                    } else {
+                        badgeLabel.getStyleClass().add("status-pending");
+                    }
+                    this.setAlignment(javafx.geometry.Pos.CENTER);
+                    setGraphic(badgeLabel);
+                    setText(null);
+                }
+            }
         });
     }
 
