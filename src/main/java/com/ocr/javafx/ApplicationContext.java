@@ -20,5 +20,5 @@ public class ApplicationContext {
     private final ScheduleSlotService scheduleSlotService = new ScheduleSlotService(scheduleSlotRepository);
     private final LearningPlanService learningPlanService = new LearningPlanService(learningPlanRepository, scheduleSlotService);
     private final LearningChartService learningChartService = new LearningChartService(scheduleSlotService);
-    private final ProfileService profileService = new ProfileService(userRepository, sessionManager);
+    private final ProfileService profileService = new ProfileService(userRepository, learningPlanRepository, scheduleSlotRepository, sessionManager);
 }
