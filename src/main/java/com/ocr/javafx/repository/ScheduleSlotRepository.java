@@ -97,7 +97,8 @@ public class ScheduleSlotRepository  {
     public double sumTotalHoursByUserId(Long userId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // Lấy tất cả các slot của user thông qua LearningPlan
-            String hql = "SELECT s.startTime, s.endTime FROM ScheduleSlot s WHERE s.learningPlan.user.id = :userId";
+            String hql = "SELECT s.startTime, s.endTime FROM ScheduleSlot s " +
+                    "WHERE s.user.id = :userId AND s.completed = true";
             List<Object[]> results = session.createQuery(hql).setParameter("userId", userId).getResultList();
 
             double totalMinutes = 0;
@@ -117,9 +118,8 @@ public class ScheduleSlotRepository  {
 
     public List<java.time.LocalDate> findDistinctDatesByUserId(Long userId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // Lấy các ngày không trùng lặp, sắp xếp từ mới nhất đến cũ nhất
             String hql = "SELECT DISTINCT s.date FROM ScheduleSlot s " +
-                    "WHERE s.learningPlan.user.id = :userId " +
+                    "WHERE s.user.id = :userId AND s.completed = true " +
                     "ORDER BY s.date DESC";
 
             return session.createQuery(hql, java.time.LocalDate.class)

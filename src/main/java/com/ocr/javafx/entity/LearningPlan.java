@@ -5,8 +5,7 @@ import com.ocr.javafx.enums.LearningPlanStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,8 +34,7 @@ public class LearningPlan {
     private String intensity;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(name = "status", columnDefinition = "learning_plan_status")
+    @Column(name = "status")
     private LearningPlanStatus status;
 
     @ElementCollection
