@@ -4,6 +4,7 @@ import com.ocr.javafx.ApplicationContext;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import lombok.Setter;
 
@@ -53,8 +54,8 @@ public class PiechartController {
         piechart.setClockwise(true);
         piechart.setStartAngle(90);
 
-        piechart.setMinSize(300, 300);
-        piechart.setPrefSize(300, 300);
-        piechart.setMaxSize(330, 330);
+        piechart.setMinSize(360, 360);
+        piechart.setPrefSize(400, 400);
+        piechart.setMaxSize(400, 400);
     }
 }

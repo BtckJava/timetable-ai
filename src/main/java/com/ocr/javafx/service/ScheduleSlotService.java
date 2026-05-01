@@ -44,7 +44,7 @@ public class ScheduleSlotService {
         for (ScheduleSlot s : sessions) {
 
             long sessionDuration = Duration.between(s.getStartTime(), s.getEndTime()).toMinutes();
-            String name = s.getPlan().getTitle();
+            String name = truncate(s.getPlan().getTitle(), 15);
 
             double hours = sessionDuration / 60.0;
 
@@ -52,5 +52,12 @@ public class ScheduleSlotService {
         }
 
         return result;
+    }
+
+    private String truncate(String text, int maxLength) {
+        if (text == null) return "";
+        return text.length() > maxLength
+                ? text.substring(0, maxLength) + "..."
+                : text;
     }
 }
