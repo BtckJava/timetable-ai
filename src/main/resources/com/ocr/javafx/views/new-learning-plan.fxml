@@ -1,73 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefWidth="400.0" spacing="15.0" styleClass="root-pane" stylesheets="@../style/learning-plan.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.views.NewLearningPlanController">
-
+<VBox prefWidth="450.0" spacing="24.0" styleClass="root-pane" stylesheets="@../style/learning-plan.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.views.NewLearningPlanController">
 
     <padding>
-        <Insets bottom="25.0" left="25.0" right="25.0" top="15.0" />
+        <Insets bottom="32.0" left="32.0" right="32.0" top="24.0" />
     </padding>
 
     <HBox alignment="CENTER_LEFT" spacing="15.0">
-        <Button fx:id="btnBack" onAction="#handleBack" style="-fx-background-color: transparent; -fx-cursor: hand;" text="←" textFill="#1e293b">
-            <font><Font name="System Bold" size="20.0" /></font>
+        <Button fx:id="btnBack" onAction="#handleBack" style="-fx-background-color: transparent; -fx-cursor: hand;" text="←" textFill="#6B7280">
+            <font><Font name="System Bold" size="24.0" /></font>
         </Button>
-        <Label text="New Learning Plan" textFill="#0f172a">
-            <font><Font name="System Bold" size="18.0" /></font>
+        <Label text="New Learning Plan" textFill="#111827">
+            <font><Font name="System Bold" size="20.0" /></font>
         </Label>
         <Region HBox.hgrow="ALWAYS" />
-        <Button fx:id="btnCreatePlan" onAction="#handleCreatePlan" style="-fx-background-color: transparent; -fx-text-fill: #2563EB; -fx-cursor: hand;" text="Create Plan">
+        <Button fx:id="btnCreatePlan" onAction="#handleCreatePlan" style="-fx-background-color: #4F46E5; -fx-text-fill: white; -fx-cursor: hand; -fx-background-radius: 6; -fx-padding: 8 16; -fx-effect: dropshadow(three-pass-box, rgba(79,70,229,0.3), 10, 0, 0, 4);" text="Create Plan">
             <font><Font name="System Bold" size="14.0" /></font>
         </Button>
     </HBox>
 
     <ScrollPane fitToWidth="true" styleClass="custom-scroll-pane" vbarPolicy="NEVER">
-        <VBox spacing="18.0">
-            <VBox spacing="8.0">
+        <VBox spacing="24.0">
+            <VBox spacing="10.0">
                 <Label styleClass="section-label" text="PLAN TITLE" />
                 <TextField fx:id="txtTitle" promptText="e.g., Mastering Spring Boot" styleClass="custom-input" />
             </VBox>
 
-            <VBox spacing="8.0">
+            <VBox spacing="10.0">
                 <Label styleClass="section-label" text="DOMAIN" />
                 <TextField fx:id="txtDomain" promptText="e.g., Software Engineering" styleClass="custom-input" />
             </VBox>
 
-            <VBox spacing="8.0">
+            <VBox spacing="10.0">
                 <Label styleClass="section-label" text="OVERALL GOAL" />
-                <TextArea fx:id="txtGoal" prefHeight="100.0" promptText="Describe what you want to achieve..." styleClass="custom-input" wrapText="true" />
+                <TextArea fx:id="txtGoal" prefHeight="120.0" promptText="Describe what you want to achieve..." styleClass="custom-input" wrapText="true" />
             </VBox>
 
-            <HBox spacing="20.0">
-                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+            <HBox spacing="24.0">
+                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                     <Label styleClass="section-label" text="DURATION (DAYS)" />
-                    <HBox alignment="CENTER" spacing="15.0" styleClass="custom-input">
-                        <Button onAction="#decrementDays" style="-fx-background-color: transparent; -fx-cursor: hand;" text="−" />
-                        <Label fx:id="lblDuration" style="-fx-font-weight: bold;" text="10" />
-                        <Button onAction="#incrementDays" style="-fx-background-color: transparent; -fx-cursor: hand;" text="+" />
+                    <HBox alignment="CENTER" spacing="20.0" styleClass="custom-input">
+                        <Button onAction="#decrementDays" style="-fx-background-color: #E5E7EB; -fx-background-radius: 4; -fx-cursor: hand;" text="−" />
+                        <Label fx:id="lblDuration" style="-fx-font-weight: bold; -fx-font-size: 14px;" text="10" />
+                        <Button onAction="#incrementDays" style="-fx-background-color: #E5E7EB; -fx-background-radius: 4; -fx-cursor: hand;" text="+" />
                     </HBox>
                 </VBox>
-                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                     <Label styleClass="section-label" text="INTENSITY" />
                     <ComboBox fx:id="comboIntensity" maxWidth="1.7976931348623157E308" styleClass="custom-input" />
                 </VBox>
             </HBox>
 
-            <VBox spacing="8.0">
-                <HBox spacing="10.0" />
-                <FlowPane fx:id="flowPaneSkills" hgap="8.0" vgap="8.0" />
+            <VBox spacing="10.0">
+                <FlowPane fx:id="flowPaneSkills" hgap="10.0" vgap="10.0" />
             </VBox>
         </VBox>
     </ScrollPane>
