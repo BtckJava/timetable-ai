@@ -158,9 +158,19 @@ public class TimetableController {
                     "Vui lòng chọn một Learning Plan trước khi tạo lịch bằng AI.");
             return;
         }
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Xác nhận ghi đè lịch");
+        confirm.setHeaderText("Ghi đè lịch hiện tại của plan trong tuần");
+        confirm.setContentText(
+                "Hệ thống sẽ xóa toàn bộ lịch học cũ của Plan này trong tuần hiện tại để ghi đè lịch mới từ AI. "
+                        + "Bạn có chắc chắn muốn tiếp tục?");
+        Optional<ButtonType> decision = confirm.showAndWait();
+        if (decision.isEmpty() || decision.get() != ButtonType.OK) {
+            return;
+        }
 
         final LocalDate weekStart = currentWeekStart;
-        final LocalDate weekEnd = currentWeekStart.plusDays(selectedPlan.getDurationDays() - 1);
+        final LocalDate weekEnd = currentWeekStart.plusDays(6);
         final List<ScheduleSlot> busySnapshot = snapshotBusySlotsForWeek(weekStart, weekEnd);
         final String aiPrompt = buildAiPrompt(selectedPlan, weekStart, weekEnd, busySnapshot);
 
@@ -188,18 +198,27 @@ public class TimetableController {
                     alert(Alert.AlertType.INFORMATION, "AI", "AI không trả về slot nào trong phản hồi.");
                     return;
                 }
+                Long selectedPlanId = planRef.getId();
+                List<ScheduleSlot> oldPlanSlotsInWeek = slots.stream()
+                        .filter(s -> isSamePlan(s, planRef, selectedPlanId))
+                        .filter(s -> s.getDate() != null
+                                && !s.getDate().isBefore(weekStart)
+                                && !s.getDate().isAfter(weekEnd))
+                        .collect(Collectors.toList());
+
+                for (ScheduleSlot old : oldPlanSlotsInWeek) {
+                    markDeletedIfPersisted(old);
+                }
+                slots.removeAll(oldPlanSlotsInWeek);
+
                 List<ScheduleSlot> toAdd = new ArrayList<>();
                 for (ScheduleSlot s : created) {
-                    if (!overlapsAnyExisting(s, Collections.emptyList(), -1)) {
-                        toAdd.add(s);
+                    if (!isSamePlan(s, planRef, selectedPlanId)) {
+                        s.setPlan(planRef);
                     }
+                    toAdd.add(s);
                 }
-                if (toAdd.isEmpty()) {
-                    alert(Alert.AlertType.INFORMATION, "AI",
-                            "Các slot AI trả về đều trùng với lịch hiện có; không thêm slot mới.");
-                } else {
-                    slots.addAll(toAdd);
-                }
+                slots.addAll(toAdd);
             } finally {
                 setBusy(false);
                 renderTimetable();
@@ -226,6 +245,28 @@ public class TimetableController {
         Thread t = new Thread(task, "timetable-openrouter-ai");
         t.setDaemon(true);
         t.start();
+    }
+
+    private static boolean isSamePlan(ScheduleSlot slot, LearningPlan selectedPlan, Long selectedPlanId) {
+        if (slot == null || slot.getPlan() == null) {
+            return false;
+        }
+        Long planId = slot.getPlan().getId();
+        if (selectedPlanId == null || planId == null) {
+            return slot.getPlan() == selectedPlan;
+        }
+        return Objects.equals(planId, selectedPlanId);
+    }
+
+    private void markDeletedIfPersisted(ScheduleSlot slot) {
+        if (slot == null || slot.getId() == null) {
+            return;
+        }
+        boolean exists = deletedSlots.stream()
+                .anyMatch(s -> s.getId() != null && Objects.equals(s.getId(), slot.getId()));
+        if (!exists) {
+            deletedSlots.add(slot);
+        }
     }
 
     private static String planDisplayName(LearningPlan plan) {

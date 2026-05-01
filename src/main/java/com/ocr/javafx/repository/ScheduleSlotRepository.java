@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,12 +18,18 @@ public class ScheduleSlotRepository  {
             transaction = session.beginTransaction();
 
             for (int i = 0; i < slots.size(); i++) {
-                // ĐÃ SỬA: Dùng merge() thay vì save()
-                // - Nếu slot chưa có ID (mới tạo) -> Insert
-                // - Nếu slot đã có ID (kéo thả đổi giờ) -> Update
-                session.merge(slots.get(i));
+                ScheduleSlot slot = slots.get(i);
+                if (slot.getId() == null) {
+                    // Mới tạo: persist để id được gán trực tiếp vào chính object hiện tại.
+                    session.persist(slot);
+                } else {
+                    // Đã có id: cập nhật.
+                    ScheduleSlot managed = (ScheduleSlot) session.merge(slot);
+                    // Đồng bộ lại id đề phòng object cũ bị detach/khác instance.
+                    slot.setId(managed.getId());
+                }
 
-                if (i % 20 == 0) {
+                if ((i + 1) % 20 == 0) {
                     session.flush();
                     session.clear();
                 }
@@ -53,8 +60,12 @@ public class ScheduleSlotRepository  {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            // ĐÃ SỬA: Dùng merge() thay vì save()
-            session.merge(slot);
+            if (slot.getId() == null) {
+                session.persist(slot);
+            } else {
+                ScheduleSlot managed = (ScheduleSlot) session.merge(slot);
+                slot.setId(managed.getId());
+            }
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -83,6 +94,30 @@ public class ScheduleSlotRepository  {
                 transaction.rollback();
             }
             e.printStackTrace();
+        }
+    }
+
+    public int deleteByPlanIdAndWeek(Long planId, LocalDate start, LocalDate end) {
+        if (planId == null || start == null || end == null) {
+            return 0;
+        }
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            String hql = "delete from ScheduleSlot s where s.plan.id = :planId and s.date between :start and :end";
+            int affected = session.createMutationQuery(hql)
+                    .setParameter("planId", planId)
+                    .setParameter("start", start)
+                    .setParameter("end", end)
+                    .executeUpdate();
+            transaction.commit();
+            return affected;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return 0;
         }
     }
 
