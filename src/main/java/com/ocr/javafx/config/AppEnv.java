@@ -36,7 +36,7 @@ public final class AppEnv {
         if (!isPresent(v)) {
             throw new IllegalStateException(
                     "Thiếu cấu hình: " + key
-                            + ". Đặt trong file .env (xem .env.example) hoặc biến môi trường / -D" + key + "=");
+                            + ". Đặt trong file .env (xem .env) hoặc biến môi trường / -D" + key + "=");
         }
         return v;
     }
