@@ -407,6 +407,12 @@ public class TimetableController {
             alert(Alert.AlertType.WARNING, "Đăng nhập", "Cần đăng nhập.");
             return;
         }
+        LearningPlan selectedPlan = planCombo.getSelectionModel().getSelectedItem();
+        if (selectedPlan == null) {
+            alert(Alert.AlertType.WARNING, "Thiếu Learning Plan",
+                    "Vui lòng chọn Learning Plan trước khi thêm ScheduleSlot thủ công.");
+            return;
+        }
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Thêm slot thủ công");
@@ -415,23 +421,34 @@ public class TimetableController {
         DatePicker datePicker = new DatePicker(LocalDate.now());
         TextField startField = new TextField("9:00");
         TextField endField = new TextField("10:30");
-        TextField topicField = new TextField();
+        ComboBox<String> topicCombo = new ComboBox<>();
+        topicCombo.setEditable(true);
+        topicCombo.setPromptText("Chọn/nhập chủ đề theo plan");
+        if (selectedPlan.getSkills() != null && !selectedPlan.getSkills().isEmpty()) {
+            topicCombo.getItems().setAll(selectedPlan.getSkills());
+        } else if (selectedPlan.getTitle() != null && !selectedPlan.getTitle().isBlank()) {
+            topicCombo.getItems().add(selectedPlan.getTitle().trim());
+        }
+        if (!topicCombo.getItems().isEmpty()) {
+            topicCombo.getSelectionModel().selectFirst();
+        }
         TextField subTopicField = new TextField();
 
         VBox form = new VBox(10,
                 labeled("Ngày", datePicker),
                 labeled("Bắt đầu (H:mm)", startField),
                 labeled("Kết thúc (H:mm)", endField),
-                labeled("Chủ đề", topicField),
+                labeled("Chủ đề", topicCombo),
                 labeled("Nội dung", subTopicField));
         form.setPadding(new Insets(16));
         dialog.getDialogPane().setContent(form);
 
         Button okBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         okBtn.addEventFilter(ActionEvent.ACTION, ev -> {
-            if (!validateManualForm(datePicker, startField, endField, topicField)) {
+            if (!validateManualForm(datePicker, startField, endField, topicCombo, selectedPlan)) {
                 ev.consume();
-                alert(Alert.AlertType.WARNING, "Dữ liệu", "Kiểm tra ngày, giờ (H:mm) và chủ đề.");
+                alert(Alert.AlertType.WARNING, "Dữ liệu",
+                        "Kiểm tra ngày, giờ (H:mm) và chọn chủ đề thuộc Learning Plan.");
             }
         });
 
@@ -443,7 +460,9 @@ public class TimetableController {
         LocalDate date = datePicker.getValue();
         LocalTime start = LocalTime.parse(startField.getText().trim(), TIME_FMT);
         LocalTime end = LocalTime.parse(endField.getText().trim(), TIME_FMT);
-        String topic = topicField.getText().trim();
+        String topic = topicCombo.getEditor().getText() != null
+                ? topicCombo.getEditor().getText().trim()
+                : "";
         String sub = subTopicField.getText() != null ? subTopicField.getText().trim() : "";
 
         ScheduleSlot s = new ScheduleSlot();
@@ -454,12 +473,18 @@ public class TimetableController {
         s.setSubTopic(sub);
         s.setCompleted(false);
         s.setUser(user);
-        s.setPlan(planCombo.getSelectionModel().getSelectedItem());
+        s.setPlan(selectedPlan);
+        if (overlapsAnyExisting(s, Collections.emptyList(), -1)) {
+            alert(Alert.AlertType.WARNING, "Trùng lịch",
+                    "Khung giờ thủ công bị trùng với ScheduleSlot đã có.");
+            return;
+        }
         slots.add(s);
     }
 
     private static boolean validateManualForm(DatePicker datePicker, TextField startField,
-                                              TextField endField, TextField topicField) {
+                                              TextField endField, ComboBox<String> topicCombo,
+                                              LearningPlan selectedPlan) {
         if (datePicker.getValue() == null) {
             return false;
         }
@@ -474,8 +499,18 @@ public class TimetableController {
         if (!end.isAfter(start)) {
             return false;
         }
-        String topic = topicField.getText() != null ? topicField.getText().trim() : "";
-        return !topic.isEmpty();
+        String topic = topicCombo.getEditor().getText() != null
+                ? topicCombo.getEditor().getText().trim()
+                : "";
+        if (topic.isEmpty()) {
+            return false;
+        }
+        List<String> skills = selectedPlan.getSkills();
+        if (skills == null || skills.isEmpty()) {
+            return true;
+        }
+        return skills.stream()
+                .anyMatch(skill -> skill != null && skill.trim().equalsIgnoreCase(topic));
     }
 
     private static HBox labeled(String title, javafx.scene.Node node) {

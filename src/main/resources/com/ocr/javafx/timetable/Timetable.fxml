@@ -12,35 +12,35 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="960.0" stylesheets="@../style/timetable.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.timetable.TimetableController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="960.0" styleClass="timetable-root" stylesheets="@../style/timetable.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.timetable.TimetableController">
 
     <top>
-        <VBox spacing="10.0" style="-fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-width: 0 0 1 0;">
+        <VBox spacing="10.0" styleClass="timetable-toolbar">
             <padding>
                 <Insets bottom="12.0" left="14.0" right="14.0" top="12.0" />
             </padding>
             <HBox alignment="CENTER_LEFT" spacing="14.0">
-                <Button mnemonicParsing="false" onAction="#onBackWeekClicked" text="&lt; Tuần trước" />
-                <Label fx:id="monthYearLabel" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #0f172a;" text="Tuần: …" />
-                <Button mnemonicParsing="false" onAction="#onNextWeekClicked" text="Tuần tới &gt;" />
+                <Button mnemonicParsing="false" onAction="#onBackWeekClicked" styleClass="timetable-btn-outline" text="&lt; Tuần trước" />
+                <Label fx:id="monthYearLabel" styleClass="timetable-week-label" text="Tuần: …" />
+                <Button mnemonicParsing="false" onAction="#onNextWeekClicked" styleClass="timetable-btn-outline" text="Tuần tới &gt;" />
                 <HBox alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
-                    <Label style="-fx-text-fill: #475569; -fx-font-weight: 600;" text="Learning plan" />
-                    <ComboBox fx:id="planCombo" prefWidth="220.0" promptText="Chọn plan" />
+                    <Label styleClass="timetable-plan-label" text="Learning plan" />
+                    <ComboBox fx:id="planCombo" prefWidth="260.0" promptText="Chọn plan" styleClass="timetable-plan-combo" />
                 </HBox>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
-                <Button fx:id="btnGenerateAi" mnemonicParsing="false" onAction="#onGenerateAi" text="Tạo lịch bằng AI" />
-                <Button fx:id="btnSaveDb" mnemonicParsing="false" onAction="#onSaveToDb" text="Lưu Database" />
-                <Button fx:id="btnAddManual" mnemonicParsing="false" onAction="#onAddManual" text="Thêm thủ công" />
+                <Button fx:id="btnGenerateAi" mnemonicParsing="false" onAction="#onGenerateAi" styleClass="timetable-btn-primary" text="Tạo lịch bằng AI" />
+                <Button fx:id="btnSaveDb" mnemonicParsing="false" onAction="#onSaveToDb" styleClass="timetable-btn-success" text="Lưu Database" />
+                <Button fx:id="btnAddManual" mnemonicParsing="false" onAction="#onAddManual" styleClass="timetable-btn-secondary" text="Thêm thủ công" />
             </HBox>
         </VBox>
     </top>
 
     <center>
         <StackPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" BorderPane.alignment="CENTER">
-            <ScrollPane fx:id="timetableScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="AS_NEEDED" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" vbarPolicy="AS_NEEDED">
+            <ScrollPane fx:id="timetableScroll" fitToHeight="true" fitToWidth="true" hbarPolicy="AS_NEEDED" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" pannable="true" styleClass="timetable-scroll" vbarPolicy="AS_NEEDED">
                 <content>
-                    <GridPane fx:id="timetableGrid" hgap="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" vgap="2.0">
+                    <GridPane fx:id="timetableGrid" hgap="2.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="timetable-grid-wrapper" vgap="2.0">
                         <padding>
                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                         </padding>
