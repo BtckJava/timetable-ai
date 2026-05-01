@@ -38,6 +38,17 @@ public class LearningPlanController implements Initializable {
     private ApplicationContext applicationContext;
     private Long currentUserId;
 
+    List<LearningPlanDTO> mockPlans = List.of(
+            new LearningPlanDTO(1L, "Java Backend", "Backend", "Build API", 40, 30, "High",
+                    List.of("Java", "Spring"), 18, "2026-04-10"),
+
+            new LearningPlanDTO(2L, "Frontend React", "Frontend", "Build UI", 70, 20, "Medium",
+                    List.of("React", "JS"), 6, "2026-04-01"),
+
+            new LearningPlanDTO(3L, "Data Structures", "CS", "Master DSA", 20, 45, "Low",
+                    List.of("Arrays", "Trees"), 35, "2026-04-05")
+    );
+
     public void init(ApplicationContext context) {
         this.applicationContext = context;
         this.planService = context.getLearningPlanService();
