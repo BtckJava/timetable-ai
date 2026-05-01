@@ -4,6 +4,7 @@ import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.main.MainController;
 import com.ocr.javafx.entity.LearningPlan;
 import com.ocr.javafx.entity.ScheduleSlot;
+import com.ocr.javafx.enums.View;
 import com.ocr.javafx.service.LearningPlanService;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -103,7 +104,7 @@ public class PlanDetailsController {
     @FXML
     private void handleBack() {
         if (mainController != null) {
-            mainController.setContent("/com/ocr/javafx/views/learning-plan-view.fxml");
+            mainController.setContent("/com/ocr/javafx/views/learning-plan-view.fxml", View.LEARNING_PLANS);
         }
     }
 }

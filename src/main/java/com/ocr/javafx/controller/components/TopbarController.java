@@ -3,6 +3,7 @@ package com.ocr.javafx.controller.components;
 import com.ocr.javafx.ApplicationContext;
 import com.ocr.javafx.controller.main.MainController;
 import com.ocr.javafx.entity.User;
+import com.ocr.javafx.enums.View;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,11 +16,8 @@ import javafx.stage.Stage;
 import lombok.Setter;
 
 public class TopbarController {
-    @ FXML
-    public Label nameLabel;
-
     @FXML
-    public Label emailLabel;
+    public Label currentViewLabel;
 
     @Setter
     private ApplicationContext applicationContext;
@@ -46,6 +44,8 @@ public class TopbarController {
 
     private final Label name = new Label();
     private final Label email = new Label();
+
+    private View currentView;
 
     public void setUser(User user) {
         name.setText(user.getUsername());
@@ -100,7 +100,7 @@ public class TopbarController {
         profileImage.setOnMouseExited(e -> popup.hide());
 
         profileImage.setOnMousePressed(e -> {
-            mainController.setContent("/com/ocr/javafx/views/profile.fxml");
+            mainController.setContent("/com/ocr/javafx/views/profile.fxml", View.PROFILE);
         });
     }
 
@@ -125,5 +125,14 @@ public class TopbarController {
     @FXML
     private void sidebarToggle(){
         mainController.sidebarToggle();
+    }
+
+    public void updateActive(View view){
+        switch (view){
+            case View.DASHBOARD -> currentViewLabel.setText("Dashboard");
+            case View.TIMETABLE -> currentViewLabel.setText("Timetable");
+            case View.LEARNING_PLANS -> currentViewLabel.setText("Learning Plans");
+            case View.PROFILE -> currentViewLabel.setText("Profile");
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.ocr.javafx.controller.main;
 
 import com.ocr.javafx.ApplicationContext;
+import com.ocr.javafx.config.ViewStateManager;
 import com.ocr.javafx.controller.components.BarchartController;
 import com.ocr.javafx.controller.components.SidebarController;
 import com.ocr.javafx.controller.components.StatsRowController;
@@ -11,6 +12,7 @@ import com.ocr.javafx.controller.views.DashboardController;
 import com.ocr.javafx.controller.views.NewLearningPlanController;
 import com.ocr.javafx.controller.views.ProfileController;
 import com.ocr.javafx.entity.User;
+import com.ocr.javafx.enums.View;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ScrollPane;
@@ -33,11 +35,16 @@ public class MainController {
     @Getter
     private TopbarController topbarController;
 
+    private ViewStateManager viewStateManager;
+
     private ApplicationContext applicationContext;
 
     public void init(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         User user = applicationContext.getSessionManager().getCurrentUser();
+
+        // ViewStateManager
+        viewStateManager = applicationContext.getViewStateManager();
 
         // Topbar
         topbarController.setApplicationContext(applicationContext);
@@ -47,7 +54,7 @@ public class MainController {
         // Sidebar
         sidebarController.setMainController(this);
 
-        setContent("/com/ocr/javafx/views/dashboard.fxml");
+        setContent("/com/ocr/javafx/views/dashboard.fxml", View.DASHBOARD);
     }
 
     @FXML
@@ -58,10 +65,17 @@ public class MainController {
         sidebar.setManaged(!isVisible);
     }
 
-    public void setContent(String path) {
+    public void setContent(String path, View view) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             contentPane.setContent(loader.load());
+
+            // update view state
+            viewStateManager.setCurrentView(view);
+
+            // update based on active view
+            sidebarController.updateActive(view);
+            topbarController.updateActive(view);
 
             Object controller = loader.getController();
 

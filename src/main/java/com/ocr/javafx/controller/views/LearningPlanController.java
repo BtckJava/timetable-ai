@@ -5,6 +5,7 @@ import com.ocr.javafx.controller.components.PlanCardController;
 import com.ocr.javafx.controller.main.MainController;
 import com.ocr.javafx.dto.LearningPlanDTO;
 import com.ocr.javafx.dto.response.LearningPlanResponse;
+import com.ocr.javafx.enums.View;
 import com.ocr.javafx.service.LearningPlanService;
 import com.ocr.javafx.util.Function.AlertUtils;
 import javafx.fxml.FXML;
@@ -99,7 +100,7 @@ public class LearningPlanController implements Initializable {
     private void handleNewPlan() {
         try {
             if(mainController != null)
-                mainController.setContent("/com/ocr/javafx/views/new-learning-plan.fxml");
+                mainController.setContent("/com/ocr/javafx/views/new-learning-plan.fxml", View.NEW_LEARNING_PLAN);
         } catch (Exception e) {
             e.printStackTrace();
             AlertUtils.showError("Không thể mở màn hình tạo kế hoạch: " + e.getMessage());        }

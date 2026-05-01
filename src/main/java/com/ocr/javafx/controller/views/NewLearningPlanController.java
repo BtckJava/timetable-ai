@@ -6,6 +6,7 @@ import com.ocr.javafx.dto.request.LearningPlanRequest;
 import com.ocr.javafx.dto.response.LearningPlanResponse;
 import com.ocr.javafx.entity.LearningPlan;
 import com.ocr.javafx.entity.User;
+import com.ocr.javafx.enums.View;
 import com.ocr.javafx.repository.LearningPlanRepository;
 import com.ocr.javafx.repository.UserRepository;
 import com.ocr.javafx.service.LearningPlanService;
@@ -94,7 +95,7 @@ public class NewLearningPlanController implements Initializable {
     @FXML
     private void handleBack() {
         if (mainController != null) {
-            mainController.setContent("/com/ocr/javafx/views/learning-plan-view.fxml");
+            mainController.setContent("/com/ocr/javafx/views/learning-plan-view.fxml", View.LEARNING_PLANS);
         } else {
             System.err.println("MainController is null! Không thể quay lại.");
         }

@@ -1,6 +1,7 @@
 package com.ocr.javafx;
 
 import com.ocr.javafx.config.SessionManager;
+import com.ocr.javafx.config.ViewStateManager;
 import com.ocr.javafx.repository.LearningPlanRepository;
 import com.ocr.javafx.repository.ScheduleSlotRepository;
 import com.ocr.javafx.repository.UserRepository;
@@ -16,6 +17,7 @@ public class ApplicationContext {
     private final LearningPlanRepository learningPlanRepository = new LearningPlanRepository();
     private final AuthService authService = new AuthService(userRepository);
     private final SessionManager sessionManager = new SessionManager();
+    private final ViewStateManager viewStateManager = new ViewStateManager();
     private final StatsRowService statsRowService = new StatsRowService(scheduleSlotRepository, learningPlanRepository);
     private final ScheduleSlotService scheduleSlotService = new ScheduleSlotService(scheduleSlotRepository);
     private final LearningPlanService learningPlanService = new LearningPlanService(learningPlanRepository, scheduleSlotService);

@@ -34,6 +34,16 @@
     -fx-cursor: hand;
 }
 
+.button.sidebar-button-active{
+    -fx-background-color: #efe68a;
+    -fx-text-fill: #111827;
+
+    -fx-border-color: #d4c94f;
+    -fx-border-width: 0 0 0 4; /* left bar */
+
+    -fx-padding: 10 15 10 11; /* adjust for border */
+}
+
 .button.sidebar-button:hover{
     -fx-background-color: #f6f0b3;
     -fx-translate-x: 2; /* tiny move right */
