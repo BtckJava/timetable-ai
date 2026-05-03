@@ -3,19 +3,29 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane styleClass="global-font" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.main.MainController">
+<StackPane fx:controller="com.ocr.javafx.controller.main.MainController"
+           xmlns="http://javafx.com/javafx/17.0.12"
+           xmlns:fx="http://javafx.com/fxml/1"
+           styleClass="global-font"
+           stylesheets="@../style/main.css">
 
-   <center>
-      <VBox>
+   <BorderPane fx:id="mainLayout">
 
-         <fx:include fx:id="topbar" source="../components/topbar.fxml" />
+      <center>
+         <VBox>
+            <fx:include fx:id="topbar" source="../components/topbar.fxml"/>
+            <ScrollPane fx:id="contentPane"
+                        fitToWidth="true"
+                        hbarPolicy="NEVER"
+                        vbarPolicy="ALWAYS"
+                        VBox.vgrow="ALWAYS"/>
+         </VBox>
+      </center>
 
-         <ScrollPane fx:id="contentPane" fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS" />
-      </VBox>
-   </center>
+      <left>
+         <fx:include fx:id="sidebar" source="../components/sidebar.fxml"/>
+      </left>
 
-   <left>
-      <fx:include fx:id="sidebar" source="../components/sidebar.fxml" />
-   </left>
+   </BorderPane>
 
-</BorderPane>
+</StackPane>

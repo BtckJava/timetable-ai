@@ -123,7 +123,10 @@ public class ProfileService {
         User user = userRepository.findByEmail(req.getEmail());
         if (user == null) return false;
         user.setUsername(req.getUsername());
-        if (req.getAvatarPath() != null) user.setAvatarPath(req.getAvatarPath());
+        if (req.getAvatarPath() != null){
+            user.setAvatarPath(req.getAvatarPath());
+            System.out.println("SUCCESS");
+        }
         userRepository.update(user);
         sessionManager.setCurrentUser(user);
         return true;

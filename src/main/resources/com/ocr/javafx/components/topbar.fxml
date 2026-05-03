@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <HBox fx:id="topbar" alignment="CENTER_LEFT" maxHeight="65.0" maxWidth="1.7976931348623157E308" minHeight="65.0" minWidth="40.0" prefHeight="65.0" prefWidth="600.0" styleClass="topbar" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.components.TopbarController">
-   <HBox alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
+   <HBox alignment="CENTER_LEFT" prefWidth="177.0" spacing="10.0" HBox.hgrow="ALWAYS">
       <padding>
          <Insets left="10.0" />
       </padding>
@@ -15,6 +15,15 @@
       <Label fx:id="currentViewLabel" prefHeight="33.0" prefWidth="129.0" styleClass="topbar-title" HBox.hgrow="ALWAYS" />
    </HBox>
    <Region prefHeight="8.0" prefWidth="254.0" HBox.hgrow="ALWAYS" />
+   <StackPane layoutX="429.0" layoutY="10.0" prefHeight="40.0" prefWidth="0.0">
+      <children>
+         <ImageView fx:id="creditBtn" fitHeight="32.0" fitWidth="32.0" onMouseClicked="#handleCreditClick" pickOnBounds="true" preserveRatio="true" styleClass="profile-image">
+            <image>
+               <Image url="@../image/clickIcon.png" />
+            </image>
+         </ImageView>
+      </children>
+   </StackPane>
    <StackPane prefHeight="40.0" prefWidth="0.0">
       <HBox.margin>
          <Insets right="5.0" />

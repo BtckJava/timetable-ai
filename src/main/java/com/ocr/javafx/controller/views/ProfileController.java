@@ -106,6 +106,10 @@ public class ProfileController {
         String iconFileName = data.getIconType() + "_lv" + data.getLevel() + ".png";
         String resourcePath = "/com/ocr/javafx/image/" + iconFileName;
 
+        System.out.println("Trying to load: " + resourcePath);
+        var url = getClass().getResource(resourcePath);
+        System.out.println("Resolved URL: " + url);
+
         try {
             Image iconImage = new Image(getClass().getResourceAsStream(resourcePath));
             imgView.setImage(iconImage);
