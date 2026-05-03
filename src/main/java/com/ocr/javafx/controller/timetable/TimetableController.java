@@ -46,10 +46,15 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.CompletableFuture;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +67,13 @@ import java.awt.Desktop;
 import java.net.URI;
 
 public class TimetableController {
+
+    private static final HttpClient MAIL_HTTP_CLIENT = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(15))
+            .build();
+    private static final String MAIL_SERVER_BASE = "http://localhost:8080";
+    private static final String MAIL_INTERNAL_KEY = "SieuCapVipPro_2026";
+    private static final DateTimeFormatter REMINDER_TIME_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     private static final DateTimeFormatter HEADER_FMT = DateTimeFormatter.ofPattern("d/M/yyyy");
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("H:mm");
@@ -423,7 +435,10 @@ public class TimetableController {
         }
         try {
             applicationContext.getScheduleSlotRepository().saveAll(new ArrayList<>(slots));
+            List<ScheduleSlot> copyOfDeletedSlots = new ArrayList<>(deletedSlots);
             flushDeletedSlotsToDatabase();
+            User user = applicationContext.getSessionManager().getCurrentUser();
+            syncRemindersWithMailServer(new ArrayList<>(slots), copyOfDeletedSlots, user);
             java.util.Set<Long> planIdsToUpdate = slots.stream()
                     .map(s -> s.getPlan() != null ? s.getPlan().getId() : null)
                     .filter(java.util.Objects::nonNull)
@@ -885,6 +900,99 @@ public class TimetableController {
             applicationContext.getScheduleSlotRepository().delete(slot);
         }
         deletedSlots.clear();
+    }
+
+    /**
+     * Đồng bộ reminder jobs với Mail Server (không block JavaFX thread).
+     */
+    private void syncRemindersWithMailServer(List<ScheduleSlot> savedSlots, List<ScheduleSlot> deletedSlots, User user) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                if (deletedSlots != null) {
+                    for (ScheduleSlot slot : deletedSlots) {
+                        try {
+                            if (slot == null || slot.getId() == null) {
+                                continue;
+                            }
+                            String uri = MAIL_SERVER_BASE + "/api/reminders/schedule/" + slot.getId();
+                            HttpRequest req = HttpRequest.newBuilder()
+                                    .uri(URI.create(uri))
+                                    .timeout(Duration.ofSeconds(30))
+                                    .header("X-Internal-Key", MAIL_INTERNAL_KEY)
+                                    .DELETE()
+                                    .build();
+                            HttpResponse<String> response = MAIL_HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofString());
+                            if (response.statusCode() != 200) {
+                                System.err.println("Mail sync DELETE failed: " + response.statusCode() + " " + uri);
+                            }
+                        } catch (Exception ex) {
+                            System.err.println("Mail sync DELETE error: " + ex.getMessage());
+                        }
+                    }
+                }
+                if (savedSlots == null) {
+                    return;
+                }
+                String email = (user != null && user.getEmail() != null) ? user.getEmail() : "";
+                for (ScheduleSlot slot : savedSlots) {
+                    try {
+                        if (slot == null || slot.getId() == null || slot.isCompleted()) {
+                            continue;
+                        }
+                        LocalDate date = slot.getDate();
+                        LocalTime startTime = slot.getStartTime();
+                        if (date == null || startTime == null) {
+                            continue;
+                        }
+                        LocalDateTime eventStart = LocalDateTime.of(date, startTime);
+                        if (!eventStart.isAfter(LocalDateTime.now())) {
+                            continue;
+                        }
+                        LocalDateTime reminder = eventStart.minusMinutes(15);
+                        String reminderTimeStr = reminder.format(REMINDER_TIME_FMT);
+                        String topic = slot.getTopic() != null ? slot.getTopic() : "";
+                        String subject = "Nhắc nhở lịch học: " + topic;
+                        String content = "Bạn có lịch học môn " + topic + " vào lúc " + startTime;
+                        if (email.isEmpty()) {
+                            System.err.println("Mail sync POST skipped: missing user email for slotId=" + slot.getId());
+                            continue;
+                        }
+                        String body = "{"
+                                + "\"slotId\":" + slot.getId() + ","
+                                + "\"email\":\"" + escapeJson(email) + "\","
+                                + "\"subject\":\"" + escapeJson(subject) + "\","
+                                + "\"content\":\"" + escapeJson(content) + "\","
+                                + "\"reminderTime\":\"" + escapeJson(reminderTimeStr) + "\""
+                                + "}";
+                        HttpRequest post = HttpRequest.newBuilder()
+                                .uri(URI.create(MAIL_SERVER_BASE + "/api/reminders/schedule"))
+                                .timeout(Duration.ofSeconds(30))
+                                .header("X-Internal-Key", MAIL_INTERNAL_KEY)
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(body))
+                                .build();
+                        HttpResponse<String> response = MAIL_HTTP_CLIENT.send(post, HttpResponse.BodyHandlers.ofString());
+                        if (response.statusCode() != 200) {
+                            System.err.println("Mail sync POST failed: " + response.statusCode() + " slotId=" + slot.getId());
+                        }
+                    } catch (Exception ex) {
+                        System.err.println("Mail sync POST error: " + ex.getMessage());
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Mail sync error: " + e.getMessage());
+            }
+        });
+    }
+
+    private static String escapeJson(String s) {
+        if (s == null) {
+            return "";
+        }
+        return s.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r");
     }
 
     /**

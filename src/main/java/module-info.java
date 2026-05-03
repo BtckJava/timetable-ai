@@ -13,6 +13,7 @@ module com.ocr.javafx {
     requires com.fasterxml.jackson.databind;
     requires java.naming;
     requires java.desktop;
+    requires java.net.http;
     requires jbcrypt;
     requires jdk.httpserver;
     requires io.github.cdimascio.dotenv.java;
