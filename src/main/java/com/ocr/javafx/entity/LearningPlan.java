@@ -5,8 +5,7 @@ import com.ocr.javafx.enums.LearningPlanStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,6 +34,7 @@ public class LearningPlan {
     private String intensity;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private LearningPlanStatus status;
 
     @ElementCollection
@@ -49,7 +49,6 @@ public class LearningPlan {
     private User user;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @OrderBy("date ASC, startTime ASC")
     private List<ScheduleSlot> slots;
 
 }
