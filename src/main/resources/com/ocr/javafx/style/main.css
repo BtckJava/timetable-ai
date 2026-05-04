@@ -58,3 +58,17 @@
 .eye-button:hover {
     -fx-text-fill: #0ea5e9;
 }
+
+.auth-input {
+    -fx-font-size: 14px;
+    -fx-border-color: #e5e7eb;
+    -fx-background-color: #ffffff;
+}
+
+.auth-button {
+    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.2), 10, 0, 0, 4);
+}
+
+.auth-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(14, 165, 233, 0.4), 12, 0, 0, 6);
+}

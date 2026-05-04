@@ -1,5 +1,6 @@
 package com.ocr.javafx.service;
 
+import com.ocr.javafx.dto.request.ChangePasswordRequest;
 import com.ocr.javafx.dto.request.LoginRequest;
 import com.ocr.javafx.dto.request.RegisterRequest;
 import com.ocr.javafx.dto.response.AuthResponse;
@@ -67,4 +68,30 @@ public class AuthService {
 
         return new AuthResponse(true, "Login successful", user);
     }
+
+    public AuthResponse changePassword(Long userId, ChangePasswordRequest request) {
+        if (request.getOldPassword().isEmpty() || request.getNewPassword().isEmpty()) {
+            return new AuthResponse(false, "Vui lòng nhập đầy đủ thông tin.", null);
+        }
+
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            return new AuthResponse(false, "Xác nhận mật khẩu mới không khớp.", null);
+        }
+
+        User user = repository.findById(userId);
+        if (user == null) {
+            return new AuthResponse(false, "Không tìm thấy người dùng.", null);
+        }
+
+        if (!BCrypt.checkpw(request.getOldPassword(), user.getPassword())) {
+            return new AuthResponse(false, "Mật khẩu cũ không chính xác.", null);
+        }
+
+        String hashed = BCrypt.hashpw(request.getNewPassword(), BCrypt.gensalt());
+        user.setPassword(hashed);
+        repository.save(user);
+
+        return new AuthResponse(true, "Đổi mật khẩu thành công!", null);
+    }
+
 }

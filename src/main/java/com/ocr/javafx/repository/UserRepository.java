@@ -19,7 +19,7 @@ public class UserRepository {
     public void save(User user){
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
-        session.save(user);
+        session.merge(user);
         session.getTransaction().commit();
         session.close();
     }
