@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="960.0" styleClass="timetable-root" stylesheets="@../style/timetable.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.timetable.TimetableController">
+<BorderPane fx:id="timetableRoot" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="600.0" prefWidth="960.0" styleClass="timetable-root" stylesheets="@../style/timetable.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ocr.javafx.controller.timetable.TimetableController">
 
     <top>
         <VBox spacing="10.0" styleClass="timetable-toolbar">
@@ -31,6 +31,7 @@
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                 <Button fx:id="btnGenerateAi" mnemonicParsing="false" onAction="#onGenerateAi" styleClass="timetable-btn-primary" text="Tạo lịch bằng AI" />
                 <Button fx:id="btnSaveDb" mnemonicParsing="false" onAction="#onSaveToDb" styleClass="timetable-btn-success" text="Lưu Database" />
+                <Button mnemonicParsing="false" onAction="#onExportIcs" styleClass="timetable-btn-secondary" text="Xuất .ics" />
                 <Button fx:id="btnAddManual" mnemonicParsing="false" onAction="#onAddManual" styleClass="timetable-btn-secondary" text="Thêm thủ công" />
             </HBox>
         </VBox>
@@ -50,4 +51,27 @@
             <ProgressIndicator fx:id="loadingIndicator" maxHeight="72.0" maxWidth="72.0" mouseTransparent="true" visible="false" StackPane.alignment="CENTER" />
         </StackPane>
     </center>
+
+    <right>
+        <VBox fx:id="focusPanel" prefWidth="250.0" spacing="10.0" styleClass="focus-panel">
+            <padding>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            </padding>
+            <Label styleClass="focus-title" text="Pomodoro Focus" />
+            <Label fx:id="focusTopicLabel" styleClass="timetable-plan-label" text="Môn học: (chưa chọn)" wrapText="true" />
+            <Label fx:id="focusTimerLabel" styleClass="focus-timer" text="25:00" />
+            <HBox spacing="8.0">
+                <Button fx:id="btnFocusStart" mnemonicParsing="false" onAction="#onFocusStart" styleClass="timetable-btn-primary" text="Bắt đầu" />
+                <Button fx:id="btnFocusPause" mnemonicParsing="false" onAction="#onFocusPause" styleClass="timetable-btn-outline" text="Tạm dừng" />
+            </HBox>
+            <Button fx:id="btnFocusSkip" mnemonicParsing="false" onAction="#onFocusSkip" styleClass="timetable-btn-secondary" text="Bỏ qua" />
+            <Label styleClass="timetable-plan-label" text="Chế độ" />
+            <VBox spacing="8.0" styleClass="focus-mode-list">
+                <Button mnemonicParsing="false" onAction="#onFocusStudyMode" styleClass="timetable-btn-outline" text="Học tập (25p)" />
+                <Button mnemonicParsing="false" onAction="#onFocusShortBreakMode" styleClass="timetable-btn-outline" text="Nghỉ ngắn (5p)" />
+                <Button mnemonicParsing="false" onAction="#onFocusLongBreakMode" styleClass="timetable-btn-outline" text="Nghỉ dài (15p)" />
+            </VBox>
+            <Label fx:id="focusMessageLabel" styleClass="focus-message" text="Sẵn sàng tập trung." wrapText="true" />
+        </VBox>
+    </right>
 </BorderPane>

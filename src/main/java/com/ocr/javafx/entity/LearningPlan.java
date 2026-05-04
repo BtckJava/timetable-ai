@@ -36,7 +36,7 @@ public class LearningPlan {
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-    @Column(columnDefinition = "learning_plan_status")
+    @Column(name = "learning_plan_status")
     private LearningPlanStatus status;
 
     @ElementCollection

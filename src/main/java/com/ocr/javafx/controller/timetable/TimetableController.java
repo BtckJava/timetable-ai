@@ -20,8 +20,11 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
@@ -33,10 +36,14 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -49,11 +56,15 @@ import javafx.geometry.Pos;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.io.File;
+import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.concurrent.CompletableFuture;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -65,6 +76,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.awt.Desktop;
 import java.net.URI;
+import java.time.ZoneOffset;
 
 public class TimetableController {
 
@@ -79,6 +91,9 @@ public class TimetableController {
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("H:mm");
     private static final int START_HOUR = 6;
     private static final int END_HOUR = 22;
+    private static final int FOCUS_STUDY_SECONDS = 25 * 60;
+    private static final int FOCUS_SHORT_BREAK_SECONDS = 5 * 60;
+    private static final int FOCUS_LONG_BREAK_SECONDS = 15 * 60;
 
     /** Cột giờ + 7 cột ngày — đủ rộng để ScrollPane hiện thanh cuộn ngang khi cửa sổ hẹp */
     private static final double COL_TIME_WIDTH = 64;
@@ -86,6 +101,9 @@ public class TimetableController {
 
     @FXML
     private GridPane timetableGrid;
+
+    @FXML
+    private BorderPane timetableRoot;
 
     @FXML
     private ScrollPane timetableScroll;
@@ -108,6 +126,27 @@ public class TimetableController {
     @FXML
     private Button btnAddManual;
 
+    @FXML
+    private VBox focusPanel;
+
+    @FXML
+    private Label focusTimerLabel;
+
+    @FXML
+    private Label focusTopicLabel;
+
+    @FXML
+    private Label focusMessageLabel;
+
+    @FXML
+    private Button btnFocusStart;
+
+    @FXML
+    private Button btnFocusPause;
+
+    @FXML
+    private Button btnFocusSkip;
+
     private final ObservableList<ScheduleSlot> slots = FXCollections.observableArrayList();
     private final LearningPlanRepository planRepository = new LearningPlanRepository();
     private final List<ScheduleSlot> deletedSlots = new ArrayList<>();
@@ -116,6 +155,30 @@ public class TimetableController {
     private LocalDate currentWeekStart;
     private ScheduleSlot draggingSlot;
     private String draggingToken;
+    private ScheduleSlot activeFocusSlot;
+    private Timeline focusTimeline;
+    private int focusRemainingSeconds = FOCUS_STUDY_SECONDS;
+    private FocusMode focusMode = FocusMode.STUDY;
+    private boolean isSmartBreakActive = false;
+    private boolean smartBreakEnabledForCurrentSession = false;
+    private int focusStudyRemainingSeconds = 0;
+    private int focusElapsedStudySeconds = 0;
+    private int focusSmartBreakCount = 0;
+    private int focusPlannedStudySeconds = 0;
+
+    private enum FocusMode {
+        STUDY("Học tập", FOCUS_STUDY_SECONDS),
+        SHORT_BREAK("Nghỉ ngắn", FOCUS_SHORT_BREAK_SECONDS),
+        LONG_BREAK("Nghỉ dài", FOCUS_LONG_BREAK_SECONDS);
+
+        private final String label;
+        private final int seconds;
+
+        FocusMode(String label, int seconds) {
+            this.label = label;
+            this.seconds = seconds;
+        }
+    }
 
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -140,6 +203,19 @@ public class TimetableController {
         planCombo.setCellFactory(lv -> new LearningPlanListCell());
         planCombo.setButtonCell(new LearningPlanListCell());
         slots.addListener((ListChangeListener.Change<? extends ScheduleSlot> c) -> renderTimetable());
+        initFocusTimer();
+    }
+
+    private void initFocusTimer() {
+        focusTimeline = new Timeline(new KeyFrame(javafx.util.Duration.seconds(1), ev -> onFocusTick()));
+        focusTimeline.setCycleCount(Timeline.INDEFINITE);
+        updateFocusUi();
+        Platform.runLater(() -> {
+            if (timetableRoot != null && timetableRoot.getScene() != null && timetableRoot.getScene().getWindow() != null) {
+                timetableRoot.getScene().getWindow()
+                        .addEventHandler(WindowEvent.WINDOW_HIDDEN, e -> stopFocusTimer());
+            }
+        });
     }
 
     @FXML
@@ -152,6 +228,58 @@ public class TimetableController {
     private void onNextWeekClicked() {
         currentWeekStart = currentWeekStart.plusWeeks(1);
         renderTimetable();
+    }
+
+    @FXML
+    private void onFocusStart() {
+        if (focusTimeline == null) {
+            initFocusTimer();
+        }
+        focusTimeline.play();
+        updateFocusUi();
+    }
+
+    @FXML
+    private void onFocusPause() {
+        if (focusTimeline != null) {
+            focusTimeline.pause();
+        }
+        updateFocusUi();
+    }
+
+    @FXML
+    private void onFocusSkip() {
+        if (isSmartBreakActive) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Bỏ qua nghỉ thông minh");
+            confirm.setHeaderText("Bạn đang trong nghỉ ngắn 2 phút");
+            confirm.setContentText("Bỏ qua nghỉ có thể làm giảm hiệu quả bảo vệ mắt/cột sống. Bạn vẫn muốn tiếp tục học ngay?");
+            Optional<ButtonType> decision = confirm.showAndWait();
+            if (decision.isPresent() && decision.get() == ButtonType.OK) {
+                endSmartBreak(true);
+            }
+            return;
+        }
+        if (focusMode == FocusMode.STUDY) {
+            setFocusMode(FocusMode.SHORT_BREAK, true);
+        } else {
+            setFocusMode(FocusMode.STUDY, false);
+        }
+    }
+
+    @FXML
+    private void onFocusStudyMode() {
+        setFocusMode(FocusMode.STUDY, false);
+    }
+
+    @FXML
+    private void onFocusShortBreakMode() {
+        setFocusMode(FocusMode.SHORT_BREAK, false);
+    }
+
+    @FXML
+    private void onFocusLongBreakMode() {
+        setFocusMode(FocusMode.LONG_BREAK, false);
     }
 
     @FXML
@@ -451,6 +579,82 @@ public class TimetableController {
             e.printStackTrace();
             alert(Alert.AlertType.ERROR, "Lỗi lưu", e.getMessage() != null ? e.getMessage() : "Không lưu được.");
         }
+    }
+
+    private String formatToIcalDateTime(LocalDate date, LocalTime time) {
+        return LocalDateTime.of(date, time).format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss"));
+    }
+
+    @FXML
+    private void onExportIcs() {
+        if (slots.isEmpty()) {
+            alert(Alert.AlertType.WARNING, "Không có dữ liệu", "Không có lịch học để xuất file .ics.");
+            return;
+        }
+
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Lưu lịch học (.ics)");
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("iCalendar Files", "*.ics"));
+        chooser.setInitialFileName("LichHoc_AI.ics");
+
+        Window owner = timetableGrid != null && timetableGrid.getScene() != null
+                ? timetableGrid.getScene().getWindow()
+                : null;
+        File file = chooser.showSaveDialog(owner);
+        if (file == null) {
+            return;
+        }
+
+        String dtStampUtc = LocalDateTime.now(ZoneOffset.UTC)
+                .format(DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss")) + "Z";
+
+        int exportedEvents = 0;
+        try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8))) {
+            writer.println("BEGIN:VCALENDAR");
+            writer.println("VERSION:2.0");
+            writer.println("PRODID:-//AI Timetable//Minh Duoi//VN");
+
+            for (ScheduleSlot slot : slots) {
+                if (slot == null || slot.getDate() == null || slot.getStartTime() == null || slot.getEndTime() == null) {
+                    continue;
+                }
+                String uid = slot.getId() != null ? String.valueOf(slot.getId()) : UUID.randomUUID().toString();
+                String start = formatToIcalDateTime(slot.getDate(), slot.getStartTime());
+                String end = formatToIcalDateTime(slot.getDate(), slot.getEndTime());
+                String topic = escapeIcsText(slot.getTopic());
+                String subTopic = escapeIcsText(slot.getSubTopic());
+
+                writer.println("BEGIN:VEVENT");
+                writer.println("UID:" + uid + "@aitimetable.com");
+                writer.println("DTSTAMP:" + dtStampUtc);
+                writer.println("DTSTART:" + start);
+                writer.println("DTEND:" + end);
+                writer.println("SUMMARY:" + topic);
+                writer.println("DESCRIPTION:" + subTopic);
+                writer.println("END:VEVENT");
+                exportedEvents++;
+            }
+
+            writer.println("END:VCALENDAR");
+            alert(Alert.AlertType.INFORMATION, "Xuất .ics thành công",
+                    "Đã xuất " + exportedEvents + " lịch học ra file:\n" + file.getAbsolutePath());
+        } catch (Exception e) {
+            alert(Alert.AlertType.ERROR, "Xuất .ics thất bại",
+                    e.getMessage() != null ? e.getMessage() : "Không thể ghi file .ics.");
+        }
+    }
+
+    private static String escapeIcsText(String value) {
+        if (value == null) {
+            return "";
+        }
+        return value
+                .replace("\\", "\\\\")
+                .replace(";", "\\;")
+                .replace(",", "\\,")
+                .replace("\r\n", "\\n")
+                .replace("\n", "\\n")
+                .replace("\r", "\\n");
     }
 
     @FXML
@@ -832,10 +1036,238 @@ public class TimetableController {
         return false;
     }
 
+    private void startFocusForSlot(ScheduleSlot slot) {
+        if (slot == null) {
+            return;
+        }
+        activeFocusSlot = slot;
+        int slotDurationSeconds = 0;
+        if (slot.getStartTime() != null && slot.getEndTime() != null) {
+            long secs = Duration.between(slot.getStartTime(), slot.getEndTime()).getSeconds();
+            if (secs > 0) {
+                slotDurationSeconds = (int) secs;
+            }
+        }
+        if (slotDurationSeconds <= 0) {
+            slotDurationSeconds = FOCUS_STUDY_SECONDS;
+        }
+        focusPlannedStudySeconds = slotDurationSeconds;
+        focusStudyRemainingSeconds = slotDurationSeconds;
+        focusElapsedStudySeconds = 0;
+        focusSmartBreakCount = 0;
+        smartBreakEnabledForCurrentSession = slotDurationSeconds > 50 * 60;
+        isSmartBreakActive = false;
+        focusMode = FocusMode.STUDY;
+        focusRemainingSeconds = focusStudyRemainingSeconds;
+        if (focusTimeline != null) {
+            focusTimeline.stop();
+            focusTimeline.play();
+        }
+        updateFocusUi();
+    }
+
+    private void setFocusMode(FocusMode mode, boolean autoStart) {
+        focusMode = mode;
+        focusRemainingSeconds = mode.seconds;
+        isSmartBreakActive = false;
+        smartBreakEnabledForCurrentSession = false;
+        focusStudyRemainingSeconds = mode == FocusMode.STUDY ? mode.seconds : 0;
+        focusElapsedStudySeconds = 0;
+        focusSmartBreakCount = 0;
+        focusPlannedStudySeconds = mode == FocusMode.STUDY ? mode.seconds : 0;
+        if (focusTimeline != null) {
+            focusTimeline.stop();
+            if (autoStart) {
+                focusTimeline.play();
+            }
+        }
+        updateFocusUi();
+    }
+
+    private void onFocusTick() {
+        if (isSmartBreakActive) {
+            if (focusRemainingSeconds > 0) {
+                focusRemainingSeconds--;
+            }
+            if (focusRemainingSeconds <= 0) {
+                endSmartBreak(false);
+            }
+            updateFocusUi();
+            return;
+        }
+
+        if (focusMode == FocusMode.STUDY && activeFocusSlot != null) {
+            if (focusStudyRemainingSeconds > 0) {
+                focusStudyRemainingSeconds--;
+                focusElapsedStudySeconds++;
+            }
+            focusRemainingSeconds = focusStudyRemainingSeconds;
+            if (focusStudyRemainingSeconds <= 0) {
+                finishFocusSession();
+                return;
+            }
+            if (smartBreakEnabledForCurrentSession
+                    && focusElapsedStudySeconds > 0
+                    && focusElapsedStudySeconds % (50 * 60) == 0) {
+                startSmartBreak();
+                updateFocusUi();
+                return;
+            }
+            updateFocusUi();
+            return;
+        }
+
+        if (focusRemainingSeconds > 0) {
+            focusRemainingSeconds--;
+        }
+        updateFocusUi();
+        if (focusRemainingSeconds <= 0) {
+            finishFocusSession();
+        }
+    }
+
+    private void finishFocusSession() {
+        if (focusTimeline != null) {
+            focusTimeline.stop();
+        }
+        focusRemainingSeconds = 0;
+        boolean wasStudy = focusMode == FocusMode.STUDY;
+        if (wasStudy && activeFocusSlot != null) {
+            activeFocusSlot.setCompleted(true);
+            renderTimetable();
+            int totalMinutes = Math.max(1, (int) Math.ceil(focusPlannedStudySeconds / 60.0));
+            int breakCount = Math.max(0, focusSmartBreakCount);
+            alert(Alert.AlertType.INFORMATION, "Pomodoro",
+                    "Bạn đã hoàn thành phiên học dài " + totalMinutes + " phút và đã có "
+                            + breakCount + " lần nghỉ ngơi thông minh để bảo vệ mắt và cột sống.");
+            isSmartBreakActive = false;
+            smartBreakEnabledForCurrentSession = false;
+            focusMode = FocusMode.SHORT_BREAK;
+            focusRemainingSeconds = FOCUS_SHORT_BREAK_SECONDS;
+            if (focusMessageLabel != null) {
+                String topic = activeFocusSlot.getTopic() == null || activeFocusSlot.getTopic().isBlank()
+                        ? "(Không tên môn)" : activeFocusSlot.getTopic();
+                focusMessageLabel.setText("Tốt lắm! Hoàn thành " + topic + ". Nghỉ ngắn 5 phút nhé.");
+            }
+        } else {
+            alert(Alert.AlertType.INFORMATION, "Pomodoro", "Đã hết giờ " + focusMode.label + ".");
+            if (focusMessageLabel != null) {
+                focusMessageLabel.setText("Chu kỳ " + focusMode.label + " đã kết thúc.");
+            }
+        }
+        updateFocusUi();
+    }
+
+    private void startSmartBreak() {
+        isSmartBreakActive = true;
+        focusMode = FocusMode.SHORT_BREAK;
+        focusRemainingSeconds = 120;
+        focusSmartBreakCount++;
+        playFocusBeep();
+        if (focusMessageLabel != null) {
+            focusMessageLabel.setText("Đã đến lúc vươn vai! Hãy rời mắt khỏi màn hình trong 2 phút để bảo vệ sức khỏe nhé 🧘‍♂️");
+        }
+    }
+
+    private void endSmartBreak(boolean skipped) {
+        isSmartBreakActive = false;
+        focusMode = FocusMode.STUDY;
+        focusRemainingSeconds = Math.max(0, focusStudyRemainingSeconds);
+        playFocusBeep();
+        if (focusMessageLabel != null) {
+            if (skipped) {
+                focusMessageLabel.setText("Đã bỏ qua nghỉ 2 phút. Quay lại tập trung nào!");
+            } else {
+                focusMessageLabel.setText("Nghỉ xong rồi! Tiếp tục học phần còn lại.");
+            }
+        }
+    }
+
+    private void playFocusBeep() {
+        try {
+            java.awt.Toolkit.getDefaultToolkit().beep();
+        } catch (Exception ignored) {
+            System.err.println("Pomodoro beep failed.");
+        }
+    }
+
+    private void stopFocusTimer() {
+        if (focusTimeline != null) {
+            focusTimeline.stop();
+        }
+    }
+
+    private void updateFocusUi() {
+        if (focusTimerLabel != null) {
+            int mins = Math.max(0, focusRemainingSeconds) / 60;
+            int secs = Math.max(0, focusRemainingSeconds) % 60;
+            focusTimerLabel.setText(String.format("%02d:%02d", mins, secs));
+            if (isSmartBreakActive) {
+                focusTimerLabel.setStyle(
+                        "-fx-font-size: 34px; -fx-font-weight: 800; -fx-text-fill: #166534;"
+                                + "-fx-background-color: #dcfce7; -fx-background-radius: 14;"
+                                + "-fx-border-color: #86efac; -fx-border-radius: 14; -fx-padding: 10 14;");
+            } else if (focusMode == FocusMode.STUDY) {
+                focusTimerLabel.setStyle(
+                        "-fx-font-size: 34px; -fx-font-weight: 800; -fx-text-fill: #b91c1c;"
+                                + "-fx-background-color: #fee2e2; -fx-background-radius: 14;"
+                                + "-fx-border-color: #fecaca; -fx-border-radius: 14; -fx-padding: 10 14;");
+            } else {
+                focusTimerLabel.setStyle(
+                        "-fx-font-size: 34px; -fx-font-weight: 800; -fx-text-fill: #0b5cab;"
+                                + "-fx-background-color: #eff6ff; -fx-background-radius: 14;"
+                                + "-fx-border-color: #bfdbfe; -fx-border-radius: 14; -fx-padding: 10 14;");
+            }
+        }
+        if (focusTopicLabel != null) {
+            String topic = (activeFocusSlot != null && activeFocusSlot.getTopic() != null && !activeFocusSlot.getTopic().isBlank())
+                    ? activeFocusSlot.getTopic()
+                    : "(chưa chọn)";
+            focusTopicLabel.setText("Môn học: " + topic);
+        }
+        if (focusMessageLabel != null) {
+            if (focusTimeline != null && focusTimeline.getStatus() == Timeline.Status.RUNNING) {
+                if (isSmartBreakActive) {
+                    focusMessageLabel.setText("Đã đến lúc vươn vai! Hãy rời mắt khỏi màn hình trong 2 phút để bảo vệ sức khỏe nhé 🧘‍♂️");
+                } else if (focusMode == FocusMode.STUDY) {
+                    String topic = (activeFocusSlot != null && activeFocusSlot.getTopic() != null && !activeFocusSlot.getTopic().isBlank())
+                            ? activeFocusSlot.getTopic()
+                            : "(chưa chọn)";
+                    focusMessageLabel.setText("Đang tập trung học " + topic + "...");
+                } else {
+                    focusMessageLabel.setText("Đang " + focusMode.label.toLowerCase() + "...");
+                }
+            } else if (focusMessageLabel.getText() == null || focusMessageLabel.getText().isBlank()) {
+                focusMessageLabel.setText("Sẵn sàng tập trung.");
+            }
+        }
+        updateFocusVisualState(focusTimeline != null && focusTimeline.getStatus() == Timeline.Status.RUNNING
+                && focusMode == FocusMode.STUDY);
+    }
+
+    private void updateFocusVisualState(boolean focusing) {
+        if (timetableScroll != null) {
+            timetableScroll.setOpacity(focusing ? 0.78 : 1.0);
+        }
+        if (monthYearLabel != null) {
+            monthYearLabel.setOpacity(focusing ? 0.85 : 1.0);
+        }
+        if (btnFocusStart != null) {
+            btnFocusStart.setDisable(focusing);
+        }
+        if (btnFocusPause != null) {
+            btnFocusPause.setDisable(!focusing);
+        }
+        if (btnFocusSkip != null) {
+            btnFocusSkip.setDisable(false);
+        }
+    }
+
     private void openSlotDetailsDialog(ScheduleSlot slot) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Chi tiết ScheduleSlot");
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+        ButtonType focusButtonType = new ButtonType("Bắt đầu tập trung", ButtonBar.ButtonData.LEFT);
+        dialog.getDialogPane().getButtonTypes().addAll(focusButtonType, ButtonType.OK, ButtonType.CANCEL);
 
         String planName = "(Không có)";
         if (slot.getPlan() != null) {
@@ -867,6 +1299,10 @@ public class TimetableController {
         dialog.getDialogPane().setContent(content);
 
         Optional<ButtonType> result = dialog.showAndWait();
+        if (result.isPresent() && result.get() == focusButtonType) {
+            startFocusForSlot(slot);
+            return;
+        }
         if (result.isPresent() && result.get() == ButtonType.OK) {
             slot.setCompleted(completedCheck.isSelected());
             renderTimetable();
