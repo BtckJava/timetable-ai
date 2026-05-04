@@ -60,6 +60,12 @@ public class LearningPlanRepository {
 
         return result != null ? result : 0;
 
+//        // *** M.O.C.K.***
+//        return switch (status) {
+//            case "COMPLETED" -> 8;
+//            case "IN_PROGRESS" -> 3;
+//            default -> 0;
+//        };
     }
 
     public long countByUserId(Long userId) {
