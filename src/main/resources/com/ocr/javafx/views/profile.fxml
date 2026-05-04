@@ -17,11 +17,22 @@
                     <StackPane>
                         <ImageView fx:id="imgAva" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
                     </StackPane>
-                    <VBox prefHeight="80.0" prefWidth="240.0" spacing="5">
+                    <VBox prefHeight="80.0" prefWidth="350.0" spacing="10">
                         <TextField fx:id="txtName" />
                         <Label fx:id="lblEmail" style="-fx-text-fill: gray;" text="nhi@gmail.com" />
-                        <Label />
-                        <Button fx:id="btnEditProfile" onAction="#handleEditProfile" style="-fx-background-color: #0984e3; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;" text="Edit Profile" />
+
+                        <HBox spacing="10">
+                            <Button fx:id="btnEditProfile" onAction="#handleEditProfile"
+                                    style="-fx-background-color: #0984e3; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;"
+                                    text="Edit Profile" />
+
+                            <Button fx:id="btnChangePassword" onAction="#handleOpenChangePassword"
+                                    style="-fx-background-color: #636e72; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;"
+                                    text="Change Password" />
+                            <Button fx:id="btnLogout" onAction="#handleLogout"
+                                    style="-fx-background-color: #ff7675; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;"
+                                    text="Logout" />
+                        </HBox>
                     </VBox>
                 </HBox>
             </HBox>
