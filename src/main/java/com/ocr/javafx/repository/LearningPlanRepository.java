@@ -60,6 +60,12 @@ public class LearningPlanRepository {
 
         return result != null ? result : 0;
 
+//        // *** M.O.C.K.***
+//        return switch (status) {
+//            case "COMPLETED" -> 8;
+//            case "IN_PROGRESS" -> 3;
+//            default -> 0;
+//        };
     }
 
     public long countByUserId(Long userId) {
@@ -107,4 +113,27 @@ public class LearningPlanRepository {
                 .uniqueResult();
     }
 
+    public long countCompletedSlots(Session session, Long planId) {
+        String hql = "SELECT COUNT(s) FROM ScheduleSlot s WHERE s.plan.id = :planId AND s.completed = true";
+        return session.createQuery(hql, Long.class)
+                .setParameter("planId", planId)
+                .uniqueResult();
+    }
+
+    public void updateProgressAndStatus(Long planId, int progress, LearningPlanStatus status) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            LearningPlan plan = session.get(LearningPlan.class, planId);
+            if (plan != null) {
+                plan.setProgress(progress);
+                plan.setStatus(status);
+                session.update(plan);
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+        }
+    }
 }

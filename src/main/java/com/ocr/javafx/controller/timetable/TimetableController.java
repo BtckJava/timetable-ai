@@ -27,6 +27,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ProgressIndicator;
@@ -45,10 +46,15 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.CompletableFuture;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +63,17 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.awt.Desktop;
+import java.net.URI;
 
 public class TimetableController {
+
+    private static final HttpClient MAIL_HTTP_CLIENT = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(15))
+            .build();
+    private static final String MAIL_SERVER_BASE = "http://localhost:8080";
+    private static final String MAIL_INTERNAL_KEY = "SieuCapVipPro_2026";
+    private static final DateTimeFormatter REMINDER_TIME_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     private static final DateTimeFormatter HEADER_FMT = DateTimeFormatter.ofPattern("d/M/yyyy");
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("H:mm");
@@ -155,6 +170,16 @@ public class TimetableController {
                     "Vui lòng chọn một Learning Plan trước khi tạo lịch bằng AI.");
             return;
         }
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Xác nhận ghi đè lịch");
+        confirm.setHeaderText("Ghi đè lịch hiện tại của plan trong tuần");
+        confirm.setContentText(
+                "Hệ thống sẽ xóa toàn bộ lịch học cũ của Plan này trong tuần hiện tại để ghi đè lịch mới từ AI. "
+                        + "Bạn có chắc chắn muốn tiếp tục?");
+        Optional<ButtonType> decision = confirm.showAndWait();
+        if (decision.isEmpty() || decision.get() != ButtonType.OK) {
+            return;
+        }
 
         final LocalDate weekStart = currentWeekStart;
         final LocalDate weekEnd = currentWeekStart.plusDays(selectedPlan.getDurationDays() - 1);
@@ -185,18 +210,27 @@ public class TimetableController {
                     alert(Alert.AlertType.INFORMATION, "AI", "AI không trả về slot nào trong phản hồi.");
                     return;
                 }
+                Long selectedPlanId = planRef.getId();
+                List<ScheduleSlot> oldPlanSlotsInWeek = slots.stream()
+                        .filter(s -> isSamePlan(s, planRef, selectedPlanId))
+                        .filter(s -> s.getDate() != null
+                                && !s.getDate().isBefore(weekStart)
+                                && !s.getDate().isAfter(weekEnd))
+                        .collect(Collectors.toList());
+
+                for (ScheduleSlot old : oldPlanSlotsInWeek) {
+                    markDeletedIfPersisted(old);
+                }
+                slots.removeAll(oldPlanSlotsInWeek);
+
                 List<ScheduleSlot> toAdd = new ArrayList<>();
                 for (ScheduleSlot s : created) {
-                    if (!overlapsAnyExisting(s, Collections.emptyList(), -1)) {
-                        toAdd.add(s);
+                    if (!isSamePlan(s, planRef, selectedPlanId)) {
+                        s.setPlan(planRef);
                     }
+                    toAdd.add(s);
                 }
-                if (toAdd.isEmpty()) {
-                    alert(Alert.AlertType.INFORMATION, "AI",
-                            "Các slot AI trả về đều trùng với lịch hiện có; không thêm slot mới.");
-                } else {
-                    slots.addAll(toAdd);
-                }
+                slots.addAll(toAdd);
             } finally {
                 setBusy(false);
                 renderTimetable();
@@ -223,6 +257,28 @@ public class TimetableController {
         Thread t = new Thread(task, "timetable-openrouter-ai");
         t.setDaemon(true);
         t.start();
+    }
+
+    private static boolean isSamePlan(ScheduleSlot slot, LearningPlan selectedPlan, Long selectedPlanId) {
+        if (slot == null || slot.getPlan() == null) {
+            return false;
+        }
+        Long planId = slot.getPlan().getId();
+        if (selectedPlanId == null || planId == null) {
+            return slot.getPlan() == selectedPlan;
+        }
+        return Objects.equals(planId, selectedPlanId);
+    }
+
+    private void markDeletedIfPersisted(ScheduleSlot slot) {
+        if (slot == null || slot.getId() == null) {
+            return;
+        }
+        boolean exists = deletedSlots.stream()
+                .anyMatch(s -> s.getId() != null && Objects.equals(s.getId(), slot.getId()));
+        if (!exists) {
+            deletedSlots.add(slot);
+        }
     }
 
     private static String planDisplayName(LearningPlan plan) {
@@ -265,9 +321,10 @@ public class TimetableController {
                 + "Yêu cầu đầu ra:\n"
                 + "- Chỉ trả về MỘT mảng JSON thuần (không markdown, không giải thích, không code fence).\n"
                 + "- Mỗi phần tử là object: {\"date\":\"yyyy-MM-dd\",\"startTime\":\"HH:mm\",\"endTime\":\"HH:mm\","
-                + "\"topic\":\"Tên bài học\",\"subTopic\":\"(tuỳ chọn)\"}\n"
+                + "\"topic\":\"Tên bài học\",\"subTopic\":\"(tuỳ chọn)\",\"resourceUrl\":\"https://...\"}\n"
                 + "- Giờ trong ngày hợp lý (ví dụ 08:00–10:00), không chồng lấn trong chính mảng bạn trả về.\n"
-                + "- Chỉ dùng ngày nằm trong khoảng tuần đã nêu.\n";
+                + "- Chỉ dùng ngày nằm trong khoảng tuần đã nêu.\n"
+                + "- resourceUrl phải là nguồn học uy tín và KHÔNG được là YouTube (không youtube.com, không youtu.be).\n";
     }
 
     /**
@@ -325,12 +382,22 @@ public class TimetableController {
                 s.setEndTime(en);
                 s.setTopic(row.topic.trim());
                 s.setSubTopic(row.subTopic != null && !row.subTopic.isBlank() ? row.subTopic.trim() : "");
+                if (row.resourceUrl != null && !row.resourceUrl.isBlank() && !isYouTubeUrl(row.resourceUrl)) {
+                    s.setResourceUrl(row.resourceUrl.trim());
+                } else {
+                    s.setResourceUrl("");
+                }
                 out.add(s);
             } catch (Exception ignored) {
                 // bỏ qua dòng không parse được
             }
         }
         return out;
+    }
+
+    private static boolean isYouTubeUrl(String url) {
+        String u = url == null ? "" : url.toLowerCase();
+        return u.contains("youtube.com") || u.contains("youtu.be");
     }
 
     private static LocalTime parseTimeFlexible(String s) {
@@ -357,6 +424,8 @@ public class TimetableController {
         String topic;
         @JsonProperty("subTopic")
         String subTopic;
+        @JsonProperty("resourceUrl")
+        String resourceUrl;
     }
 
     @FXML
@@ -366,7 +435,17 @@ public class TimetableController {
         }
         try {
             applicationContext.getScheduleSlotRepository().saveAll(new ArrayList<>(slots));
+            List<ScheduleSlot> copyOfDeletedSlots = new ArrayList<>(deletedSlots);
             flushDeletedSlotsToDatabase();
+            User user = applicationContext.getSessionManager().getCurrentUser();
+            syncRemindersWithMailServer(new ArrayList<>(slots), copyOfDeletedSlots, user);
+            java.util.Set<Long> planIdsToUpdate = slots.stream()
+                    .map(s -> s.getPlan() != null ? s.getPlan().getId() : null)
+                    .filter(java.util.Objects::nonNull)
+                    .collect(java.util.stream.Collectors.toSet());
+            for (Long planId : planIdsToUpdate) {
+                applicationContext.getLearningPlanService().calculateAndUpdateProgress(planId);
+            }
             alert(Alert.AlertType.INFORMATION, "Đã lưu", "Đã lưu " + slots.size() + " slot xuống database.");
         } catch (Exception e) {
             e.printStackTrace();
@@ -384,6 +463,12 @@ public class TimetableController {
             alert(Alert.AlertType.WARNING, "Đăng nhập", "Cần đăng nhập.");
             return;
         }
+        LearningPlan selectedPlan = planCombo.getSelectionModel().getSelectedItem();
+        if (selectedPlan == null) {
+            alert(Alert.AlertType.WARNING, "Thiếu Learning Plan",
+                    "Vui lòng chọn Learning Plan trước khi thêm ScheduleSlot thủ công.");
+            return;
+        }
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Thêm slot thủ công");
@@ -392,23 +477,34 @@ public class TimetableController {
         DatePicker datePicker = new DatePicker(LocalDate.now());
         TextField startField = new TextField("9:00");
         TextField endField = new TextField("10:30");
-        TextField topicField = new TextField();
+        ComboBox<String> topicCombo = new ComboBox<>();
+        topicCombo.setEditable(true);
+        topicCombo.setPromptText("Chọn/nhập chủ đề theo plan");
+        if (selectedPlan.getSkills() != null && !selectedPlan.getSkills().isEmpty()) {
+            topicCombo.getItems().setAll(selectedPlan.getSkills());
+        } else if (selectedPlan.getTitle() != null && !selectedPlan.getTitle().isBlank()) {
+            topicCombo.getItems().add(selectedPlan.getTitle().trim());
+        }
+        if (!topicCombo.getItems().isEmpty()) {
+            topicCombo.getSelectionModel().selectFirst();
+        }
         TextField subTopicField = new TextField();
 
         VBox form = new VBox(10,
                 labeled("Ngày", datePicker),
                 labeled("Bắt đầu (H:mm)", startField),
                 labeled("Kết thúc (H:mm)", endField),
-                labeled("Chủ đề", topicField),
+                labeled("Chủ đề", topicCombo),
                 labeled("Nội dung", subTopicField));
         form.setPadding(new Insets(16));
         dialog.getDialogPane().setContent(form);
 
         Button okBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         okBtn.addEventFilter(ActionEvent.ACTION, ev -> {
-            if (!validateManualForm(datePicker, startField, endField, topicField)) {
+            if (!validateManualForm(datePicker, startField, endField, topicCombo, selectedPlan)) {
                 ev.consume();
-                alert(Alert.AlertType.WARNING, "Dữ liệu", "Kiểm tra ngày, giờ (H:mm) và chủ đề.");
+                alert(Alert.AlertType.WARNING, "Dữ liệu",
+                        "Kiểm tra ngày, giờ (H:mm) và chọn chủ đề thuộc Learning Plan.");
             }
         });
 
@@ -420,7 +516,9 @@ public class TimetableController {
         LocalDate date = datePicker.getValue();
         LocalTime start = LocalTime.parse(startField.getText().trim(), TIME_FMT);
         LocalTime end = LocalTime.parse(endField.getText().trim(), TIME_FMT);
-        String topic = topicField.getText().trim();
+        String topic = topicCombo.getEditor().getText() != null
+                ? topicCombo.getEditor().getText().trim()
+                : "";
         String sub = subTopicField.getText() != null ? subTopicField.getText().trim() : "";
 
         ScheduleSlot s = new ScheduleSlot();
@@ -431,12 +529,18 @@ public class TimetableController {
         s.setSubTopic(sub);
         s.setCompleted(false);
         s.setUser(user);
-        s.setPlan(planCombo.getSelectionModel().getSelectedItem());
+        s.setPlan(selectedPlan);
+        if (overlapsAnyExisting(s, Collections.emptyList(), -1)) {
+            alert(Alert.AlertType.WARNING, "Trùng lịch",
+                    "Khung giờ thủ công bị trùng với ScheduleSlot đã có.");
+            return;
+        }
         slots.add(s);
     }
 
     private static boolean validateManualForm(DatePicker datePicker, TextField startField,
-                                              TextField endField, TextField topicField) {
+                                              TextField endField, ComboBox<String> topicCombo,
+                                              LearningPlan selectedPlan) {
         if (datePicker.getValue() == null) {
             return false;
         }
@@ -451,8 +555,18 @@ public class TimetableController {
         if (!end.isAfter(start)) {
             return false;
         }
-        String topic = topicField.getText() != null ? topicField.getText().trim() : "";
-        return !topic.isEmpty();
+        String topic = topicCombo.getEditor().getText() != null
+                ? topicCombo.getEditor().getText().trim()
+                : "";
+        if (topic.isEmpty()) {
+            return false;
+        }
+        List<String> skills = selectedPlan.getSkills();
+        if (skills == null || skills.isEmpty()) {
+            return true;
+        }
+        return skills.stream()
+                .anyMatch(skill -> skill != null && skill.trim().equalsIgnoreCase(topic));
     }
 
     private static HBox labeled(String title, javafx.scene.Node node) {
@@ -731,6 +845,12 @@ public class TimetableController {
         CheckBox completedCheck = new CheckBox("Đã hoàn thành");
         completedCheck.setSelected(slot.isCompleted());
 
+        String resourceUrl = slot.getResourceUrl() != null ? slot.getResourceUrl().trim() : "";
+        Hyperlink resourceLink = new Hyperlink(resourceUrl.isBlank() ? "(Chưa có)" : resourceUrl);
+        resourceLink.setDisable(resourceUrl.isBlank());
+        resourceLink.setWrapText(true);
+        resourceLink.setOnAction(ev -> openExternalUrl(resourceUrl));
+
         VBox content = new VBox(
                 8,
                 new Label("Date: " + (slot.getDate() != null ? slot.getDate() : "")),
@@ -738,6 +858,8 @@ public class TimetableController {
                 new Label("End Time: " + (slot.getEndTime() != null ? slot.getEndTime() : "")),
                 new Label("Topic: " + (slot.getTopic() != null ? slot.getTopic() : "")),
                 new Label("SubTopic: " + (slot.getSubTopic() != null ? slot.getSubTopic() : "")),
+                new Label("Resource URL:"),
+                resourceLink,
                 new Label("LearningPlan: " + planName),
                 completedCheck
         );
@@ -751,6 +873,25 @@ public class TimetableController {
         }
     }
 
+    private void openExternalUrl(String url) {
+        if (url == null || url.isBlank()) {
+            return;
+        }
+        try {
+            if (!Desktop.isDesktopSupported()) {
+                throw new IllegalStateException("Desktop API không được hỗ trợ trên hệ thống này.");
+            }
+            Desktop desktop = Desktop.getDesktop();
+            if (!desktop.isSupported(Desktop.Action.BROWSE)) {
+                throw new IllegalStateException("Không hỗ trợ mở trình duyệt mặc định.");
+            }
+            desktop.browse(URI.create(url));
+        } catch (Exception e) {
+            alert(Alert.AlertType.ERROR, "Mở liên kết thất bại",
+                    "Không thể mở resourceUrl trên trình duyệt: " + e.getMessage());
+        }
+    }
+
     private void flushDeletedSlotsToDatabase() throws Exception {
         if (deletedSlots.isEmpty()) {
             return;
@@ -759,6 +900,99 @@ public class TimetableController {
             applicationContext.getScheduleSlotRepository().delete(slot);
         }
         deletedSlots.clear();
+    }
+
+    /**
+     * Đồng bộ reminder jobs với Mail Server (không block JavaFX thread).
+     */
+    private void syncRemindersWithMailServer(List<ScheduleSlot> savedSlots, List<ScheduleSlot> deletedSlots, User user) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                if (deletedSlots != null) {
+                    for (ScheduleSlot slot : deletedSlots) {
+                        try {
+                            if (slot == null || slot.getId() == null) {
+                                continue;
+                            }
+                            String uri = MAIL_SERVER_BASE + "/api/reminders/schedule/" + slot.getId();
+                            HttpRequest req = HttpRequest.newBuilder()
+                                    .uri(URI.create(uri))
+                                    .timeout(Duration.ofSeconds(30))
+                                    .header("X-Internal-Key", MAIL_INTERNAL_KEY)
+                                    .DELETE()
+                                    .build();
+                            HttpResponse<String> response = MAIL_HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofString());
+                            if (response.statusCode() != 200) {
+                                System.err.println("Mail sync DELETE failed: " + response.statusCode() + " " + uri);
+                            }
+                        } catch (Exception ex) {
+                            System.err.println("Mail sync DELETE error: " + ex.getMessage());
+                        }
+                    }
+                }
+                if (savedSlots == null) {
+                    return;
+                }
+                String email = (user != null && user.getEmail() != null) ? user.getEmail() : "";
+                for (ScheduleSlot slot : savedSlots) {
+                    try {
+                        if (slot == null || slot.getId() == null || slot.isCompleted()) {
+                            continue;
+                        }
+                        LocalDate date = slot.getDate();
+                        LocalTime startTime = slot.getStartTime();
+                        if (date == null || startTime == null) {
+                            continue;
+                        }
+                        LocalDateTime eventStart = LocalDateTime.of(date, startTime);
+                        if (!eventStart.isAfter(LocalDateTime.now())) {
+                            continue;
+                        }
+                        LocalDateTime reminder = eventStart.minusMinutes(15);
+                        String reminderTimeStr = reminder.format(REMINDER_TIME_FMT);
+                        String topic = slot.getTopic() != null ? slot.getTopic() : "";
+                        String subject = "Nhắc nhở lịch học: " + topic;
+                        String content = "Bạn có lịch học môn " + topic + " vào lúc " + startTime;
+                        if (email.isEmpty()) {
+                            System.err.println("Mail sync POST skipped: missing user email for slotId=" + slot.getId());
+                            continue;
+                        }
+                        String body = "{"
+                                + "\"slotId\":" + slot.getId() + ","
+                                + "\"email\":\"" + escapeJson(email) + "\","
+                                + "\"subject\":\"" + escapeJson(subject) + "\","
+                                + "\"content\":\"" + escapeJson(content) + "\","
+                                + "\"reminderTime\":\"" + escapeJson(reminderTimeStr) + "\""
+                                + "}";
+                        HttpRequest post = HttpRequest.newBuilder()
+                                .uri(URI.create(MAIL_SERVER_BASE + "/api/reminders/schedule"))
+                                .timeout(Duration.ofSeconds(30))
+                                .header("X-Internal-Key", MAIL_INTERNAL_KEY)
+                                .header("Content-Type", "application/json")
+                                .POST(HttpRequest.BodyPublishers.ofString(body))
+                                .build();
+                        HttpResponse<String> response = MAIL_HTTP_CLIENT.send(post, HttpResponse.BodyHandlers.ofString());
+                        if (response.statusCode() != 200) {
+                            System.err.println("Mail sync POST failed: " + response.statusCode() + " slotId=" + slot.getId());
+                        }
+                    } catch (Exception ex) {
+                        System.err.println("Mail sync POST error: " + ex.getMessage());
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Mail sync error: " + e.getMessage());
+            }
+        });
+    }
+
+    private static String escapeJson(String s) {
+        if (s == null) {
+            return "";
+        }
+        return s.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r");
     }
 
     /**
