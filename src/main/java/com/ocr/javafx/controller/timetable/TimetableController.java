@@ -1064,11 +1064,8 @@ public class TimetableController {
             if (empty || item == null) {
                 setText(null);
             } else {
-                String g = item.getGoal();
                 String t = item.getTitle();
-                if (g != null && !g.isBlank()) {
-                    setText(g.length() > 48 ? g.substring(0, 45) + "…" : g);
-                } else if (t != null && !t.isBlank()) {
+                if (t != null && !t.isBlank()) {
                     setText(t);
                 } else {
                     setText("Plan #" + item.getId());
