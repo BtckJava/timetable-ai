@@ -1,0 +1,162 @@
+/* Timetable — Alert / Dialog (JavaFX DialogPane) */
+
+.dialog-pane.timetable-dialog {
+    -fx-background-color: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
+    -fx-background-insets: 0;
+    -fx-background-radius: 18;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.22), 32, 0.18, 0, 12);
+    -fx-min-width: 360px;
+    -fx-max-width: 520px;
+}
+
+.dialog-pane.timetable-dialog > .header-panel {
+    -fx-background-radius: 18 18 0 0;
+    -fx-padding: 18 22 12 22;
+}
+
+.dialog-pane.timetable-dialog > .header-panel .label {
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
+    -fx-wrap-text: true;
+}
+
+.dialog-pane.timetable-dialog > .graphic-container {
+    -fx-padding: 0 0 0 0;
+}
+
+.dialog-pane.timetable-dialog > .content {
+    -fx-padding: 8 24 12 24;
+}
+
+.dialog-pane.timetable-dialog > .content.label {
+    -fx-wrap-text: true;
+    -fx-font-size: 13.5px;
+    -fx-line-spacing: 2px;
+    -fx-text-fill: #475569;
+}
+
+.dialog-pane.timetable-dialog .content .label {
+    -fx-wrap-text: true;
+    -fx-font-size: 13.5px;
+    -fx-line-spacing: 2px;
+    -fx-text-fill: #475569;
+}
+
+.dialog-pane.timetable-dialog > .button-bar > .container {
+    -fx-padding: 10 20 18 20;
+    -fx-spacing: 10;
+}
+
+.dialog-pane.timetable-dialog .button {
+    -fx-background-radius: 10;
+    -fx-padding: 8 18;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-min-width: 88px;
+}
+
+.dialog-pane.timetable-dialog .button.cancel {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #475569;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+}
+
+.dialog-pane.timetable-dialog .button.cancel:hover {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #cbd5e1;
+}
+
+.dialog-pane.timetable-dialog .button.default,
+.dialog-pane.timetable-dialog .button:default {
+    -fx-background-color: linear-gradient(to bottom, #4ab5e2, #3299c7);
+    -fx-text-fill: #ffffff;
+    -fx-border-color: transparent;
+}
+
+.dialog-pane.timetable-dialog .button.default:hover,
+.dialog-pane.timetable-dialog .button:default:hover {
+    -fx-background-color: linear-gradient(to bottom, #3aa3d1, #2a87b0);
+}
+
+/* Variant accents — header strip */
+.dialog-pane.timetable-dialog.timetable-dialog--information > .header-panel {
+    -fx-background-color: linear-gradient(to right, #e0f2fe 0%, #f0f9ff 55%, #ffffff 100%);
+}
+
+.dialog-pane.timetable-dialog.timetable-dialog--warning > .header-panel {
+    -fx-background-color: linear-gradient(to right, #fffbeb 0%, #fef3c7 50%, #ffffff 100%);
+}
+
+.dialog-pane.timetable-dialog.timetable-dialog--error > .header-panel {
+    -fx-background-color: linear-gradient(to right, #fef2f2 0%, #fee2e2 50%, #ffffff 100%);
+}
+
+.dialog-pane.timetable-dialog.timetable-dialog--confirmation > .header-panel {
+    -fx-background-color: linear-gradient(to right, #eef2ff 0%, #e0e7ff 45%, #f8fafc 100%);
+}
+
+.dialog-pane.timetable-dialog.timetable-dialog--form > .header-panel,
+.dialog-pane.timetable-dialog.timetable-dialog--details > .header-panel {
+    -fx-background-color: linear-gradient(to right, #e0f2fe 0%, #f8fafc 70%, #ffffff 100%);
+}
+
+/* Custom form / details content */
+.timetable-dialog-form {
+    -fx-spacing: 12;
+}
+
+.timetable-dialog-field-row {
+    -fx-alignment: center-left;
+    -fx-spacing: 12;
+}
+
+.timetable-dialog-field-row > .label {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #475569;
+    -fx-min-width: 112px;
+}
+
+.timetable-dialog-details {
+    -fx-spacing: 8;
+}
+
+.timetable-dialog-details .label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #334155;
+}
+
+.timetable-dialog-details .hyperlink {
+    -fx-font-size: 12.5px;
+    -fx-border-width: 0;
+    -fx-underline: true;
+}
+
+.timetable-dialog-details .check-box {
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #0f172a;
+}
+
+.dialog-pane.timetable-dialog .combo-box,
+.dialog-pane.timetable-dialog .text-field,
+.dialog-pane.timetable-dialog .date-picker {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+}
+
+.dialog-pane.timetable-dialog .text-field:focused,
+.dialog-pane.timetable-dialog .combo-box:focused {
+    -fx-border-color: #4ab5e2;
+    -fx-effect: dropshadow(gaussian, rgba(74, 181, 226, 0.22), 8, 0.2, 0, 0);
+}

@@ -11,6 +11,7 @@ import com.ocr.javafx.entity.ScheduleSlot;
 import com.ocr.javafx.entity.User;
 import com.ocr.javafx.repository.LearningPlanRepository;
 import com.ocr.javafx.service.LearningPlanService;
+import com.ocr.javafx.service.MailSyncService;
 import com.ocr.javafx.service.OpenRouterAI;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -20,7 +21,10 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -29,6 +33,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -37,6 +42,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javafx.scene.input.ClipboardContent;
@@ -53,9 +59,6 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.io.File;
 import java.io.PrintWriter;
 import java.time.Duration;
@@ -70,6 +73,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -80,17 +84,14 @@ import java.time.ZoneOffset;
 
 public class TimetableController {
 
-    private static final HttpClient MAIL_HTTP_CLIENT = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(15))
-            .build();
-    private static final String MAIL_SERVER_BASE = "http://localhost:8080";
-    private static final String MAIL_INTERNAL_KEY = "SieuCapVipPro_2026";
-    private static final DateTimeFormatter REMINDER_TIME_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-
     private static final DateTimeFormatter HEADER_FMT = DateTimeFormatter.ofPattern("d/M/yyyy");
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("H:mm");
     private static final int START_HOUR = 6;
     private static final int END_HOUR = 22;
+    private static final String TIMETABLE_DIALOG_STYLESHEET = Objects.requireNonNull(
+            TimetableController.class.getResource("/com/ocr/javafx/style/timetable-dialog.css"),
+            "timetable-dialog.css"
+    ).toExternalForm();
     private static final int FOCUS_STUDY_SECONDS = 25 * 60;
     private static final int FOCUS_SHORT_BREAK_SECONDS = 5 * 60;
     private static final int FOCUS_LONG_BREAK_SECONDS = 15 * 60;
@@ -150,6 +151,7 @@ public class TimetableController {
     private final ObservableList<ScheduleSlot> slots = FXCollections.observableArrayList();
     private final LearningPlanRepository planRepository = new LearningPlanRepository();
     private final List<ScheduleSlot> deletedSlots = new ArrayList<>();
+    private final MailSyncService mailSyncService = MailSyncService.getInstance();
 
     private ApplicationContext applicationContext;
     private LocalDate currentWeekStart;
@@ -254,6 +256,7 @@ public class TimetableController {
             confirm.setTitle("Bỏ qua nghỉ thông minh");
             confirm.setHeaderText("Bạn đang trong nghỉ ngắn 2 phút");
             confirm.setContentText("Bỏ qua nghỉ có thể làm giảm hiệu quả bảo vệ mắt/cột sống. Bạn vẫn muốn tiếp tục học ngay?");
+            prepareTimetableAlert(confirm);
             Optional<ButtonType> decision = confirm.showAndWait();
             if (decision.isPresent() && decision.get() == ButtonType.OK) {
                 endSmartBreak(true);
@@ -304,6 +307,7 @@ public class TimetableController {
         confirm.setContentText(
                 "Hệ thống sẽ xóa toàn bộ lịch học cũ của Plan này trong tuần hiện tại để ghi đè lịch mới từ AI. "
                         + "Bạn có chắc chắn muốn tiếp tục?");
+        prepareTimetableAlert(confirm);
         Optional<ButtonType> decision = confirm.showAndWait();
         if (decision.isEmpty() || decision.get() != ButtonType.OK) {
             return;
@@ -676,6 +680,7 @@ public class TimetableController {
 
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Thêm slot thủ công");
+        dialog.setHeaderText("Điền thông tin cho slot mới");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
         DatePicker datePicker = new DatePicker(LocalDate.now());
@@ -701,7 +706,9 @@ public class TimetableController {
                 labeled("Chủ đề", topicCombo),
                 labeled("Nội dung", subTopicField));
         form.setPadding(new Insets(16));
+        form.getStyleClass().add("timetable-dialog-form");
         dialog.getDialogPane().setContent(form);
+        prepareTimetableDialog(dialog, "form");
 
         Button okBtn = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
         okBtn.addEventFilter(ActionEvent.ACTION, ev -> {
@@ -777,6 +784,7 @@ public class TimetableController {
         Label l = new Label(title);
         l.setMinWidth(100);
         HBox row = new HBox(10, l, node);
+        row.getStyleClass().add("timetable-dialog-field-row");
         row.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(node, Priority.ALWAYS);
         return row;
@@ -1266,6 +1274,7 @@ public class TimetableController {
     private void openSlotDetailsDialog(ScheduleSlot slot) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("Chi tiết ScheduleSlot");
+        dialog.setHeaderText("Thông tin lịch học");
         ButtonType focusButtonType = new ButtonType("Bắt đầu tập trung", ButtonBar.ButtonData.LEFT);
         dialog.getDialogPane().getButtonTypes().addAll(focusButtonType, ButtonType.OK, ButtonType.CANCEL);
 
@@ -1296,7 +1305,9 @@ public class TimetableController {
                 completedCheck
         );
         content.setPadding(new Insets(12));
+        content.getStyleClass().add("timetable-dialog-details");
         dialog.getDialogPane().setContent(content);
+        prepareTimetableDialog(dialog, "details");
 
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.isPresent() && result.get() == focusButtonType) {
@@ -1344,91 +1355,12 @@ public class TimetableController {
     private void syncRemindersWithMailServer(List<ScheduleSlot> savedSlots, List<ScheduleSlot> deletedSlots, User user) {
         CompletableFuture.runAsync(() -> {
             try {
-                if (deletedSlots != null) {
-                    for (ScheduleSlot slot : deletedSlots) {
-                        try {
-                            if (slot == null || slot.getId() == null) {
-                                continue;
-                            }
-                            String uri = MAIL_SERVER_BASE + "/api/reminders/schedule/" + slot.getId();
-                            HttpRequest req = HttpRequest.newBuilder()
-                                    .uri(URI.create(uri))
-                                    .timeout(Duration.ofSeconds(30))
-                                    .header("X-Internal-Key", MAIL_INTERNAL_KEY)
-                                    .DELETE()
-                                    .build();
-                            HttpResponse<String> response = MAIL_HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofString());
-                            if (response.statusCode() != 200) {
-                                System.err.println("Mail sync DELETE failed: " + response.statusCode() + " " + uri);
-                            }
-                        } catch (Exception ex) {
-                            System.err.println("Mail sync DELETE error: " + ex.getMessage());
-                        }
-                    }
-                }
-                if (savedSlots == null) {
-                    return;
-                }
-                String email = (user != null && user.getEmail() != null) ? user.getEmail() : "";
-                for (ScheduleSlot slot : savedSlots) {
-                    try {
-                        if (slot == null || slot.getId() == null || slot.isCompleted()) {
-                            continue;
-                        }
-                        LocalDate date = slot.getDate();
-                        LocalTime startTime = slot.getStartTime();
-                        if (date == null || startTime == null) {
-                            continue;
-                        }
-                        LocalDateTime eventStart = LocalDateTime.of(date, startTime);
-                        if (!eventStart.isAfter(LocalDateTime.now())) {
-                            continue;
-                        }
-                        LocalDateTime reminder = eventStart.minusMinutes(15);
-                        String reminderTimeStr = reminder.format(REMINDER_TIME_FMT);
-                        String topic = slot.getTopic() != null ? slot.getTopic() : "";
-                        String subject = "Nhắc nhở lịch học: " + topic;
-                        String content = "Bạn có lịch học môn " + topic + " vào lúc " + startTime;
-                        if (email.isEmpty()) {
-                            System.err.println("Mail sync POST skipped: missing user email for slotId=" + slot.getId());
-                            continue;
-                        }
-                        String body = "{"
-                                + "\"slotId\":" + slot.getId() + ","
-                                + "\"email\":\"" + escapeJson(email) + "\","
-                                + "\"subject\":\"" + escapeJson(subject) + "\","
-                                + "\"content\":\"" + escapeJson(content) + "\","
-                                + "\"reminderTime\":\"" + escapeJson(reminderTimeStr) + "\""
-                                + "}";
-                        HttpRequest post = HttpRequest.newBuilder()
-                                .uri(URI.create(MAIL_SERVER_BASE + "/api/reminders/schedule"))
-                                .timeout(Duration.ofSeconds(30))
-                                .header("X-Internal-Key", MAIL_INTERNAL_KEY)
-                                .header("Content-Type", "application/json")
-                                .POST(HttpRequest.BodyPublishers.ofString(body))
-                                .build();
-                        HttpResponse<String> response = MAIL_HTTP_CLIENT.send(post, HttpResponse.BodyHandlers.ofString());
-                        if (response.statusCode() != 200) {
-                            System.err.println("Mail sync POST failed: " + response.statusCode() + " slotId=" + slot.getId());
-                        }
-                    } catch (Exception ex) {
-                        System.err.println("Mail sync POST error: " + ex.getMessage());
-                    }
-                }
+                String email = user != null ? user.getEmail() : "";
+                mailSyncService.syncSlots(savedSlots, deletedSlots, email);
             } catch (Exception e) {
                 System.err.println("Mail sync error: " + e.getMessage());
             }
         });
-    }
-
-    private static String escapeJson(String s) {
-        if (s == null) {
-            return "";
-        }
-        return s.replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r");
     }
 
     /**
@@ -1482,11 +1414,59 @@ public class TimetableController {
         }
     }
 
+    private static void ensureDialogStylesheet(DialogPane pane) {
+        if (!pane.getStylesheets().contains(TIMETABLE_DIALOG_STYLESHEET)) {
+            pane.getStylesheets().add(TIMETABLE_DIALOG_STYLESHEET);
+        }
+    }
+
+    private static void playDialogEntrance(DialogPane pane) {
+        pane.setOpacity(0);
+        pane.setScaleX(0.92);
+        pane.setScaleY(0.92);
+        FadeTransition fade = new FadeTransition(javafx.util.Duration.millis(260), pane);
+        fade.setFromValue(0);
+        fade.setToValue(1);
+        ScaleTransition scale = new ScaleTransition(javafx.util.Duration.millis(260), pane);
+        scale.setFromX(0.92);
+        scale.setFromY(0.92);
+        scale.setToX(1.0);
+        scale.setToY(1.0);
+        new ParallelTransition(fade, scale).play();
+    }
+
+    private static void prepareTimetableDialog(Dialog<?> dialog, String variant) {
+        DialogPane pane = dialog.getDialogPane();
+        ensureDialogStylesheet(pane);
+        pane.getStyleClass().removeIf(c -> c.startsWith("timetable-dialog--"));
+        pane.getStyleClass().add("timetable-dialog");
+        pane.getStyleClass().add("timetable-dialog--" + variant);
+        Window.getWindows().stream()
+                .filter(w -> w != null && w.isShowing())
+                .findFirst()
+                .ifPresent(dialog::initOwner);
+        dialog.setOnShown(e -> playDialogEntrance(pane));
+    }
+
+    private static void prepareTimetableAlert(Alert alert) {
+        prepareTimetableDialog(alert, alert.getAlertType().name().toLowerCase(Locale.ROOT));
+    }
+
     private static void doAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
-        alert.setHeaderText(null);
+        alert.setHeaderText(title);
         alert.setContentText(message);
+        prepareTimetableAlert(alert);
+
+        if (type == Alert.AlertType.INFORMATION) {
+            // Không APPLICATION_MODAL: cho phép thao tác lưới/timetable trong khi có toast đồng bộ Mail
+            // hoặc khi có thông báo thành công treo sót — tránh khóa cả cửa sổ bằng showAndWait.
+            alert.initModality(Modality.NONE);
+            alert.show();
+            return;
+        }
+
         alert.showAndWait();
     }
 

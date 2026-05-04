@@ -17,7 +17,7 @@ public class OpenRouterAI {
 
     public static String ask(String prompt) throws Exception {
 
-        String apiKey = "";
+        String apiKey = resolveApiKey();
 
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException(
