@@ -22,16 +22,10 @@
                         <Label fx:id="lblEmail" style="-fx-text-fill: gray;" text="nhi@gmail.com" />
 
                         <HBox spacing="10">
-                            <Button fx:id="btnEditProfile" onAction="#handleEditProfile"
-                                    style="-fx-background-color: #0984e3; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;"
-                                    text="Edit Profile" />
+                            <Button fx:id="btnEditProfile" onAction="#handleEditProfile" style="-fx-background-color: #0984e3; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;" text="Edit Profile" />
 
-                            <Button fx:id="btnChangePassword" onAction="#handleOpenChangePassword"
-                                    style="-fx-background-color: #636e72; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;"
-                                    text="Change Password" />
-                            <Button fx:id="btnLogout" onAction="#handleLogout"
-                                    style="-fx-background-color: #ff7675; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;"
-                                    text="Logout" />
+                            <Button fx:id="btnChangePassword" onAction="#handleOpenChangePassword" style="-fx-background-color: #636e72; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;" text="Change Password" />
+                            <Button fx:id="btnLogout" onAction="#handleLogout" style="-fx-background-color: #ff7675; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;" text="Logout" />
                         </HBox>
                     </VBox>
                 </HBox>
@@ -50,8 +44,8 @@
                     <Label fx:id="lblStreak" style="-fx-font-size: 18px; -fx-text-fill: black; -fx-font-weight: bold;" text="7" />
                 </VBox>
                 <VBox spacing="5" style="-fx-background-color: #fab1a0; -fx-padding: 15; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
-                    <Label style="-fx-text-fill: white;" text="Skills Learned" />
-                    <Label fx:id="lblSkills" style="-fx-font-size: 18px; -fx-text-fill: white; -fx-font-weight: bold;" text="24" />
+                    <Label style="-fx-text-fill: white;" text="Completed Sessions" />
+                    <Label fx:id="lblSessions" style="-fx-font-size: 18px; -fx-text-fill: white; -fx-font-weight: bold;" text="24" />
                 </VBox>
             </HBox>
             <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1),10,0,0,3);">
@@ -59,18 +53,18 @@
                 <HBox spacing="15">
                     <VBox alignment="CENTER" spacing="5" style="-fx-background-color: #f1f2f6; -fx-padding: 15; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                         <ImageView fx:id="imgAchievementPlan" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label style="-fx-font-weight: bold;" text="Quick Learner" />
-                        <Label fx:id="txtQuickLearner" style="-fx-text-fill: gray;" text="Completed your first plan" wrapText="true" />
+                        <Label fx:id="txtTitlePlan" style="-fx-font-weight: bold;" text="Quick Learner" />
+                        <Label fx:id="txtDesPlan" style="-fx-text-fill: gray;" text="Completed your first plan" wrapText="true" />
                     </VBox>
                     <VBox alignment="CENTER" spacing="5" style="-fx-background-color: #f1f2f6; -fx-padding: 15; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                         <ImageView fx:id="imgAchievementStreak" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label style="-fx-font-weight: bold;" text="7-Day Streak" />
+                        <Label fx:id="txtTitleStreak" style="-fx-font-weight: bold;" text="7-Day Streak" />
                         <Label fx:id="txtStreak" style="-fx-text-fill: gray;" text="Studied 7 days in a row" wrapText="true" />
                     </VBox>
                     <VBox alignment="CENTER" spacing="5" style="-fx-background-color: #f1f2f6; -fx-padding: 15; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                         <ImageView fx:id="imgAchievementHour" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label style="-fx-font-weight: bold;" text="Master" />
-                        <Label fx:id="txtMaster" style="-fx-text-fill: gray;" text="Learned 20+ skills" wrapText="true" />
+                        <Label fx:id="txtTitleHour" style="-fx-font-weight: bold;" text="Master" />
+                        <Label fx:id="txtDesHour" style="-fx-text-fill: gray;" text="Learned 20+ skills" wrapText="true" />
                     </VBox>
                 </HBox>
             </VBox>

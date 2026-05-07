@@ -34,7 +34,7 @@ public class    MainApplication extends Application {
 */
 
         stage.initStyle(StageStyle.UNDECORATED);
-        stage.setTitle("App cua Nhi hihi");
+        stage.setTitle("DoDo");
         stage.setScene(scene);
 
         stage.show();
