@@ -28,7 +28,7 @@ public class OpenRouterAI {
 
         JSONObject bodyJson = new JSONObject();
 
-        bodyJson.put("model", "inclusionai/ling-2.6-1t:free");
+        bodyJson.put("model", "openai/gpt-oss-120b:free");
 
         JSONArray messages = new JSONArray();
 
