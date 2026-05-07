@@ -22,16 +22,10 @@
                         <Label fx:id="lblEmail" style="-fx-text-fill: gray;" text="nhi@gmail.com" />
 
                         <HBox spacing="10">
-                            <Button fx:id="btnEditProfile" onAction="#handleEditProfile"
-                                    style="-fx-background-color: #0984e3; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;"
-                                    text="Edit Profile" />
+                            <Button fx:id="btnEditProfile" onAction="#handleEditProfile" style="-fx-background-color: #0984e3; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;" text="Edit Profile" />
 
-                            <Button fx:id="btnChangePassword" onAction="#handleOpenChangePassword"
-                                    style="-fx-background-color: #636e72; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;"
-                                    text="Change Password" />
-                            <Button fx:id="btnLogout" onAction="#handleLogout"
-                                    style="-fx-background-color: #ff7675; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;"
-                                    text="Logout" />
+                            <Button fx:id="btnChangePassword" onAction="#handleOpenChangePassword" style="-fx-background-color: #636e72; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;" text="Change Password" />
+                            <Button fx:id="btnLogout" onAction="#handleLogout" style="-fx-background-color: #ff7675; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 10 20;" text="Logout" />
                         </HBox>
                     </VBox>
                 </HBox>
@@ -50,8 +44,8 @@
                     <Label fx:id="lblStreak" style="-fx-font-size: 18px; -fx-text-fill: black; -fx-font-weight: bold;" text="7" />
                 </VBox>
                 <VBox spacing="5" style="-fx-background-color: #fab1a0; -fx-padding: 15; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
-                    <Label style="-fx-text-fill: white;" text="Skills Learned" />
-                    <Label fx:id="lblSkills" style="-fx-font-size: 18px; -fx-text-fill: white; -fx-font-weight: bold;" text="24" />
+                    <Label style="-fx-text-fill: white;" text="Completed Sessions" />
+                    <Label fx:id="lblSessions" style="-fx-font-size: 18px; -fx-text-fill: white; -fx-font-weight: bold;" text="24" />
                 </VBox>
             </HBox>
             <VBox spacing="15" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1),10,0,0,3);">

@@ -39,8 +39,8 @@ public class ProfileService {
 
         double hours = scheduleSlotRepository.sumTotalHoursByUserId(user.getId());
 
-        List<java.time.LocalDate> dates = scheduleSlotRepository.findDistinctDatesByUserId(user.getId());
-        int streak = calculateStreak(dates);
+        List<Object[]> dailyStatus = scheduleSlotRepository.findDailyCompletionStatus(user.getId());
+        int streak = calculateStreak(dailyStatus);
 
         // Tính số skills từ danh sách topic của các slot đã xong
         int skills = (int) scheduleSlotRepository.findByUserId(user.getId()).stream()
@@ -58,28 +58,40 @@ public class ProfileService {
         res.setCurrentStreak(streak);
         res.setSkillsLearned(skills);
 
-        res.setAchievements(buildAchievements((int) hours, completedPlans, streak, skills));
+        res.setAchievements(buildAchievements((int) hours, completedPlans, streak));
         return res;
     }
 
-    private List<AchievementResponse> buildAchievements(int hours, int plans, int streak, int skills) {
+    private List<AchievementResponse> buildAchievements(int hours, int plans, int streak) {
         List<AchievementResponse> list = new ArrayList<>();
 
         // 1. Kế hoạch (Type: plan)
-        list.add(calculateCustomTier(plans, new int[]{1, 5, 12, 25}, "plan",
-                new String[]{"Starter", "Quick Learner", "Professional", "Plan Legend"},
-                new String[]{"Completed your first plan", "5 plans completed", "12 plans finished", "25+ plans master"}));
-
+        list.add(calculateCustomTier(plans, new int[]{1, 5, 15, 30}, "plan",
+                new String[]{"Beginner Planner", "Goal Getter", "Strategy Master", "Planning Legend"},
+                new String[]{
+                        "Completed 1 learning plan.",
+                        "Completed 5 learning plans.",
+                        "Completed 15 learning plans.",
+                        "Completed 30 learning plans."
+                }));
         // 2. Chuỗi ngày (Type: streak)
         list.add(calculateCustomTier(streak, new int[]{3, 7, 15, 30}, "streak",
-                new String[]{"Starter", "7-Day Streak", "Consistent", "Unstoppable"},
-                new String[]{"3 days in a row", "A full week of learning", "15 days of discipline", "30 days! You are a beast"}));
-
+                new String[]{"Habit Starter", "Weekly Warrior", "Unstoppable", "Consistency King"},
+                new String[]{
+                        "Maintain a 3-day streak.",
+                        "Reach a 7-day streak.",
+                        "Build a 15-day streak.",
+                        "Achieve a 30-day ."
+                }));
         // 3. Kỹ năng (Type: skill - dùng icon plan hoặc tạo mới)
-        list.add(calculateCustomTier(skills, new int[]{5, 10, 20, 50}, "plan",
-                new String[]{"Learner", "Expert", "Master", "Grandmaster"},
-                new String[]{"5 skills acquired", "10 skills learned", "Mastered 20+ skills", "50+ skills: Living Library"}));
-
+        list.add(calculateCustomTier(hours, new int[]{10, 50, 150, 300}, "hour",
+                new String[]{"Focus Novice", "Deep Learner", "Flow Specialist", "Zen Master"},
+                new String[]{
+                        "Log 10 hours of focused study.",
+                        "Accumulate 50 hours of deep work.",
+                        "Reach 150 focus hours.",
+                        "Clock in 300 focus hours."
+                }));
         return list;
     }
 
@@ -97,20 +109,27 @@ public class ProfileService {
         return new AchievementResponse(finalTitle, finalDesc, iconType, level, isUnlocked);
     }
 
-    private int calculateStreak(List<LocalDate> dates) {
-        if (dates == null || dates.isEmpty()) return 0;
+    private int calculateStreak(List<Object[]> dailyStatus) {
+        if (dailyStatus == null || dailyStatus.isEmpty()) return 0;
+
         int streak = 0;
         LocalDate today = LocalDate.now();
-        LocalDate firstDate = dates.get(0);
-        if (!firstDate.equals(today) && !firstDate.equals(today.minusDays(1))) {
+
+        LocalDate latestTaskDate = (LocalDate) dailyStatus.get(0)[0];
+
+        if (latestTaskDate.isBefore(today.minusDays(1))) {
             return 0;
         }
-        for (int i = 0; i < dates.size(); i++) {
-            if (i == 0) {
-                streak = 1;
+
+        for (Object[] row : dailyStatus) {
+            LocalDate date = (LocalDate) row[0];
+            int isFullyCompleted = ((Number) row[1]).intValue();
+
+            if (isFullyCompleted == 1) {
+                streak++;
             } else {
-                if (dates.get(i - 1).minusDays(1).equals(dates.get(i))) {
-                    streak++;
+                if (date.equals(today)) {
+                    continue;
                 } else {
                     break;
                 }

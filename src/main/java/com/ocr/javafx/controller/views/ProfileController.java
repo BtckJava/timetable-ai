@@ -56,7 +56,7 @@ public class ProfileController {
     private Label lblPlans;
 
     @FXML
-    private Label lblSkills;
+    private Label lblSessions;
 
     @FXML
     private Label lblStreak;
@@ -100,7 +100,7 @@ public class ProfileController {
         lblHours.setText(String.valueOf(res.getTotalHours()));
         lblPlans.setText(String.valueOf(res.getCompletedPlans()));
         lblStreak.setText(String.valueOf(res.getCurrentStreak()));
-        lblSkills.setText(String.valueOf(res.getSkillsLearned()));
+        lblSessions.setText(String.valueOf(res.getSkillsLearned()));
 
         if (res.getAvatarPath() != null && !res.getAvatarPath().isEmpty()) {
             imgAva.setImage(new Image("file:" + res.getAvatarPath()));
@@ -109,7 +109,7 @@ public class ProfileController {
         if (res.getAchievements() != null && res.getAchievements().size() >= 3) {
             renderAchievementUI(res.getAchievements().get(0), txtQuickLearner, imgAchievementPlan);
             renderAchievementUI(res.getAchievements().get(1), txtStreak, imgAchievementStreak);
-            renderAchievementUI(res.getAchievements().get(2), txtMaster, imgAchievementHour);
+            renderAchievementUI(res.getAchievements().get(2), txtMaster, imgAchievementHour);;
         }
     }
 
@@ -118,19 +118,20 @@ public class ProfileController {
         String iconFileName = data.getIconType() + "_lv" + data.getLevel() + ".png";
         String resourcePath = "/com/ocr/javafx/image/" + iconFileName;
 
-        System.out.println("Trying to load: " + resourcePath);
-        var url = getClass().getResource(resourcePath);
-        System.out.println("Resolved URL: " + url);
-
         try {
-            Image iconImage = new Image(getClass().getResourceAsStream(resourcePath));
-            imgView.setImage(iconImage);
+            var stream = getClass().getResourceAsStream(resourcePath);
+            if (stream != null) {
+                imgView.setImage(new Image(stream));
+            } else {
+                System.err.println("Resource not found: " + resourcePath);
+            }
         } catch (Exception e) {
-            System.err.println("Error: Icon not found at " + resourcePath);
+            System.err.println("Error loading image: " + resourcePath);
         }
 
         imgView.setOpacity(data.isUnlocked() ? 1.0 : 0.4);
-    }
+
+        }
 
     @FXML
     void handleEditProfile(ActionEvent event) {
