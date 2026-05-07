@@ -32,7 +32,13 @@ import java.io.IOException;
 public class ProfileController {
 
     @FXML
+    private Button btnChangePassword;
+
+    @FXML
     private Button btnEditProfile;
+
+    @FXML
+    private Button btnLogout;
 
     @FXML
     private ImageView imgAchievementHour;
@@ -56,22 +62,31 @@ public class ProfileController {
     private Label lblPlans;
 
     @FXML
-    private Label lblSkills;
+    private Label lblSessions;
 
     @FXML
     private Label lblStreak;
 
     @FXML
-    private Label txtMaster;
+    private Label txtDesHour;
+
+    @FXML
+    private Label txtDesPlan;
 
     @FXML
     private TextField txtName;
 
     @FXML
-    private Label txtQuickLearner;
+    private Label txtStreak;
 
     @FXML
-    private Label txtStreak;
+    private Label txtTitleHour;
+
+    @FXML
+    private Label txtTitlePlan;
+
+    @FXML
+    private Label txtTitleStreak;
 
     private SessionManager sessionManager;
     private ProfileService profileService;
@@ -100,33 +115,33 @@ public class ProfileController {
         lblHours.setText(String.valueOf(res.getTotalHours()));
         lblPlans.setText(String.valueOf(res.getCompletedPlans()));
         lblStreak.setText(String.valueOf(res.getCurrentStreak()));
-        lblSkills.setText(String.valueOf(res.getSkillsLearned()));
+        lblSessions.setText(String.valueOf(res.getSkillsLearned()));
 
         if (res.getAvatarPath() != null && !res.getAvatarPath().isEmpty()) {
             imgAva.setImage(new Image("file:" + res.getAvatarPath()));
         }
 
         if (res.getAchievements() != null && res.getAchievements().size() >= 3) {
-            renderAchievementUI(res.getAchievements().get(0), txtQuickLearner, imgAchievementPlan);
-            renderAchievementUI(res.getAchievements().get(1), txtStreak, imgAchievementStreak);
-            renderAchievementUI(res.getAchievements().get(2), txtMaster, imgAchievementHour);
+            renderAchievementUI(res.getAchievements().get(0), txtTitlePlan, txtDesPlan, imgAchievementPlan);
+            renderAchievementUI(res.getAchievements().get(1), txtTitleStreak, txtStreak, imgAchievementStreak);
+            renderAchievementUI(res.getAchievements().get(2), txtTitleHour, txtDesHour, imgAchievementHour);
         }
     }
 
-    private void renderAchievementUI(AchievementResponse data, Label descLabel, ImageView imgView) {
-        descLabel.setText(data.getDescription());
+    private void renderAchievementUI(AchievementResponse data, Label titleLabel, Label descLabel, ImageView imgView) {
+        if (titleLabel != null) titleLabel.setText(data.getTitle());
+        if (descLabel != null) descLabel.setText(data.getDescription());
+
         String iconFileName = data.getIconType() + "_lv" + data.getLevel() + ".png";
         String resourcePath = "/com/ocr/javafx/image/" + iconFileName;
 
-        System.out.println("Trying to load: " + resourcePath);
-        var url = getClass().getResource(resourcePath);
-        System.out.println("Resolved URL: " + url);
-
         try {
-            Image iconImage = new Image(getClass().getResourceAsStream(resourcePath));
-            imgView.setImage(iconImage);
+            var stream = getClass().getResourceAsStream(resourcePath);
+            if (stream != null) {
+                imgView.setImage(new Image(stream));
+            }
         } catch (Exception e) {
-            System.err.println("Error: Icon not found at " + resourcePath);
+            System.err.println("Error loading image: " + resourcePath);
         }
 
         imgView.setOpacity(data.isUnlocked() ? 1.0 : 0.4);

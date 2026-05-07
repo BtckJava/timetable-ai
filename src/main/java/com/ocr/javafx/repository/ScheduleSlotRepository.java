@@ -170,4 +170,19 @@ public class ScheduleSlotRepository  {
             return java.util.Collections.emptyList();
         }
     }
+
+    public List<Object[]> findDailyCompletionStatus(Long userId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "SELECT s.date, MIN(CASE WHEN s.completed = true THEN 1 ELSE 0 END) " +
+                    "FROM ScheduleSlot s WHERE s.user.id = :userId " +
+                    "GROUP BY s.date ORDER BY s.date DESC";
+
+            return session.createQuery(hql, Object[].class)
+                    .setParameter("userId", userId)
+                    .getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return java.util.Collections.emptyList();
+        }
+    }
 }
