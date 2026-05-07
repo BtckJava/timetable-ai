@@ -6,7 +6,6 @@ import com.ocr.javafx.controller.base.BaseController;
 import com.ocr.javafx.controller.main.MainController;
 import com.ocr.javafx.dto.request.LoginRequest;
 import com.ocr.javafx.dto.response.AuthResponse;
-import com.ocr.javafx.service.AuthService;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -92,7 +91,19 @@ public class LoginController extends BaseController {
 
     @FXML
     void handleForgotPassword(ActionEvent event) {
-        //
+        try {
+            Stage stage = (Stage) emailField.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/ocr/javafx/login/forgot-password.fxml")
+            );
+            Scene scene = new Scene(loader.load());
+            ForgotPasswordController controller = loader.getController();
+            controller.setApplicationContext(applicationContext);
+            stage.setScene(scene);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Cannot open Forgot Password screen");
+        }
     }
 
 
@@ -114,7 +125,7 @@ public class LoginController extends BaseController {
         setLoadingState(true);
 
 
-        Task<AuthResponse> loginTask = new Task<>() {
+        Task<AuthResponse> loginTask = new Task<AuthResponse>() {
             @Override
             protected AuthResponse call() {
                 LoginRequest request = new LoginRequest(email, password);

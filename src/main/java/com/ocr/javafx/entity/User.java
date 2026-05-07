@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -37,4 +39,10 @@ public class User extends BaseEntity {
 
     @Column(name = "skills_learned", nullable = false)
     private int skillsLearned = 0;
+
+    @Column(name = "otp_code")
+    private String otpCode;
+
+    @Column(name = "otp_expiry_time")
+    private LocalDateTime otpExpiryTime;
 }
