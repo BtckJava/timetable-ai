@@ -53,18 +53,18 @@
                 <HBox spacing="15">
                     <VBox alignment="CENTER" spacing="5" style="-fx-background-color: #f1f2f6; -fx-padding: 15; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                         <ImageView fx:id="imgAchievementPlan" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label style="-fx-font-weight: bold;" text="Quick Learner" />
-                        <Label fx:id="txtQuickLearner" style="-fx-text-fill: gray;" text="Completed your first plan" wrapText="true" />
+                        <Label fx:id="txtTitlePlan" style="-fx-font-weight: bold;" text="Quick Learner" />
+                        <Label fx:id="txtDesPlan" style="-fx-text-fill: gray;" text="Completed your first plan" wrapText="true" />
                     </VBox>
                     <VBox alignment="CENTER" spacing="5" style="-fx-background-color: #f1f2f6; -fx-padding: 15; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                         <ImageView fx:id="imgAchievementStreak" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label style="-fx-font-weight: bold;" text="7-Day Streak" />
+                        <Label fx:id="txtTitleStreak" style="-fx-font-weight: bold;" text="7-Day Streak" />
                         <Label fx:id="txtStreak" style="-fx-text-fill: gray;" text="Studied 7 days in a row" wrapText="true" />
                     </VBox>
                     <VBox alignment="CENTER" spacing="5" style="-fx-background-color: #f1f2f6; -fx-padding: 15; -fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                         <ImageView fx:id="imgAchievementHour" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label style="-fx-font-weight: bold;" text="Master" />
-                        <Label fx:id="txtMaster" style="-fx-text-fill: gray;" text="Learned 20+ skills" wrapText="true" />
+                        <Label fx:id="txtTitleHour" style="-fx-font-weight: bold;" text="Master" />
+                        <Label fx:id="txtDesHour" style="-fx-text-fill: gray;" text="Learned 20+ skills" wrapText="true" />
                     </VBox>
                 </HBox>
             </VBox>

@@ -32,7 +32,13 @@ import java.io.IOException;
 public class ProfileController {
 
     @FXML
+    private Button btnChangePassword;
+
+    @FXML
     private Button btnEditProfile;
+
+    @FXML
+    private Button btnLogout;
 
     @FXML
     private ImageView imgAchievementHour;
@@ -62,16 +68,25 @@ public class ProfileController {
     private Label lblStreak;
 
     @FXML
-    private Label txtMaster;
+    private Label txtDesHour;
+
+    @FXML
+    private Label txtDesPlan;
 
     @FXML
     private TextField txtName;
 
     @FXML
-    private Label txtQuickLearner;
+    private Label txtStreak;
 
     @FXML
-    private Label txtStreak;
+    private Label txtTitleHour;
+
+    @FXML
+    private Label txtTitlePlan;
+
+    @FXML
+    private Label txtTitleStreak;
 
     private SessionManager sessionManager;
     private ProfileService profileService;
@@ -107,14 +122,16 @@ public class ProfileController {
         }
 
         if (res.getAchievements() != null && res.getAchievements().size() >= 3) {
-            renderAchievementUI(res.getAchievements().get(0), txtQuickLearner, imgAchievementPlan);
-            renderAchievementUI(res.getAchievements().get(1), txtStreak, imgAchievementStreak);
-            renderAchievementUI(res.getAchievements().get(2), txtMaster, imgAchievementHour);;
+            renderAchievementUI(res.getAchievements().get(0), txtTitlePlan, txtDesPlan, imgAchievementPlan);
+            renderAchievementUI(res.getAchievements().get(1), txtTitleStreak, txtStreak, imgAchievementStreak);
+            renderAchievementUI(res.getAchievements().get(2), txtTitleHour, txtDesHour, imgAchievementHour);
         }
     }
 
-    private void renderAchievementUI(AchievementResponse data, Label descLabel, ImageView imgView) {
-        descLabel.setText(data.getDescription());
+    private void renderAchievementUI(AchievementResponse data, Label titleLabel, Label descLabel, ImageView imgView) {
+        if (titleLabel != null) titleLabel.setText(data.getTitle());
+        if (descLabel != null) descLabel.setText(data.getDescription());
+
         String iconFileName = data.getIconType() + "_lv" + data.getLevel() + ".png";
         String resourcePath = "/com/ocr/javafx/image/" + iconFileName;
 
@@ -122,16 +139,13 @@ public class ProfileController {
             var stream = getClass().getResourceAsStream(resourcePath);
             if (stream != null) {
                 imgView.setImage(new Image(stream));
-            } else {
-                System.err.println("Resource not found: " + resourcePath);
             }
         } catch (Exception e) {
             System.err.println("Error loading image: " + resourcePath);
         }
 
         imgView.setOpacity(data.isUnlocked() ? 1.0 : 0.4);
-
-        }
+    }
 
     @FXML
     void handleEditProfile(ActionEvent event) {
