@@ -173,7 +173,7 @@ Hệ thống được triển khai theo mô hình phân tán, tách biệt giữ
 
 
 **Video Demo:**
-[Video Link](#)
+[Video Link](https://drive.google.com/file/d/1djm4nPw5wM7o7JHn_SvjVmWxxbqNbWq6/view?usp=sharing)
 
 
 
