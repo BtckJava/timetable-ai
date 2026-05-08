@@ -138,6 +138,15 @@ com.ocr.mailservice
 └── MailServiceApplication # Điểm khởi chạy dịch vụ Mail
 ```
 
+### 4.5. Hạ tầng và Triển khai (Infrastructure & Deployment)
+
+Hệ thống được triển khai theo mô hình phân tán, tách biệt giữa Client và Background Services để tối ưu hiệu năng và đảm bảo thông báo luôn được gửi đúng giờ ngay cả khi người dùng không mở ứng dụng.
+
+- **Cloud Database (PostgreSQL):** Sử dụng **Neon Tech** (Serverless Postgres) làm cơ sở dữ liệu lưu trữ đám mây chính. Neon cung cấp khả năng tự động giãn nở (autoscaling) và đồng bộ dữ liệu thời gian thực giữa JavaFX Client và Mail Service. Hệ thống cũng tự động khởi tạo các bảng `jobrunr_*` để quản lý hàng đợi gửi mail.
+- **Mail Service (Spring Boot):** Triển khai trực tiếp lên **Render** (Platform-as-a-Service) thông qua quy trình CI/CD tự động từ GitHub. Các thông tin nhạy cảm (Credentials, Database URL, Mail Password) được bảo mật hoàn toàn qua cơ chế Environment Variables của Render.
+- **Dịch vụ SMTP (Gửi Email):** Tích hợp dịch vụ **Brevo (Sendinblue)** và **Gmail SMTP** qua cổng bảo mật SSL (Port 465/2525) để thực hiện gửi mail định dạng HTML, tránh tình trạng bị các bộ lọc đưa vào hòm Thư rác (Spam).
+- **Client Application (JavaFX):** Đóng gói thành file thực thi `.jar`, giao tiếp với Server thông qua RESTful API kết hợp Header bảo mật định danh (`X-Internal-Key`) để cấp quyền gọi lệnh đặt/hủy lịch nhắc nhở.
+
 
 
 ## 5. Ảnh và Video Demo
@@ -227,6 +236,14 @@ com.ocr.mailservice
     + Nếu tìm thấy, thực hiện lệnh `BackgroundJob.delete(uuid)` để hủy Job cũ, sau đó mới tạo Job mới.
     + Bổ sung API `DELETE` để hủy Job ngay lập tức khi người dùng xóa lịch trên ứng dụng.
 
+
+#### Vấn Đề 7: Giao diện (UI) bị treo khi Server Mail phản hồi chậm hoặc sập
+- **Mô tả:** Do sử dụng gói Cloud Render, Mail Server thường xuyên rơi vào trạng thái "ngủ" (Cold start) hoặc bị quá tải mạng. Khi đó, nếu JavaFX Client cố gắng đồng bộ hàng loạt lịch trình, các luồng (Thread) gọi HTTP API sẽ bị treo (timeout), dẫn đến toàn bộ giao diện ứng dụng của người dùng bị đơ cứng (freeze) và gây ra hiện tượng dội bom (spam request) khi Server vừa thức dậy.
+- **Hành động để giải quyết:** Áp dụng mẫu thiết kế **Circuit Breaker (Ngắt mạch)** kết hợp cơ chế **Retry (Thử lại)** tại tầng Client (`MailSyncService`):
+  - **Cơ chế Retry:** Khi HTTP request thất bại (lỗi 5xx hoặc timeout), hệ thống tự động thử lại tối đa 3 lần với thời gian trễ (delay) giữa các lần gọi.
+  - **Cơ chế Circuit Breaker:** Nếu việc đồng bộ thất bại liên tiếp 3 lần, hệ thống sẽ tự động "ngắt cầu dao" (Open Circuit). Trong 60 giây tiếp theo, mọi yêu cầu đồng bộ Mail sẽ bị từ chối ngay lập tức tại Client (Fast-fail) thay vì gửi lên Server.
+  - **Tối ưu UI:** Gom nhóm các thông báo lỗi (Toast) thông qua `SyncUiHints` để không hiển thị hàng loạt thông báo làm phiền người dùng.
+- **Kết quả:** Ứng dụng Client hoạt động mượt mà, chịu lỗi tốt (Fault-tolerant). Bảo vệ được Server khỏi các đợt tấn công DDoS cục bộ do lỗi logic, và cải thiện tối đa trải nghiệm người dùng ngay cả khi hạ tầng mạng không ổn định.
 ## 7. Kết Luận
 
 **Kết quả đạt được:** Ứng dụng đã hoàn thiện các tính năng cốt lõi, giải quyết các vấn đề về hiệu năng và dữ liệu.
